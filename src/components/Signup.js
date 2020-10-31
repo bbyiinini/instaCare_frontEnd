@@ -6,7 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import db, {provider1}from '../base';
 
-const Login = (props) => {
+const Signup = (props) => {
 
     const [password, setPassword] = useState("");
     const [Id, setId] = useState("");
@@ -20,27 +20,28 @@ const Login = (props) => {
         setId(e.target.value);
     };
 
-    const handleLoginWithGoogle = () => {
+    const handleSignUp = () => {
+        if(!Id.match(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/)){
+            alert('Incorrect Email Format');
+            return;
+        }
         try{
-            db.auth().signInWithPopup(provider1);
+            db.auth().createUserWithEmailAndPassword(Id, password);
+            alert('success!')
             history.push("/");
-        } catch (error){
+        } catch(error){
             alert(error);
         }
-    }
-
-    const redirectSignup = () =>{
-        history.push("/signup");
     }
 
     return (
         <div>
             <MuiThemeProvider>
             <div>
-                <AppBar title="Login"/>
+                <AppBar title="Signup"/>
                 <TextField
-                    hintText="Enter your Username"
-                    floatingLabelText="Username"
+                    hintText="Enter your Email"
+                    floatingLabelText="Email"
                     onChange = {IdChange}
                     />
                 <br/>
@@ -51,8 +52,7 @@ const Login = (props) => {
                     onChange = {passChange}
                     />
                 <br/>
-                <RaisedButton label="Submit" primary={true} style={style} onClick={handleLoginWithGoogle}/>
-                <RaisedButton label="Sign Up" primary={true} style={style} onClick={redirectSignup}/>
+                <RaisedButton label="Sign up" primary={true} style={style} onClick={handleSignUp}/>
             </div>
             </MuiThemeProvider>
         </div>
@@ -61,4 +61,4 @@ const Login = (props) => {
     const style = {margin: 15,};
 
 
-export default Login;
+export default Signup;
