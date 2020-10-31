@@ -2,8 +2,7 @@ import React, {useState} from "react";
 import TextField from "material-ui/TextField";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import {auth} from "../../firebase";
-import {toast, ToastContainer} from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'
+import {toast} from "react-toastify";
 
 const SignUp = () => {
 
@@ -13,21 +12,39 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        if (!email || !password){
+            toast.error("email and password are required")
+            return;
+        }
+
+        if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email))
+        {
+            toast.error("You have entered an invalid email address!")
+            return;
+        }
+
+        if (password.length < 6){
+            toast.error("password must be more than 6 character long")
+            return;
+        }
         const actionSetting = {
             url: 'http://localhost:3000/signup/complete',
             handleCodeInApp: true,
         }
-        console.log(actionSetting.url)
-        console.log(email)
+        // console.log(email)
         await auth.sendSignInLinkToEmail(email, actionSetting);
         toast.success(`Email is sent to ${email}, please confirm your email and continue to complete sign up`);
+
+        window.localStorage.setItem('email', email)
+        window.localStorage.setItem('password', password)
         setEmail("")
+        setPassword("")
     };
 
 
 
     const signUpForm = () => (
-        // <form onSubmit={handleSubmit}>
         <MuiThemeProvider>
             <div >
                 <TextField
@@ -48,14 +65,6 @@ const SignUp = () => {
                 <button type="Submit" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
             </div>
         </MuiThemeProvider>
-        //     <input type="email"
-        //         value={email}
-        //            onChange={e => setEmail(e.target.value)}
-        //            autoFocus
-        //     />
-        //     <button type="submit" className="btn btn-primary" onChange={handleSubmit}>Sign Up</button>
-        // </form>
-
     )
 
 
@@ -64,7 +73,6 @@ const SignUp = () => {
             <div>
                 <div>
                     <h4>Sign Up</h4>
-                    <ToastContainer/>
                     {signUpForm()}
                 </div>
             </div>
