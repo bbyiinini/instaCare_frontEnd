@@ -4,6 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import {Link} from "react-router-dom";
 
 const Login = (props) => {
 
@@ -38,10 +39,14 @@ const Login = (props) => {
                     onChange = {passChange}
                     />
                 <br/>
+                <div>
+                    <Link to="/forgot/password" className="text-danger">Forgot Password</Link>
+                </div>
                 <RaisedButton label="Submit" primary={true} style={style} onClick={""}/>
             </div>
             </MuiThemeProvider>
         </div>
+
     );
 }
     const style = {margin: 15,};
