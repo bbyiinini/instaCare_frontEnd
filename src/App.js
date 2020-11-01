@@ -59,7 +59,7 @@ const App = () => {
                 <header className="App-header">
                   <img src={logo} className="App-logo" alt="logo" />
                   <p>
-                    Welcome {user.displayName}
+                    Welcome {user==null?"":user.displayName}
                   </p>
                 </header>
               </div>

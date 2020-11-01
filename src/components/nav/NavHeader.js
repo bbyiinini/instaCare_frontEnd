@@ -55,7 +55,7 @@ const NavHeader = () => {
             </Item>
 
 
-            <SubMenu key="SubMenu" icon={<SettingOutlined />} className="float-right" title={(user&&user.displayName)==null?"User":user.displayName}>
+            <SubMenu key="SubMenu" icon={<SettingOutlined />} title={(user&&user.displayName)==null?"User":user.displayName}>
                 <Menu.ItemGroup title="Profile">
                     <Item key="item1">option 1</Item>
                 </Menu.ItemGroup>
