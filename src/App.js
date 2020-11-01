@@ -13,6 +13,7 @@ import {userReducer} from "./reducer/UserReducer";
 import Login from './components/Login'
 import Signup from './components/Signup'
 import NavHeader from "./components/nav/NavHeader";
+import SignUpComplete from "./components/SignUpComplete";
 
 
 
@@ -63,6 +64,7 @@ const App = () => {
             </Route>
             <Route exact path="/login" component={() => <Login />} />
             <Route exact path="/signup" component={() => <Signup />} />
+            <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
           </Switch>
         </Router>
       </div>
