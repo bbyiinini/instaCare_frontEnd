@@ -3,11 +3,11 @@ import { Menu } from 'antd';
 import {
     HomeOutlined,
     UserOutlined,
-    UserAddOutlined, LogoutOutlined
+    UserAddOutlined, LogoutOutlined, SettingOutlined
 } from '@ant-design/icons';
 import {Link, useHistory} from 'react-router-dom';
 import db from "../../base";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {toast} from "react-toastify";
 
 
@@ -18,7 +18,7 @@ const NavHeader = () => {
     const [currState, setCurrState] = useState('home')
     let dispatch = useDispatch();
     let history = useHistory();
-
+    let {user} = useSelector((state)=>(state))
     const handleClick = (event) => {
         setCurrState(event.key)
     }
@@ -41,26 +41,28 @@ const NavHeader = () => {
                 <Link to="/">Home</Link>
             </Item>
 
-            <Item key="logout" icon={<LogoutOutlined />} className="float-right" onClick={logout}>
-                Logout
-            </Item>
 
-            <Item key="signup" icon={<UserAddOutlined />} className="float-right">
-                <Link to="/signup">Sign Up</Link>
-            </Item>
+            {!user && (
+                <Item key="signup" icon={<UserAddOutlined />} className="float-right">
+                    <Link to="/signup">Sign Up</Link>
+                </Item>
 
-            <Item key="login" icon={<UserOutlined />} className="float-right">
-                <Link to="/login">Login</Link>
-            </Item>
+            )}
 
+            {!user && (
+                <Item key="login" icon={<UserOutlined />} className="float-right">
+                    <Link to="/login">Login</Link>
+                </Item>
+            )}
 
+            {user && (
+                <SubMenu key="SubMenu" icon={<SettingOutlined />} className="float-right" title={user.displayName==null?"user":user.displayName}>
+                    <Menu.ItemGroup title="Profile">
+                        <Item key="logout" icon={<LogoutOutlined />} onClick={logout}>Logout</Item>
+                    </Menu.ItemGroup>
+                </SubMenu>
+            )}
 
-            {/*<SubMenu key="SubMenu" icon={<SettingOutlined />} title="User">*/}
-            {/*    <Menu.ItemGroup title="Item 1">*/}
-            {/*        <Item key="setting:1">Option 1</Item>*/}
-            {/*        <Item key="setting:2">Option 2</Item>*/}
-            {/*    </Menu.ItemGroup>*/}
-            {/*</SubMenu>*/}
         </Menu>
     );
 }

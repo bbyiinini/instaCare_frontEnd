@@ -1,5 +1,5 @@
 import React, { useState }  from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -7,7 +7,8 @@ import TextField from 'material-ui/TextField';
 import db, {provider1}from '../base';
 import {Button} from "antd";
 import {GoogleOutlined, MailOutlined} from "@ant-design/icons";
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
+
 
 
 const Login = (props) => {
@@ -40,7 +41,7 @@ const Login = (props) => {
         }catch (error) {
             console.log(email,password)
             console.log(error)
-            toast.error("log in failed")
+            toast.error("log in failed, make sure your email and password are correct")
         }
 
     }
@@ -79,12 +80,15 @@ const Login = (props) => {
                     onChange = {passChange}
                     />
                 <br/>
+                <Link to="/forgot/reset">Forgot Password</Link>
+                <br/>
                 <Button className="m-3" type="danger" shape="round" icon={<GoogleOutlined />} onClick={handleLoginWithGoogle}>Login with Google</Button>
                 <br/>
                 {/*<RaisedButton label="Login with google" primary={true} style={style} onClick={handleLoginWithGoogle}/>*/}
                 <Button className="m-2" type="primary" shape="round" icon={<MailOutlined/>}disabled={!email || password.length < 6} onClick={handleLoginWithEmailAndPassword}>Login with Email/Password</Button>
                 {/*<RaisedButton label="Login with Email and Password" primary={true} style={style} onClick={handleLoginWithEmailAndPassword}/>*/}
                 {/*<RaisedButton label="Sign Up" primary={true} style={style} onClick={redirectSignup}/>*/}
+                <br/>
             </div>
             </MuiThemeProvider>
         </div>
