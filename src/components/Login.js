@@ -85,7 +85,7 @@ const Login = (props) => {
                 <Button className="m-3" type="danger" shape="round" icon={<GoogleOutlined />} onClick={handleLoginWithGoogle}>Login with Google</Button>
                 <br/>
                 {/*<RaisedButton label="Login with google" primary={true} style={style} onClick={handleLoginWithGoogle}/>*/}
-                <Button className="m-2" type="primary" shape="round" icon={<MailOutlined/>}disabled={!email || password.length < 6} onClick={handleLoginWithEmailAndPassword}>Login with Email/Password</Button>
+                <Button className="m-2" type="primary" shape="round" icon={<MailOutlined/>} disabled={!email || password.length < 6} onClick={handleLoginWithEmailAndPassword}>Login with Email/Password</Button>
                 {/*<RaisedButton label="Login with Email and Password" primary={true} style={style} onClick={handleLoginWithEmailAndPassword}/>*/}
                 {/*<RaisedButton label="Sign Up" primary={true} style={style} onClick={redirectSignup}/>*/}
                 <br/>

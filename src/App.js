@@ -21,6 +21,7 @@ import ForgotPassword from "./components/ForgotPassword";
 const App = () => {
   const dispatch = useDispatch();
   let {user} = useSelector((state)=>({...state}))
+  // console.log(user)
   useEffect(()=>{
     const unsubscribe = db.auth().onAuthStateChanged(async (user) =>{
       if (user) {
@@ -58,7 +59,7 @@ const App = () => {
                 <header className="App-header">
                   <img src={logo} className="App-logo" alt="logo" />
                   <p>
-                    Welcome {user == null?"":user.displayName}
+                    Welcome {user.displayName}
                   </p>
                 </header>
               </div>
