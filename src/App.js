@@ -18,7 +18,7 @@ import NavHeader from "./components/nav/NavHeader";
 
 const App = () => {
   const dispatch = useDispatch();
-  let state = useSelector((state)=>(state))
+  let {user} = useSelector((state)=>({...state}))
   useEffect(()=>{
     const unsubscribe = db.auth().onAuthStateChanged(async (user) =>{
       if (user) {
@@ -56,7 +56,7 @@ const App = () => {
                 <header className="App-header">
                   <img src={logo} className="App-logo" alt="logo" />
                   <p>
-                    Welcome {state.user == null?"":state.user.displayName}
+                    Welcome {user == null?"":user.displayName}
                   </p>
                 </header>
               </div>
