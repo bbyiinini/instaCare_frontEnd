@@ -80,7 +80,7 @@ const Login = (props) => {
                     onChange = {passChange}
                     />
                 <br/>
-                <Link to="/forgot/reset">Forgot Password</Link>
+                <Link to="/forgot/resetpassword" className="text-danger">Forgot Password</Link>
                 <br/>
                 <Button className="m-3" type="danger" shape="round" icon={<GoogleOutlined />} onClick={handleLoginWithGoogle}>Login with Google</Button>
                 <br/>
