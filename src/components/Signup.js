@@ -55,7 +55,7 @@ const Signup = (props) => {
 
         window.localStorage.setItem('email', email)
         window.localStorage.setItem('password', password)
-        window.localStorage.setItem('userType', "123")
+        window.localStorage.setItem('userType', "124")
         setEmail("")
         setPassword("")
     };
