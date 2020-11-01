@@ -4,7 +4,9 @@ import Login from './components/Login'
 import Signup from './components/Signup'
 import logo from './logo.svg';
 import './App.css';
-
+import NavHeader from "./components/nav/NavHeader";
+import 'antd/dist/antd.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
   constructor(props) {
@@ -15,6 +17,7 @@ class App extends Component {
     return (
       <div className="App">
         <Router>
+          <NavHeader/>
           {/* <NavBar
             loggedIn={this.state.loggedIn}
             toggleLogin={this.toggleLogin}

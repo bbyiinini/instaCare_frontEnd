@@ -20,9 +20,9 @@ const Login = (props) => {
         setId(e.target.value);
     };
 
-    const handleLoginWithGoogle = () => {
+    const handleLoginWithGoogle = async () => {
         try{
-            db.auth().signInWithPopup(provider1);
+           await db.auth().signInWithPopup(provider1);
             history.push("/");
         } catch (error){
             alert(error);
