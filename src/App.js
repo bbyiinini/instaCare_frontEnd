@@ -14,6 +14,7 @@ import Login from './components/Login'
 import Signup from './components/Signup'
 import NavHeader from "./components/nav/NavHeader";
 import SignUpComplete from "./components/SignUpComplete";
+import ForgotPassword from "./components/ForgotPassword";
 
 
 
@@ -65,6 +66,7 @@ const App = () => {
             <Route exact path="/login" component={() => <Login />} />
             <Route exact path="/signup" component={() => <Signup />} />
             <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
+            <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />
           </Switch>
         </Router>
       </div>
