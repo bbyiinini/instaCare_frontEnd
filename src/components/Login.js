@@ -38,6 +38,7 @@ const Login = (props) => {
           })
             history.push("/");
         }catch (error) {
+            console.log(email,password)
             console.log(error)
             toast.error("log in failed")
         }
@@ -66,8 +67,8 @@ const Login = (props) => {
             <div>
                 <AppBar title="Login"/>
                 <TextField
-                    hintText="Enter your Username"
-                    floatingLabelText="Username"
+                    hintText="Enter your Email"
+                    floatingLabelText="Email"
                     onChange = {emailChange}
                     />
                 <br/>

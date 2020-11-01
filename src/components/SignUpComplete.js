@@ -11,8 +11,10 @@ const SignUpComplete = ({props}) => {
         if (email != null) {
             db.auth().signInWithEmailLink(email, window.location.href).then(()=>{
                 toast.success("Sign Up success")
-                 let user = db.auth.currentUser;
-                 if (user.emailVerified){
+                // console.log(db.auth().currentUser)
+                let user = db.auth().currentUser;
+                 // console.log(user)
+                 if (db.auth().currentUser.emailVerified){
                      user.updatePassword(password).then(() => {
                          console.log('update success')
                          window.localStorage.removeItem('email')
