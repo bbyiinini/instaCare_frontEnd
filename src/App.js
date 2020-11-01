@@ -1,23 +1,51 @@
-import React, {Component} from 'react';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Login from './components/Login'
-import Signup from './components/Signup'
+import React, {Component, useEffect} from 'react';
 import logo from './logo.svg';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {ToastContainer} from "react-toastify";
+import db from "./base";
+import {useDispatch, useSelector} from "react-redux";
 import './App.css';
-import NavHeader from "./components/nav/NavHeader";
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-  }
+import {userReducer} from "./reducer/UserReducer";
+import Login from './components/Login'
+import Signup from './components/Signup'
+import NavHeader from "./components/nav/NavHeader";
 
-  render() {
-    return (
+
+
+const App = () => {
+  const dispatch = useDispatch();
+  let state = useSelector((state)=>(state))
+  useEffect(()=>{
+    const unsubscribe = db.auth().onAuthStateChanged(async (user) =>{
+      if (user) {
+        const idTokenResult = await user.getIdTokenResult();
+        // console.log("user", user)
+        dispatch({
+          type:'LOGGED_IN_USER',
+          payload: {
+            email: user.email,
+            token: idTokenResult.token,
+            displayName: user.displayName
+          }
+        })
+      }
+    })
+    // cleanup memory
+    return () => unsubscribe();
+  },[])
+
+
+
+  return (
+
       <div className="App">
         <Router>
           <NavHeader/>
+          <ToastContainer/>
           {/* <NavBar
             loggedIn={this.state.loggedIn}
             toggleLogin={this.toggleLogin}
@@ -28,9 +56,8 @@ class App extends Component {
                 <header className="App-header">
                   <img src={logo} className="App-logo" alt="logo" />
                   <p>
-                    Edit <code>src/App.js</code> and save to reload.
+                    Welcome {state.user == null?"":state.user.displayName}
                   </p>
-                  <a href="/login">Login</a>
                 </header>
               </div>
             </Route>
@@ -39,8 +66,9 @@ class App extends Component {
           </Switch>
         </Router>
       </div>
+
     );
-  }
+
 }
 
 export default App;
