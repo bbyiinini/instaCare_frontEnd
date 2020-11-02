@@ -15,6 +15,7 @@ import Signup from './components/Signup'
 import NavHeader from "./components/nav/NavHeader";
 import SignUpComplete from "./components/SignUpComplete";
 import ForgotPassword from "./components/ForgotPassword";
+import ProtectedRoute from "./routes/ProtectedRoute"
 
 
 
@@ -64,7 +65,7 @@ const App = () => {
                 </header>
               </div>
             </Route>
-            <Route exact path="/login" component={() => <Login />} />
+            <ProtectedRoute exact path="/login" component={() => <Login />} />
             <Route exact path="/signup" component={() => <Signup />} />
             <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
             <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />

@@ -20,9 +20,9 @@ const SignUpComplete = ({props}) => {
                 })
                 let user = db.auth().currentUser;
                  // console.log(user)
-                 if (db.auth().currentUser.emailVerified){
-                   await user.updatePassword(password)
-                 }
+                if (db.auth().currentUser.emailVerified){
+                await user.updatePassword(password)
+                }
 
             }).catch((error)=>{
                 console.log(error)
