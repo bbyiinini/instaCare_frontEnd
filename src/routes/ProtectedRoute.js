@@ -7,10 +7,8 @@ import {useDispatch, useSelector} from "react-redux";
 const ProtectedRoute = () => {
 
     const {user} = useSelector((state)=>({...state}))
-
-    const isAuthenticated = user.token;
     
-    return isAuthenticated ? (
+    return user==null ? (
         <Login />
     ) : (
         <Redirect to={{ pathname: '/' }} />
