@@ -33,7 +33,8 @@ const App = () => {
           payload: {
             email: user.email,
             token: idTokenResult.token,
-            displayName: user.displayName
+            displayName: user.displayName,
+            uid: user.uid
           }
         })
       }

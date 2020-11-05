@@ -17,8 +17,8 @@ const Signup = (props) => {
 
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
     const [type, setType] = useState("");
-    const history = useHistory();
 
 
     const passChange = (e) => {
@@ -30,21 +30,24 @@ const Signup = (props) => {
     };
 
     const typeChange = (e) => {
-        console.log(e.target.value);
         setType(e.target.value);
+    };
+
+    const nameChange = (e) => {
+        setName(e.target.value);
     };
 
     const handleSignUp = async (e) => {
         e.preventDefault()
 
-        if (!email || !password) {
-            toast.error("email and password are required")
-            return;
-        }
-        if (password.length < 6) {
-            toast.error("password must be more than 6 character long")
-            return;
-        }
+        // if (!email || !password) {
+        //     toast.error("email and password are required")
+        //     return;
+        // }
+        // if (password.length < 6) {
+        //     toast.error("password must be more than 6 character long")
+        //     return;
+        // }
         if (!email.match(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/)) {
             toast.error("You have entered an invalid email address!")
             return;
@@ -68,8 +71,6 @@ const Signup = (props) => {
         window.localStorage.setItem('email', email)
         window.localStorage.setItem('password', password)
         window.localStorage.setItem('userType', type)
-        setEmail("")
-        setPassword("")
     };
 
     return (
@@ -90,6 +91,12 @@ const Signup = (props) => {
                 onChange = {passChange}
                 />
                 <br/>
+                <TextField
+                hintText="Enter your Name"
+                floatingLabelText="Name"
+                onChange = {nameChange}
+                />
+                <br/>
                 <FormControl style={{minWidth:120}}>
                     <InputLabel id="demo-simple-select-label">Type</InputLabel>
                     <Select
@@ -97,8 +104,8 @@ const Signup = (props) => {
                     id="demo-simple-select"
                     value={type}
                     onChange={typeChange}>
-                        <MenuItem value={"s"}>Senior</MenuItem>
-                        <MenuItem value={"v"}>Volunteer</MenuItem>
+                        <MenuItem value={0}>Senior</MenuItem>
+                        <MenuItem value={1}>Volunteer</MenuItem>
                     </Select>
                 </FormControl>
                 <br/>
