@@ -17,11 +17,14 @@ const SignUpComplete = ({props}) => {
                 // test CORS
                 await UserService.saveUser(UserBean).then(res=>{
                     toast.success("saved user type to backend")
+                }).catch(res=>{
+                    console.log("CORS not connected")
                 })
                 let user = db.auth().currentUser;
                  // console.log(user)
                 if (db.auth().currentUser.emailVerified){
-                await user.updatePassword(password)
+                    await user.updatePassword(password)
+                    console.log("update success")
                 }
 
             }).catch((error)=>{
