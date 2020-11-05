@@ -1,9 +1,15 @@
 import React, { useState }  from "react";
 import { useHistory } from "react-router-dom";
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+
 import db, {provider1}from '../base';
 import {toast} from "react-toastify";
 
@@ -11,6 +17,7 @@ const Signup = (props) => {
 
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [type, setType] = useState("");
     const history = useHistory();
 
 
@@ -20,6 +27,11 @@ const Signup = (props) => {
 
     const emailChange = (e) => {
         setEmail(e.target.value);
+    };
+
+    const typeChange = (e) => {
+        console.log(e.target.value);
+        setType(e.target.value);
     };
 
     const handleSignUp = async (e) => {
@@ -55,7 +67,7 @@ const Signup = (props) => {
 
         window.localStorage.setItem('email', email)
         window.localStorage.setItem('password', password)
-        window.localStorage.setItem('userType', "124")
+        window.localStorage.setItem('userType', type)
         setEmail("")
         setPassword("")
     };
@@ -71,12 +83,24 @@ const Signup = (props) => {
                     onChange = {emailChange}
                     />
                 <br/>
-                    <TextField
-                    type="password"
-                    hintText="Enter your Password"
-                    floatingLabelText="Password"
-                    onChange = {passChange}
-                    />
+                <TextField
+                type="password"
+                hintText="Enter your Password"
+                floatingLabelText="Password"
+                onChange = {passChange}
+                />
+                <br/>
+                <FormControl style={{minWidth:120}}>
+                    <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                    <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={type}
+                    onChange={typeChange}>
+                        <MenuItem value={"s"}>Senior</MenuItem>
+                        <MenuItem value={"v"}>Volunteer</MenuItem>
+                    </Select>
+                </FormControl>
                 <br/>
                 <RaisedButton label="Sign up" primary={true} style={style} onClick={handleSignUp}/>
             </div>
