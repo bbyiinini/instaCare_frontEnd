@@ -25,8 +25,7 @@ const NavHeader = () => {
     }
     const logout = () => {
         db.auth().signOut().then(r =>{
-            // toast.success("user logged out!")
-            console.log("user logged out")
+            toast.success("user logged out!")
         });
         dispatch({
             type: 'LOGOUT',
