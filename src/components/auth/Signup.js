@@ -10,7 +10,7 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
-import db, {provider1}from '../base';
+import db, {provider1}from '../../base';
 import {toast} from "react-toastify";
 
 const Signup = (props) => {

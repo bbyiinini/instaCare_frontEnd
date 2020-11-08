@@ -4,7 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import db, {provider1}from '../base';
+import db, {provider1}from '../../base';
 import {Button} from "antd";
 import {GoogleOutlined, MailOutlined} from "@ant-design/icons";
 import {toast} from "react-toastify";

@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { Redirect } from 'react-router-dom'
-import Login from '../components/Login';
+import Login from '../components/auth/Login';
 import {useDispatch, useSelector} from "react-redux";
 
 const ProtectedRoute = () => {

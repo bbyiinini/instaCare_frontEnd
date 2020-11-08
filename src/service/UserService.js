@@ -15,6 +15,14 @@ class UserService {
             console.log(error.response)
         });
     }
+
+    request(uid, requestBean){
+        return Axios.post("http://localhost:8080/request/"+uid).then(res=>{
+            console.log(res)
+        }).catch(error => {
+            console.log(error.message)
+        })
+    }
 }
 
 export default new UserService();
