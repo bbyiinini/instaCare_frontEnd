@@ -10,13 +10,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 import {userReducer} from "./reducer/UserReducer";
-import Login from './components/Login'
-import Signup from './components/Signup'
+import Login from './components/auth/Login'
+import Signup from './components/auth/Signup'
 import NavHeader from "./components/nav/NavHeader";
-import SignUpComplete from "./components/SignUpComplete";
-import ForgotPassword from "./components/ForgotPassword";
+import SignUpComplete from "./components/auth/SignUpComplete";
+import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
 import FinishSetUp from "./components/FinishSetUp";
+import Request from "./components/request/RequestPlazza";
+
 
 
 const App = () => {
@@ -86,6 +88,7 @@ const App = () => {
             <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
             <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />
             <Route exact path="/finishSetUp" component={() => <FinishSetUp/>}/>
+            <Route exact path="/request" component={() => <Request />} />
           </Switch>
         </Router>
       </div>

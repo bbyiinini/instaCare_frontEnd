@@ -1,8 +1,8 @@
 import React, {useEffect} from "react";
-import db from "../base";
+import db from "../../base";
 import {toast} from "react-toastify";
 import {useHistory} from "react-router-dom"
-import UserService from "../service/UserService";
+import UserService from "../../service/UserService";
 
 const SignUpComplete = ({props}) => {
     let history = useHistory()

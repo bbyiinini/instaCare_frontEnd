@@ -15,6 +15,7 @@ class UserService {
             console.log(error.response)
         });
     }
+
 }
 
 export default new UserService();

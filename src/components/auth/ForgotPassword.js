@@ -1,5 +1,5 @@
 import React, { useState, useEffect }  from "react";
-import db, {provider1}from '../base';
+import db, {provider1}from '../../base';
 import {toast} from "react-toastify";
 
 
