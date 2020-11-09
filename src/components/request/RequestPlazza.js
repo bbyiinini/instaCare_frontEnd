@@ -13,6 +13,9 @@ const Request = () => {
     const {user} = useSelector((state)=>({...state}))
 
     const handleClick = () => {
+        if (user == null){
+            return;
+        }
         let requestBean ={requestContent:text}
         RequestService.request(user.uid, requestBean).then(res=>{
             toast.success("save request to backend success")
@@ -23,11 +26,14 @@ const Request = () => {
     }
 
     const fetchData = async () => {
-        const result = await Axios(
-            "http://localhost:8080/request/"+user.uid,
-        );
+        if (user != null){
+            const result = await Axios(
+                "http://localhost:8080/request/"+user.uid,
+            );
 
-        setContent(result.data);
+            setContent(result.data);
+        }
+
     };
 
 
