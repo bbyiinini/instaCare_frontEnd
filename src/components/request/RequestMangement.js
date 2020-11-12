@@ -1,3 +1,4 @@
+import { blue, red } from "@material-ui/core/colors";
 import React, {useEffect, useState} from "react";
 import { useSelector} from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -10,17 +11,22 @@ const RequestMangement = () => {
     const history = useHistory();
 
     const backHome = () =>{
-        history.push('/')
+        history.push('/');
     }
 
     return(
         <>
            {user==null?
            <div>
-               <p>waiting for redirection, back to <a onClick={backHome}>home</a></p>
+               <p>waiting for redirection, back to <a onClick={backHome} style={{color:"blue"}}>HOME</a></p>
            </div>
-           :<div>
-               <h1>Hello</h1>
+           :<div className="row">
+                <div className="column">
+                    Display
+                </div>
+                <div className="column">
+                    Map
+                </div>
             </div>}
         </>
     );
