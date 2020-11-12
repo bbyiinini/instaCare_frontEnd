@@ -4,6 +4,9 @@ import { useSelector} from "react-redux";
 import { useHistory } from "react-router-dom";
 import {toast} from "react-toastify";
 
+import CardHeader from '@material-ui/core/CardHeader';
+import Avatar from '@material-ui/core/Avatar';
+
 const RequestMangement = () => {
 
     let {user} = useSelector((state)=>({...state}));
@@ -22,7 +25,15 @@ const RequestMangement = () => {
            </div>
            :<div className="row">
                 <div className="column">
-                    Display
+                    <CardHeader
+                        avatar={
+                        <Avatar aria-label="recipe" className={''}>
+                            R
+                        </Avatar>
+                        }
+                        title={<><a>{user.displayName}</a><div>{user.email}</div></>}
+                        subheader="GPA: 4.0"
+                    />
                 </div>
                 <div className="column">
                     Map

@@ -25,6 +25,8 @@ const NavHeader = () => {
                 return "requestPlazza";
             case "/requestmangement":
                 return "requestMangement";
+            case "/post":
+                return "post";
         }
         return "home";
     }
