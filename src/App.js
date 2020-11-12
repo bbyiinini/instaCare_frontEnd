@@ -17,6 +17,7 @@ import SignUpComplete from "./components/auth/SignUpComplete";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
 import Request from "./components/request/RequestPlazza";
+import RequestMangement from "./components/request/RequestMangement";
 
 
 
@@ -72,6 +73,7 @@ const App = () => {
             <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
             <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />
             <Route exact path="/request" component={() => <Request />} />
+            <Route exact path="/requestmangement" component={() => <RequestMangement />} />
           </Switch>
         </Router>
       </div>

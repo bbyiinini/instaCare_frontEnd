@@ -15,13 +15,30 @@ const { SubMenu, Item } = Menu;
 
 
 const NavHeader = () => {
-    const [currState, setCurrState] = useState('home')
-    let dispatch = useDispatch();
     let history = useHistory();
+
+    const convertPath = (s) =>{
+        switch(s){
+            case "/" :
+                return "home";
+            case "/request":
+                return "requestPlazza";
+            case "/requestmangement":
+                return "requestMangement";
+        }
+        return "home";
+    }
+
+    const [currState, setCurrState] = useState(convertPath(history.location.pathname));
+    let dispatch = useDispatch();
+    console.log(history.location.pathname);
     let {user} = useSelector((state)=>({...state}))
     // console.log(user)
+
+    
+
     const handleClick = (event) => {
-        setCurrState(event.key)
+        setCurrState(convertPath(history.location.pathname));
     }
     const logout = () => {
         db.auth().signOut().then(r =>{
@@ -57,6 +74,10 @@ const NavHeader = () => {
 
             <Item key="requestPlazza" icon={<HomeOutlined />}>
                 <Link to="/request">requst plazza</Link>
+            </Item>
+
+            <Item key="requestMangement" icon={<HomeOutlined />}>
+                <Link to="/requestmangement">requstM</Link>
             </Item>
 
 
