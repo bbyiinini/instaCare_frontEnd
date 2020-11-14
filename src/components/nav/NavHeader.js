@@ -27,6 +27,8 @@ const NavHeader = () => {
                 return "requestMangement";
             case "/post":
                 return "post";
+            case "/homepage":
+                return "Homepage";
         }
         return "home";
     }
@@ -84,6 +86,10 @@ const NavHeader = () => {
 
             <Item key="requestMangement" icon={<HomeOutlined />}>
                 <Link to="/requestmangement">requstM</Link>
+            </Item>
+
+            <Item key="homePage" icon={<HomeOutlined />}>
+                <Link to="/homepage">Homepage</Link>
             </Item>
 
 

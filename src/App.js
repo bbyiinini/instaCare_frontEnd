@@ -20,6 +20,8 @@ import Request from "./components/request/RequestPlazza";
 import RequestMangement from "./components/request/RequestMangement";
 import PostRequest from "./components/request/PostRequest";
 
+import Homepage from "./components/homepage/Homepage";
+
 
 
 const App = () => {
@@ -76,6 +78,7 @@ const App = () => {
             <Route exact path="/request" component={() => <Request />} />
             <Route exact path="/requestmangement" component={() => <RequestMangement />} />
             <Route exact path="/post" component={() => <PostRequest />} />
+            <Route exact path="/homepage" component={() => <Homepage />} />
           </Switch>
         </Router>
       </div>
