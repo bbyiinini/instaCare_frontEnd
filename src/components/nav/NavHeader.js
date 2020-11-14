@@ -8,7 +8,6 @@ import {
 import {Link, useHistory} from 'react-router-dom';
 import db from "../../base";
 import {useDispatch, useSelector} from "react-redux";
-import {toast} from "react-toastify";
 
 
 const { SubMenu, Item } = Menu;
@@ -25,6 +24,8 @@ const NavHeader = () => {
                 return "requestPlazza";
             case "/requestmangement":
                 return "requestMangement";
+            case "/post":
+                return "post";
         }
         return "home";
     }
