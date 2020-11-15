@@ -9,7 +9,6 @@ import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-import {userReducer} from "./reducer/UserReducer";
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import NavHeader from "./components/nav/NavHeader";
@@ -20,14 +19,16 @@ import FinishSetUp from "./components/FinishSetUp";
 import Request from "./components/request/RequestPlazza";
 import RequestMangement from "./components/request/RequestMangement";
 import PostRequest from "./components/request/PostRequest";
+import Profile from './components/Profile'
 
+import userService from './service/UserService'
 
 
 const App = () => {
   const dispatch = useDispatch();
   const [finishStatus,setStatus] = useState(true)
   let user = useSelector(state=>state.user)
-  console.log(user)
+  // console.log(user)
   if(user && user.uid){
     // check if user profile is completed
     firestore.collection("users").doc(user.uid).get().then((doc)=>{
@@ -43,6 +44,7 @@ const App = () => {
   useEffect(async ()=>{
     const unsubscribe = db.auth().onAuthStateChanged(async (user) =>{
       if (user) {
+        // persist user's loggin state
         const idTokenResult = await user.getIdTokenResult();
         dispatch({
           type:'LOGGED_IN_USER',
@@ -53,6 +55,15 @@ const App = () => {
             uid: user.uid,
           }
         })
+
+        // store user profile data into redux
+        const {data} = await userService.retrieve(user.uid)
+        const profileData = data.data
+        dispatch({
+          type:'SET_PROFILE',
+          payload: profileData
+        })
+
       }else{
         console.log("you have logout")
       }
@@ -93,6 +104,7 @@ const App = () => {
             <Route exact path="/request" component={() => <Request />} />
             <Route exact path="/requestmangement" component={() => <RequestMangement />} />
             <Route exact path="/post" component={() => <PostRequest />} />
+            <Route exact path="/profile" component={() => <Profile />} />
           </Switch>
         </Router>
       </div>

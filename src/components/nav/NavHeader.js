@@ -84,6 +84,10 @@ const NavHeader = () => {
                 <Link to="/login">Login</Link>
             </Item>
 
+          <Item key="userProfile" icon={<UserOutlined />} className="float-right">
+            <Link to="/profile">Profile</Link>
+          </Item>
+
 
             <SubMenu key="SubMenu" icon={<SettingOutlined />} title={(user&&user.displayName)==null?"User":user.displayName}>
                 <Menu.ItemGroup title="Profile">
