@@ -17,7 +17,7 @@ class UserService {
     }
 
     retrieve(uid){
-        return Axios.get("http://localhost:8080/users/t6zFmkEG2GTO1EWafXBZxHBm0Dp2")
+        return Axios.get("http://localhost:8080/users/" + uid)
     }
 
 }

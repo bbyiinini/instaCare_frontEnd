@@ -25,11 +25,14 @@ const useStyle = makeStyles(theme=>({
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #064d40',
     borderRadius:"30px",
-    boxShadow: theme.shadows[5],
+    boxShadow: theme.shadows[2],
     padding: theme.spacing(2, 4, 3),
+    width:"50%",
   },
+  textfield: {
+    width:"100%",
+  }
 }))
 export default function (){
   const classes = useStyle()
@@ -108,6 +111,12 @@ export default function (){
           <h5>{email}</h5>
           <h5>Rating</h5>
         </div>
+        <div style={{textAlign:'left',width:"80%",marginTop:"15vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
+          <h3>Reset Password</h3>
+          <h3>Reset Password</h3>
+          <h3>Reset Password</h3>
+          <h3>Reset Password</h3>
+        </div>
       </Grid>
       <Grid item xs={8}>
         <div className={classes.info}>
@@ -143,7 +152,7 @@ export default function (){
         </div>
         <div className={classes.info}>
           <h3>Address Lists</h3>
-          {addressList.map((item, index)=>{
+          {addressList && addressList.map((item, index)=>{
             return (
             <Grid container spacing={2}>
               <Grid item xs={9}>
@@ -172,14 +181,19 @@ export default function (){
         >
           <Fade in={open}>
             <div className={classes.paper}>
-              <h2 id="transition-modal-title">{modalTitle} Change</h2>
-              <p id="transition-modal-description">react-transition-group animates me.</p>
+              <h2 id="transition-modal-title">Edit {modalTitle}</h2>
               <TextField
+                  className={classes.textfield}
                   label={`Enter new ${modalTitle}`}
                   onChange={handleModalChange}
                   defaultValue={modalContent}
+                  multiline
+                  rows={modalTitle === "Description" ? 6 : 1}
               />
-              <Button onClick={submitChange}>Confirm Changes</Button>
+              <div>
+                <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button>
+                <Button onClick={handleClose} style={{float:"right"}}>Cancel</Button>
+              </div>
             </div>
           </Fade>
         </Modal>
