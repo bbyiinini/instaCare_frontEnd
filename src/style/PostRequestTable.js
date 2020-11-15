@@ -1,0 +1,116 @@
+import {Button, Pagination, Space, Tag} from "antd";
+import React, {useState} from "react";
+import {Link} from "react-router-dom";
+
+
+
+export const modalStyle = {
+    overlay:{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)'
+    },
+    content: {
+        top: '15%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '30%',
+        borderRadius:'30px',
+        transform: 'translate(-40%, -10%)',
+    },
+
+}
+
+
+
+export const columns = [
+
+    {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        render: text => <a>{text}</a>,
+    },
+    {
+        title: 'Request title',
+        dataIndex: 'requestTitle',
+        key: 'requestTitle',
+    },
+    {
+        title: 'Volunteer',
+        dataIndex: 'volunteer',
+        key: 'volunteer',
+        width: '20%'
+    },
+    {
+        title: 'Tags',
+        key: 'tags',
+        dataIndex: 'tags',
+        width:'5%',
+        render: tags => (
+            <>
+                {tags.map(tag => {
+                    let color = tag.length > 5 ? 'geekblue' : 'green';
+                    if (tag === 'Grocery') {
+                        color = 'volcano';
+                    }
+                    return (
+                        <Tag color={color} key={tag}>
+                            {tag}
+                        </Tag>
+                    );
+                })}
+            </>
+        ),
+    },
+    {
+        title: 'Request Time',
+        dataIndex: 'requestTime',
+        key: 'requestTime',
+        width: '20%'
+    },
+
+    {
+        key: 'action',
+        render: () => (
+
+            <Space size="middle">
+                {/*<a>Invite {record.name}</a>*/}
+                {/*<a>Delete</a>*/}
+                <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement">request management</Link></Button>
+            </Space>
+        ),
+    },
+];
+
+
+
+
+// const data = [
+//         {
+//             key: '1',
+//             name: 'John Brown',
+//             age: 32,
+//             address: 'New York No. 1 Lake Park',
+//             tags: ['nice', 'developer'],
+//         },
+//         {
+//             key: '2',
+//             name: 'Jim Green',
+//             age: 42,
+//             address: 'London No. 1 Lake Park',
+//             tags: ['loser'],
+//         },
+//         {
+//             key: '3',
+//             name: 'Joe Black',
+//             age: 32,
+//             address: 'Sidney No. 1 Lake Park',
+//             tags: ['cool', 'teacher'],
+//         },
+//     ];
+
