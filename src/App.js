@@ -18,6 +18,8 @@ import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
 import FinishSetUp from "./components/FinishSetUp";
 import Request from "./components/request/RequestPlazza";
+import RequestMangement from "./components/request/RequestMangement";
+import PostRequest from "./components/request/PostRequest";
 
 
 
@@ -89,6 +91,8 @@ const App = () => {
             <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />
             <Route exact path="/finishSetUp" component={() => <FinishSetUp/>}/>
             <Route exact path="/request" component={() => <Request />} />
+            <Route exact path="/requestmangement" component={() => <RequestMangement />} />
+            <Route exact path="/post" component={() => <PostRequest />} />
           </Switch>
         </Router>
       </div>

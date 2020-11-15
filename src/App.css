@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+
+
+.row {
+  display: flex;
+  height: 100vh;
+  overflow: auto;
+}
+
+.request-card {
+  text-align:left;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+.nav-column {
+  position: fixed;
+}
+
+.content-column {
+  height:100vh;
+  overflow: scroll;
+}
