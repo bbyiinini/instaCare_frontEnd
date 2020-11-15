@@ -1,24 +1,72 @@
 import React, { useState }  from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link} from "react-router-dom";
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from '@material-ui/core/Button';
 import TextField from 'material-ui/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import Grid from '@material-ui/core/Grid';
+import Input from '@material-ui/core/Input';
+
+import senior from '../../Assets/senior.jpeg'
+import volunteer from '../../Assets/volunteer.png'
+import googlePNG from '../../Assets/google.png'
+import welcome from '../../Assets/welcome.png'
+
+import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 
 import db, {provider1}from '../../base';
 import {toast} from "react-toastify";
 
+const theme = createMuiTheme({
+    overrides: {
+        MuiButton: {
+            root: {
+                borderRadius: 100,
+            },
+        },
+    },
+})
+
+const useStyles = makeStyles({
+    root: {
+        background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+        border: 0,
+        borderRadius: 3,
+        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+        color: 'white',
+        padding: '0 30px',
+    },
+    textfield:{
+        borderStyle: "solid",
+        borderRadius: "100px",
+        borderWidth: "1px",
+        width:"50%",
+        margin:"auto",
+        textAlign:"center"
+    },
+    imgstyle:{
+        width:"100px",
+        height:"100px",
+        borderRadius:"50%",
+        margin:"10px"
+    }
+});
+
 const Signup = (props) => {
+    const classes = useStyles()
+    console.log(classes.root)
 
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [type, setType] = useState("");
+    const [seniorBorder, setSenior] = useState("");
+    const [volunteerBorder, setVolunteer] = useState("");
 
 
     const passChange = (e) => {
@@ -29,9 +77,19 @@ const Signup = (props) => {
         setEmail(e.target.value);
     };
 
-    const typeChange = (e) => {
-        setType(e.target.value);
-    };
+    const typeChange = (type) => {
+        return (e) => {
+            setType(type)
+            if(type){
+                setSenior("")
+                setVolunteer("2px solid #12897b")
+            }else{
+                setVolunteer("")
+                setSenior("2px solid #12897b")
+            }
+        }
+    }
+
 
     const nameChange = (e) => {
         setName(e.target.value);
@@ -75,42 +133,96 @@ const Signup = (props) => {
 
     return (
         <div>
-            <MuiThemeProvider>
-            <div>
-                <AppBar title="Signup"/>
-                <TextField
-                    hintText="Enter your Email"
-                    floatingLabelText="Email"
-                    onChange = {emailChange}
-                    />
-                <br/>
-                <TextField
-                type="password"
-                hintText="Enter your Password"
-                floatingLabelText="Password"
-                onChange = {passChange}
-                />
-                <br/>
-                <TextField
-                hintText="Enter your Name"
-                floatingLabelText="Name"
-                onChange = {nameChange}
-                />
-                <br/>
-                <FormControl style={{minWidth:120}}>
-                    <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                    <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={type}
-                    onChange={typeChange}>
-                        <MenuItem value={0}>Senior</MenuItem>
-                        <MenuItem value={1}>Volunteer</MenuItem>
-                    </Select>
-                </FormControl>
-                <br/>
-                <RaisedButton label="Sign up" primary={true} style={style} onClick={handleSignUp}/>
-            </div>
+            <MuiThemeProvider theme={theme}>
+                <Grid container spacing={0} style={{marginTop:"100px"}}>
+                    <Grid item xs={6}>
+                        <img src={welcome} style={{width:"600px"}}/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <div style={{lineHeight:"100%"}}>
+                            <div style={{display:"inline-block",lineHeight:"3.5",fontSize:"32px"}}>I am a:</div>
+                            <div
+                                style={{
+                                verticalAlign: "top",
+                                display: "inline-block",
+                                textAlign: "center",
+                                width: "120px"
+                            }}>
+                                <img
+                                style={{border:seniorBorder}}
+                                className={classes.imgstyle}
+                                onClick={typeChange(0)}
+                                src={senior}
+                                alt={"senior"}/>
+
+                                <span style={{
+                                    display:"block"
+                                }}>Senior</span>
+                            </div>
+                            <div
+                                style={{
+                                    verticalAlign: "top",
+                                    display: "inline-block",
+                                    textAlign: "center",
+                                    width: "120px"
+                                }}
+                            >
+                            <img
+                                value={1}
+                                onClick={typeChange(1)}
+                                style={{border:volunteerBorder}}
+                                className={classes.imgstyle} src={volunteer} alt={"volunteer"}/>
+                                <span style={{
+                                    display:"block"
+                                }}>Volunteer</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div className={classes.textfield}>
+                                <Input
+                                    disableUnderline
+                                    style={{width:"80%"}}
+                                    placeholder={"User Name"}
+                                    onChange = {nameChange}
+                                />
+                            </div>
+                            <br/>
+                            <div className={classes.textfield}>
+                                <Input
+                                    disableUnderline
+                                    style={{width:"80%"}}
+                                    placeholder={"Email"}
+                                    onChange = {emailChange}
+                                />
+                            </div>
+                            <br/>
+                            <div className={classes.textfield}>
+                                <Input
+                                    disableUnderline
+                                    style={{width:"80%"}}
+                                    placeholder={"Enter Password"}
+                                    onChange = {passChange}
+                                    type={"password"}
+                                />
+                            </div>
+                            <br/>
+                            <Button label="Sign up"
+                                    style={{backgroundColor:"#12897b", color:"white"}}
+                                    className={classes.textfield}
+                                    onClick={handleSignUp}>Sign Up</Button>
+
+                            <div style={{textAlign:"center"}}>
+                                <br/>
+                                Or join us with
+                                <br/>
+                                <img src={googlePNG} style={{width:'30px'}}/>
+                                <br/>
+                                Already Have an account? <Link style={{color:"#12897b"}} to={"/login"}><b>Sign In</b></Link>
+
+                            </div>
+                        </div>
+                    </Grid>
+                </Grid>
             </MuiThemeProvider>
         </div>
     );

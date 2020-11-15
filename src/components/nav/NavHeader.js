@@ -41,7 +41,7 @@ const NavHeader = () => {
                 <Link to="/">Home</Link>
             </Item>
 
-            <Item key="logout" icon={<LogoutOutlined />} className="float-right" onClick={logout}>Logout</Item>
+          {user && <Item key="logout" icon={<LogoutOutlined />} className="float-right" onClick={logout}>Logout</Item>}
 
             <Item key="signup" icon={<UserAddOutlined />} className="float-right">
                 <Link to="/signup">Sign Up</Link>
