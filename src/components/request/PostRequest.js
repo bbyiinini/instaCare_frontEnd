@@ -147,7 +147,7 @@ const PostRequest = () => {
 
 
     return (
-        <div>
+        <div style={customStyle}>
 
             <h1 className="float-left">Welcome{user==null?"":", "+userName}</h1>
             <div className="grid">
@@ -213,8 +213,8 @@ const PostRequest = () => {
                             <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
                             <label className="form-check-label" >Physical contact needed</label>
                         </div>
-                        <button className="btn btn-primary float-right m-2" onClick={handleSubmit}>Post</button>
-                        <button className="btn btn-primary float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</button>
+                        <Button type="primary" style={{background:'green'}} shape="round" className="float-right" onClick={handleSubmit}>Post</Button>
+                        <label style={{color:'green', cursor:'pointer'}} className="float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</label>
                     </form>
                 </Modal>
             </MuiThemeProvider>
@@ -223,6 +223,16 @@ const PostRequest = () => {
     );
 }
 
-
+const customStyle = {
+    // top: '15%',
+    // left: '50%',
+    // right: 'auto',
+    // bottom: 'auto',
+    // width: '80%',
+    marginLeft: '5%',
+    marginRight: '5%',
+    marginTop: '5%'
+    // transform: 'translate(10%, 10%)',
+}
 
 export default PostRequest;

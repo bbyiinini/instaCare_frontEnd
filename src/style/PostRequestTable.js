@@ -72,7 +72,7 @@ export const ongoingColumns = [
         title: 'Request Time',
         dataIndex: 'requestTime',
         key: 'requestTime',
-        width: '20%'
+        width: '15%'
     },
 
     {
@@ -128,13 +128,13 @@ export const pastColumns = [
         title: 'Request Time',
         dataIndex: 'requestTime',
         key: 'requestTime',
-        width: '20%'
+        width: '10%'
     },
     {
         title: 'Rating',
         dataIndex: 'rating',
         key: 'rating',
-        width: '20%'
+        width: '10%'
     },
 
     {
