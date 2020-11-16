@@ -12,16 +12,11 @@ import {ongoingColumns, modalStyle, pastColumns} from "../../style/PostRequestTa
 import Select from 'react-select'
 
 const PostRequest = () => {
-    const dispatch = useDispatch();
     const {user} = useSelector((state)=>({...state}))
     const profile = useSelector(state=>state.userProfile)
     const requestDetail = useSelector(state=>state.requestDetail)
-    // const [userAddress, setUserAddress] = useState([])
     const [tags, setTags] = useState([])
-    // const [userName, setUserName] = useState("")
     const [ModalIsOpen, setModalIsOpen] = useState(false);
-    // const [requestDetail, setRequestDetail] = useState([])
-    const [pastRequestDetail, setPastRequestDetail] = useState([])
 
 
 
@@ -136,9 +131,6 @@ const PostRequest = () => {
                     </div>
                 </div>
             </div>
-            {/*<div className="flex-content">*/}
-
-            {/*</div>*/}
 
             {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 2}} /> :
                 <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 2}} />
