@@ -44,8 +44,7 @@ const NavHeader = () => {
     }
     const logout = () => {
         db.auth().signOut().then(r =>{
-            // toast.success("user logged out!")
-            console.log("user logged out")
+            toast.success("user logged out!")
         });
         dispatch({
             type: 'LOGOUT',
@@ -61,17 +60,11 @@ const NavHeader = () => {
                 <Link to="/">Home</Link>
             </Item>
 
-            {user && (
-                <Item key="logout" icon={<LogoutOutlined />} className="float-right" onClick={logout}>Logout</Item>
-            )}
+          {user && <Item key="logout" icon={<LogoutOutlined />} className="float-right" onClick={logout}>Logout</Item>}
 
-
-            {!user && (
-                <Item key="signup" icon={<UserAddOutlined />} className="float-right">
-                    <Link to="/signup">Sign Up</Link>
-                </Item>
-            )}
-
+          {!user && <Item key="signup" icon={<UserAddOutlined />} className="float-right">
+                <Link to="/signup">Sign Up</Link>
+            </Item>}
 
 
             <Item key="requestPlazza" icon={<HomeOutlined />}>
@@ -87,12 +80,13 @@ const NavHeader = () => {
             </Item>
 
 
-            {!user && (
-                <Item key="login" icon={<UserOutlined />} className="float-right">
-                    <Link to="/login">Login</Link>
-                </Item>
-            )}
+          {!user && <Item key="login" icon={<UserOutlined />} className="float-right">
+                <Link to="/login">Login</Link>
+            </Item>}
 
+          {user && <Item key="userProfile" icon={<UserOutlined />} className="float-right">
+            <Link to="/profile">Profile</Link>
+          </Item>}
 
 
             <SubMenu key="SubMenu" icon={<SettingOutlined />} title={(user&&user.displayName)==null?"User":user.displayName}>
