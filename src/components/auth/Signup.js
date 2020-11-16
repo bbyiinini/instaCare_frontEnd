@@ -6,10 +6,10 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Input from '@material-ui/core/Input';
 
-import senior from '../../Assets/senior.jpeg'
-import volunteer from '../../Assets/volunteer.png'
-import googlePNG from '../../Assets/google.png'
-import welcome from '../../Assets/welcome.png'
+import senior from '../../assets/senior.jpeg'
+import volunteer from '../../assets/volunteer.png'
+import googlePNG from '../../assets/google.png'
+import welcome from '../../assets/welcome.png'
 
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 

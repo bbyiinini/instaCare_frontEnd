@@ -4,12 +4,12 @@ import { Redirect } from 'react-router-dom'
 import Login from '../components/auth/Login';
 import {useDispatch, useSelector} from "react-redux";
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({component: Component}) => {
 
     const {user} = useSelector((state)=>({...state}))
     
     return user==null ? (
-        <Login />
+        <Component />
     ) : (
         <Redirect to={{ pathname: '/' }} />
     );

@@ -2,13 +2,13 @@ import React, { useState, useEffect }  from "react";
 import db, {provider1}from '../../base';
 import {toast} from "react-toastify";
 import { useHistory } from "react-router-dom";
-import forgot from '../../Assets/forgot.png'
+import forgot from '../../assets/forgot.png'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Input from '@material-ui/core/Input';
-import Reset from "../../Assets/Reset.png";
+import Reset from "../../assets/Reset.png";
 import {makeStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
