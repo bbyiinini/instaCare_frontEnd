@@ -1,0 +1,29 @@
+/* table */
+.ant-table {
+    font-size: 16px;
+    /*width: 600px;*/
+}
+
+.ant-table-placeholder {
+    display: none;
+}
+
+/* row data */
+.ant-table-tbody > tr > td {
+    height: 5px;
+    /*width: 5px;*/
+    padding: 30px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    /*border: 1px solid black;*/
+}
+/* row tags */
+.my-tag {
+    font-size: 10px;
+    margin: 3px;
+}
+
+.ant-table-thead > tr > th {
+    height: 5px;
+    padding-left: 30px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+}

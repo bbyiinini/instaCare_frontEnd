@@ -1,73 +1,240 @@
 import React, {useEffect, useState} from "react";
 import Modal from "react-modal";
-import {Button} from "antd";
+import {Button, Table} from "antd";
 import Axios from "axios";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import RequestService from "../../service/RequestService";
+import {toast} from "react-toastify";
+import "../../style/PostRequest.css";
+import TextField from "@material-ui/core/TextField";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {ongoingColumns, modalStyle, pastColumns} from "../../style/PostRequestTable";
+import Select from 'react-select'
 
 const PostRequest = () => {
-
+    const dispatch = useDispatch();
     const {user} = useSelector((state)=>({...state}))
-    const [userProfile, setUserProfile] = useState([])
+    const [userAddress, setUserAddress] = useState([])
+    const [tags, setTags] = useState([])
+    const [userName, setUserName] = useState("")
     const [ModalIsOpen, setModalIsOpen] = useState(false);
+    const [requestDetail, setRequestDetail] = useState([])
+    const [pastRequestDetail, setPastRequestDetail] = useState([])
 
-    const fetchAddress = async () => {
+
+    useEffect( ()=>{
+       const fetchRequestInfo = (async ()=>{
+                if (user != null) {
+                    const requestResult = await Axios.get(
+                        "http://localhost:8080/request/" + user.uid,
+                    );
+                    const pastResult = await Axios.get(
+                        "http://localhost:8080/request/past/" + user.uid,
+                    );
+                    // console.log(pastResult.data)
+                    const userResult = await Axios.get(
+                        "http://localhost:8080/users/" + user.uid,
+                    );
+
+                    // console.log(requestResult)
+                    if (requestResult !== null){
+                        setRequestDetail(requestResult.data.data)
+                    }
+                    if (pastResult !== null){
+
+                        setPastRequestDetail(pastResult.data.data)
+                    }
+                    if (userResult !== null){
+                        setUserAddress(userResult.data.data.addressList)
+                        setUserName(userResult.data.data.fullName)
+                    }
+
+                }
+        });
+
+        fetchRequestInfo().then(res=>{
+            console.log("success")
+        })
+    },[])
+
+
+    const options = [
+        { value: 'Easy to do', label: 'Easy to do' },
+        { value: 'Shopping', label: 'Shopping' },
+        { value: 'Cleaning', label: 'Cleaning' },
+        { value: 'Tool needed', label: 'Tool needed' },
+        { value: 'Grocery', label: 'Grocery' },
+    ]
+
+    const openPostWindow = () => {
         setModalIsOpen(true)
-        // console.log(user)
-        if (user != null) {
-            const result = await Axios.get(
-                "http://localhost:8080/users/" + user.uid,
-            );
-            // console.log(result.data.data.addressList[0])
-            setUserProfile(result.data.data.addressList)
+    }
+
+    const [text, setText] = useState("");
+    const [checked, setChecked] = useState(false)
+    const [title, setTitle] = useState("")
+    const [address, setAddress] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [past, setPast] = useState(false)
+
+
+    const handleCheckBox = () => {
+        setChecked(!checked)
+    }
+
+    const handleSubmit = async (e) => {
+        // e.preventDefault();
+        if (user == null){
+            return;
+        }
+        let date = new Date().toLocaleDateString();
+        let time = new Date().toLocaleTimeString('en-US', { hour12: false });
+        let requestBean ={
+            requestContent:text,
+            title: title,
+            address: address,
+            phoneNumber: phoneNumber,
+            neededPhysicalContact: checked,
+            createTime: time + " " + date,
+            tags: tags
         }
 
+        if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){
+            // console.log(text, title, address, phoneNumber)
+            await RequestService.request(user.uid, requestBean).then(res=>{
+                toast.success("save request to backend success")
+            }).catch(res=>{
+                toast.error("save failed")
+            })
+             window.location.reload();
+        }else {
+            toast.error("please fill all required information")
+        }
 
     }
 
-    return (
-        <div>
-            <Button type="primary" shape="round" onClick={fetchAddress}>Post</Button>
-            <Modal isOpen={ModalIsOpen} appElement={document.getElementById('root')}>
-                <h1>This is pop up window</h1>
-            <form>
-                <div>
-                    <label>Title</label>
-                    <input type="text" className="form-control" id="title" aria-describedby="emailHelp"/>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="validationTextarea">Textarea</label>
-                    <textarea className="form-control" id="validationTextarea"
-                              placeholder="Required example textarea" required>
-                    </textarea>
-                    {/*<div className="invalid-feedback">*/}
-                    {/*    Please enter a message in the textarea.*/}
-                    {/*</div>*/}
-                </div>
-                <div className="form-group">
-                    <label htmlFor="exampleInputPassword1">Phone Number</label>
-                    <input type="text" className="form-control" id="exampleInputPassword1"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="exampleFormControlSelect1">Address</label>
-                    <select className="form-control" id="exampleFormControlSelect1">
-                        {userProfile.length !== 0? userProfile.map((userProfile) =>
-                            <option key={userProfile}>{userProfile}</option>
-                        ):  <option key="default">Address not found in database</option>}
+    const onGoingData =  requestDetail.map((res,index)=>({
+        key: index,
+        status: res.status===1?"Volunteer on the way":"request sent",
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title,
+        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: res.createTime
+    }));
 
-                    </select>
+    const pastData =  pastRequestDetail.map((res,index)=>({
+        key: index,
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title,
+        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: res.createTime
+    }));
+
+    const handleChange = (e) => {
+        if (e.target.value === "past"){
+            setPast(true)
+        }else {
+            setPast(false)
+        }
+
+    }
+
+    const addTags = (e) => {
+        if (e != null){
+            const result = e.map(res=>(res.value))
+            setTags(result)
+            console.log(result)
+        }
+    }
+
+
+    return (
+        <div style={customStyle}>
+
+            <h1 className="float-left">Welcome{user==null?"":", "+userName}</h1>
+            <div className="grid">
+                <div className="row">
+                    <div className="col-sm-1">
+                        <select className="ml-3" style={{border:'none', color:'darkgreen', outline:'none'}} defaultValue="onGoing" onChange={handleChange}>
+                            <option value="onGoing">Ongoing Requests</option>
+                            <option value="past">Past Requests</option>
+                        </select>
+                    </div>
                 </div>
-                <div className="form-group form-check">
-                    <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
-                        <label className="form-check-label" htmlFor="exampleCheck1">Physical contact needed</label>
-                </div>
-                <button type="submit" className="btn btn-primary float-right m-2" onClick={()=>setModalIsOpen(false)}>Post</button>
-                <button type="submit" className="btn btn-primary float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</button>
-            </form>
-            </Modal>
+            </div>
+            {/*<div className="flex-content">*/}
+
+            {/*</div>*/}
+
+            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 2}} /> :
+                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 2}} />
+            }
+
+            <Button type="primary" style={{background:'green', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
+
+
+            <MuiThemeProvider>
+                <Modal style={modalStyle} isOpen={ModalIsOpen} appElement={document.getElementById('root')}>
+                    <h1 className="text-center">Post Request</h1>
+                    <form >
+                        <div>
+                            <label className="form-inline" style={{height:'50px'}}>Title
+                            <TextField style={{marginBottom:'30px', marginLeft:'20px'}} required id="standard-basic" label="Enter a title"
+                              onChange={e=>setTitle(e.target.value)}/>
+                            </label>
+                            <div >
+                                <div className="tags-input">
+                                    <Select isMulti={true} options={options} onChange={addTags} />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="validationTextarea"/>
+                            <textarea className="form-control"
+                                      placeholder="Required request detail" required onChange={e=>setText(e.target.value)}>
+                    </textarea>
+
+                        </div>
+                        <div className="form-inline">
+                            <label >Phone Number</label>
+                            <input style={{width:'50%'}} required type="phoneNumber" className="form-control ml-3 mt-3"
+                                   onChange={e=>setPhoneNumber(e.target.value)}/>
+                        </div>
+                        <div className="form-group mt-3">
+                            <select className="form-control" onChange={e=>setAddress(e.target.value)} defaultValue="selected">
+                                <option value="selected" disabled hidden>
+                                    Select your address
+                                </option>
+                                {userAddress.length !== 0? userAddress.map((address) =>
+                                    <option key={address}>{address}</option>
+                                ):  <option key="default">No address record in database</option>}
+
+                            </select>
+                        </div>
+                        <div className="form-group form-check">
+                            <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
+                            <label className="form-check-label" >Physical contact needed</label>
+                        </div>
+                        <Button type="primary" style={{background:'green'}} shape="round" className="float-right" onClick={handleSubmit}>Post</Button>
+                        <label style={{color:'green', cursor:'pointer'}} className="float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</label>
+                    </form>
+                </Modal>
+            </MuiThemeProvider>
+
         </div>
     );
 }
 
-
+const customStyle = {
+    // top: '15%',
+    // left: '50%',
+    // right: 'auto',
+    // bottom: 'auto',
+    // width: '80%',
+    marginLeft: '5%',
+    marginRight: '5%',
+    marginTop: '5%'
+    // transform: 'translate(10%, 10%)',
+}
 
 export default PostRequest;

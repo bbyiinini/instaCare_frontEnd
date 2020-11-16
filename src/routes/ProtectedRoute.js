@@ -7,7 +7,6 @@ import {useDispatch, useSelector} from "react-redux";
 const ProtectedRoute = ({component: Component}) => {
 
     const {user} = useSelector((state)=>({...state}))
-    
     return user==null ? (
         <Component />
     ) : (
