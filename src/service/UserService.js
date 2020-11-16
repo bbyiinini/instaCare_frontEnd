@@ -7,8 +7,8 @@ class UserService {
     //     return Axios.post(USER_API_BASE_URL, user);
     // }
 
-    registed(uid, type){
-        return Axios.post("http://localhost:8080/users/"+uid,type).then(response => {
+    registed(uid, data){
+        return Axios.put("http://localhost:8080/users/"+uid,data).then(response => {
             console.log(response.data)
         })
         .catch(error => {

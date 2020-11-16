@@ -2,6 +2,7 @@ import React, {Component, useEffect, useState} from 'react';
 import {useDispatch, useSelector,useStore} from "react-redux";
 import {useHistory} from "react-router-dom"
 import db,{firestore} from "../base";
+import UserService from "../service/UserService";
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
@@ -43,9 +44,16 @@ export default function FinishSetUp(props){
       email:email,
       id:uid,
       phone:phone,
-      address:addr
+      address_list:[addr],
     }
-    await firestore.collection("users").doc(uid).set(userObj)
+    
+    await UserService.registed(uid, userObj).then(res=>{
+      console.log("saved user type to backend")
+    }).catch(res=>{
+      console.log("CORS not connected")
+    });
+
+    // await firestore.collection("users").doc(uid).add(userObj)
     window.location = "/"
   }
 
