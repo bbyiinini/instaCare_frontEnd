@@ -35,12 +35,14 @@ const PostRequest = () => {
                     const userResult = await Axios.get(
                         "http://localhost:8080/users/" + user.uid,
                     );
+
+                    // console.log(requestResult)
                     if (requestResult !== null){
-                        setRequestDetail(requestResult.data)
+                        setRequestDetail(requestResult.data.data)
                     }
                     if (pastResult !== null){
 
-                        setPastRequestDetail(pastResult.data)
+                        setPastRequestDetail(pastResult.data.data)
                     }
                     if (userResult !== null){
                         setUserAddress(userResult.data.data.addressList)
@@ -104,15 +106,15 @@ const PostRequest = () => {
             }).catch(res=>{
                 toast.error("save failed")
             })
-
+             window.location.reload();
         }else {
             toast.error("please fill all required information")
         }
 
     }
 
-    const onGoingData =  requestDetail.map(res=>({
-        key: res.title,
+    const onGoingData =  requestDetail.map((res,index)=>({
+        key: index,
         status: res.status===1?"Volunteer on the way":"request sent",
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
@@ -120,8 +122,8 @@ const PostRequest = () => {
         requestTime: res.createTime
     }));
 
-    const pastData =  pastRequestDetail.map(res=>({
-        key: res.title,
+    const pastData =  pastRequestDetail.map((res,index)=>({
+        key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
         volunteer: res.volunteer === null? "Pending" : res.volunteer,

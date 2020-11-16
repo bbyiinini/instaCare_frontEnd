@@ -8,12 +8,16 @@ class UserService {
     // }
 
     registed(uid, type){
-        return Axios.post("http://localhost:8080/users/"+uid, type).then(response => { 
-            console.log(response)
+        return Axios.post("http://localhost:8080/users/"+uid,type).then(response => {
+            console.log(response.data)
         })
         .catch(error => {
             console.log(error.response)
         });
+    }
+
+    retrieve(uid){
+        return Axios.get("http://localhost:8080/users/" + uid)
     }
 
 }

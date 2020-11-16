@@ -1,45 +1,72 @@
-import React, {Component, useEffect} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import logo from './logo.svg';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route ,useHistory, Redirect} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
-import db from "./base";
-import {useDispatch, useSelector} from "react-redux";
+import db,{firestore} from "./base";
+import {useDispatch, useSelector,useStore} from "react-redux";
 import './App.css';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-import {userReducer} from "./reducer/UserReducer";
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import NavHeader from "./components/nav/NavHeader";
 import SignUpComplete from "./components/auth/SignUpComplete";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
+import FinishSetUp from "./components/FinishSetUp";
 import Request from "./components/request/RequestPlazza";
 import RequestMangement from "./components/request/RequestMangement";
 import PostRequest from "./components/request/PostRequest";
+import Profile from './components/Profile'
+import ResetPassword from "./components/auth/ResetPassword";
 
+import userService from './service/UserService'
 
 
 const App = () => {
   const dispatch = useDispatch();
-  let {user} = useSelector((state)=>({...state}))
+  const [finishStatus,setStatus] = useState(true)
+  let user = useSelector(state=>state.user)
   // console.log(user)
-  useEffect(()=>{
+  if(user && user.uid){
+    // check if user profile is completed
+    firestore.collection("users").doc(user.uid).get().then((doc)=>{
+      const data = doc.data()
+      if(!data){
+        //  user hasn't finished setup
+        setStatus(false)
+        console.log("still false")
+      }
+    })
+  }
+
+  useEffect(async ()=>{
     const unsubscribe = db.auth().onAuthStateChanged(async (user) =>{
       if (user) {
+        // persist user's loggin state
         const idTokenResult = await user.getIdTokenResult();
-        // console.log("user", user)
         dispatch({
           type:'LOGGED_IN_USER',
           payload: {
             email: user.email,
             token: idTokenResult.token,
             displayName: user.displayName,
-            uid: user.uid
+            uid: user.uid,
           }
         })
+
+        // store user profile data into redux
+        const {data} = await userService.retrieve(user.uid)
+        const profileData = data.data
+        dispatch({
+          type:'SET_PROFILE',
+          payload: profileData
+        })
+
+      }else{
+        console.log("you have logout")
       }
     })
     // cleanup memory
@@ -60,6 +87,7 @@ const App = () => {
           /> */}
           <Switch>
             <Route exact path="/">
+              {!finishStatus && <Redirect to="/finishSetUp"/>}
               <div className="root">
                 <header className="App-header">
                   <img src={logo} className="App-logo" alt="logo" />
@@ -70,12 +98,15 @@ const App = () => {
               </div>
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
-            <ProtectedRoute exact path="/signup" component={() => <Signup />} />
+            <Route exact path="/signup" component={() => <Signup />} />
             <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
             <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />
+            <Route exact path="/finishSetUp" component={() => <FinishSetUp/>}/>
             <Route exact path="/request" component={() => <Request />} />
             <Route exact path="/requestmangement" component={() => <RequestMangement />} />
             <Route exact path="/post" component={() => <PostRequest />} />
+            <Route exact path="/profile" component={() => <Profile />} />
+            <Route exact path="/reset" component={() => <ResetPassword />} />
           </Switch>
         </Router>
       </div>
