@@ -14,7 +14,7 @@ import Select from 'react-select'
 const PostRequest = () => {
     const {user} = useSelector((state)=>({...state}))
     const profile = useSelector(state=>state.userProfile)
-    const requestDetail = useSelector(state=>state.requestDetail)
+    const requestDetail = useSelector((state)=>state.requestDetail)
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
 
@@ -94,12 +94,14 @@ const PostRequest = () => {
         }
     }
 
-    if(!profile || !requestDetail){
+
+    if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
         return(<div/>)
     }
+
     let {fullName, addressList} = profile
-    let {ongoingRequest, pastRequest} = requestDetail
-    const onGoingData =  ongoingRequest.map((res,index)=>({
+    let {ongoingRequest} = requestDetail
+    const onGoingData = ongoingRequest.map((res,index)=>({
         key: index,
         status: res.status===1?"Volunteer on the way":"request sent",
         tags: res.tags===null?[]:res.tags,
@@ -108,7 +110,7 @@ const PostRequest = () => {
         requestTime: res.createTime
     }));
 
-    const pastData =  pastRequest.map((res,index)=>({
+    const pastData = requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
