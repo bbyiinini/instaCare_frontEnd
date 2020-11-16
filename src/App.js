@@ -23,6 +23,7 @@ import Profile from './components/Profile'
 import ResetPassword from "./components/auth/ResetPassword";
 
 import userService from './service/UserService'
+import Axios from "axios";
 
 
 const App = () => {
@@ -63,6 +64,24 @@ const App = () => {
         dispatch({
           type:'SET_PROFILE',
           payload: profileData
+        })
+
+        const requestResult = await Axios.get(
+            "http://localhost:8080/request/" + user.uid,
+        );
+        const requestDetail = requestResult.data.data
+        dispatch({
+          type: 'REQUEST',
+          payload: requestDetail
+        })
+
+        const pastResult = await Axios.get(
+            "http://localhost:8080/request/past/" + user.uid,
+        );
+        const pastRequestDetail = pastResult.data.data
+        dispatch({
+          type: 'PAST',
+          payload: pastRequestDetail
         })
 
       }else{

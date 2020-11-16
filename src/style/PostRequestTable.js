@@ -128,7 +128,7 @@ export const pastColumns = [
         title: 'Request Time',
         dataIndex: 'requestTime',
         key: 'requestTime',
-        width: '10%'
+        width: '15%'
     },
     {
         title: 'Rating',
