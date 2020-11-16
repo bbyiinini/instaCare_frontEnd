@@ -62,9 +62,9 @@ const NavHeader = () => {
 
           {user && <Item key="logout" icon={<LogoutOutlined />} className="float-right" onClick={logout}>Logout</Item>}
 
-            <Item key="signup" icon={<UserAddOutlined />} className="float-right">
+          {!user && <Item key="signup" icon={<UserAddOutlined />} className="float-right">
                 <Link to="/signup">Sign Up</Link>
-            </Item>
+            </Item>}
 
 
             <Item key="requestPlazza" icon={<HomeOutlined />}>
@@ -80,13 +80,13 @@ const NavHeader = () => {
             </Item>
 
 
-            <Item key="login" icon={<UserOutlined />} className="float-right">
+          {!user && <Item key="login" icon={<UserOutlined />} className="float-right">
                 <Link to="/login">Login</Link>
-            </Item>
+            </Item>}
 
-          <Item key="userProfile" icon={<UserOutlined />} className="float-right">
+          {user && <Item key="userProfile" icon={<UserOutlined />} className="float-right">
             <Link to="/profile">Profile</Link>
-          </Item>
+          </Item>}
 
 
             <SubMenu key="SubMenu" icon={<SettingOutlined />} title={(user&&user.displayName)==null?"User":user.displayName}>

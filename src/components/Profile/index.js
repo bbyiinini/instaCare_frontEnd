@@ -112,10 +112,8 @@ export default function (){
           <h5>Rating</h5>
         </div>
         <div style={{textAlign:'left',width:"80%",marginTop:"15vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
-          <h3>Reset Password</h3>
-          <h3>Reset Password</h3>
-          <h3>Reset Password</h3>
-          <h3>Reset Password</h3>
+          <h4>Reset Password</h4>
+          <h4>Contact us at <a>help@instacare.com</a></h4>
         </div>
       </Grid>
       <Grid item xs={8}>

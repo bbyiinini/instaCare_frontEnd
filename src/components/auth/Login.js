@@ -133,7 +133,7 @@ const Login = (props) => {
                                     className={classes.textfield}
                                     disabled={!email || password.length < 6}
                                     onClick={handleLoginWithEmailAndPassword}
-                            >Sign Up</Button>
+                            >Log In</Button>
                         </div>
 
                     </Grid>

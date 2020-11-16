@@ -20,6 +20,7 @@ import Request from "./components/request/RequestPlazza";
 import RequestMangement from "./components/request/RequestMangement";
 import PostRequest from "./components/request/PostRequest";
 import Profile from './components/Profile'
+import ResetPassword from "./components/auth/ResetPassword";
 
 import userService from './service/UserService'
 
@@ -105,6 +106,7 @@ const App = () => {
             <Route exact path="/requestmangement" component={() => <RequestMangement />} />
             <Route exact path="/post" component={() => <PostRequest />} />
             <Route exact path="/profile" component={() => <Profile />} />
+            <Route exact path="/reset" component={() => <ResetPassword />} />
           </Switch>
         </Router>
       </div>
