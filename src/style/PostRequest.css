@@ -4,6 +4,10 @@
     /*width: 600px;*/
 }
 
+.ant-table-placeholder {
+    display: none;
+}
+
 /* row data */
 .ant-table-tbody > tr > td {
     height: 5px;

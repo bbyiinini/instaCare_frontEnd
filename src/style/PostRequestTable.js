@@ -27,24 +27,25 @@ export const modalStyle = {
 
 
 
-export const columns = [
+export const ongoingColumns = [
 
     {
         title: 'Status',
         dataIndex: 'status',
         key: 'status',
-        render: text => <a>{text}</a>,
+        width: '15%'
     },
     {
         title: 'Request title',
         dataIndex: 'requestTitle',
         key: 'requestTitle',
+        width: '15%'
     },
     {
         title: 'Volunteer',
         dataIndex: 'volunteer',
         key: 'volunteer',
-        width: '20%'
+        width: '10%'
     },
     {
         title: 'Tags',
@@ -88,6 +89,66 @@ export const columns = [
 ];
 
 
+export const pastColumns = [
+
+    {
+        title: 'Request title',
+        dataIndex: 'requestTitle',
+        key: 'requestTitle',
+        width: '15%'
+    },
+    {
+        title: 'Volunteer',
+        dataIndex: 'volunteer',
+        key: 'volunteer',
+        width: '10%'
+    },
+    {
+        title: 'Tags',
+        key: 'tags',
+        dataIndex: 'tags',
+        width:'5%',
+        render: tags => (
+            <>
+                {tags.map(tag => {
+                    let color = tag.length > 5 ? 'geekblue' : 'green';
+                    if (tag === 'Grocery') {
+                        color = 'volcano';
+                    }
+                    return (
+                        <Tag color={color} key={tag}>
+                            {tag}
+                        </Tag>
+                    );
+                })}
+            </>
+        ),
+    },
+    {
+        title: 'Request Time',
+        dataIndex: 'requestTime',
+        key: 'requestTime',
+        width: '20%'
+    },
+    {
+        title: 'Rating',
+        dataIndex: 'rating',
+        key: 'rating',
+        width: '20%'
+    },
+
+    {
+        key: 'action',
+        render: () => (
+
+            <Space size="middle">
+                {/*<a>Invite {record.name}</a>*/}
+                {/*<a>Delete</a>*/}
+                <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement">request management</Link></Button>
+            </Space>
+        ),
+    },
+];
 
 
 // const data = [

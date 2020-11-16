@@ -1,49 +1,71 @@
 import React, {useEffect, useState} from "react";
 import Modal from "react-modal";
-import {Button,  Pagination, Table, Tag, Space} from "antd";
+import {Button, Table} from "antd";
 import Axios from "axios";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import RequestService from "../../service/RequestService";
 import {toast} from "react-toastify";
 import "../../style/PostRequest.css";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {columns, modalStyle} from "../../style/PostRequestTable";
+import {ongoingColumns, modalStyle, pastColumns} from "../../style/PostRequestTable";
+import Select from 'react-select'
 
 const PostRequest = () => {
-
+    const dispatch = useDispatch();
     const {user} = useSelector((state)=>({...state}))
     const [userAddress, setUserAddress] = useState([])
+    const [tags, setTags] = useState([])
+    const [userName, setUserName] = useState("")
     const [ModalIsOpen, setModalIsOpen] = useState(false);
     const [requestDetail, setRequestDetail] = useState([])
+    const [pastRequestDetail, setPastRequestDetail] = useState([])
+
 
     useEffect( ()=>{
-        const fetchRequestInfo = async () => {
-            if (user != null) {
-                const result = await Axios.get(
-                    "http://localhost:8080/request/" + user.uid,
-                );
-                // console.log(result)
-                setRequestDetail(result.data)
-                // setUserAddress(result.data.data.addressList)
-            }
-        }
-        fetchRequestInfo().then(r => console.log("success") )
+       const fetchRequestInfo = (async ()=>{
+                if (user != null) {
+                    const requestResult = await Axios.get(
+                        "http://localhost:8080/request/" + user.uid,
+                    );
+                    const pastResult = await Axios.get(
+                        "http://localhost:8080/request/past/" + user.uid,
+                    );
+                    // console.log(pastResult.data)
+                    const userResult = await Axios.get(
+                        "http://localhost:8080/users/" + user.uid,
+                    );
+                    if (requestResult !== null){
+                        setRequestDetail(requestResult.data)
+                    }
+                    if (pastResult !== null){
+
+                        setPastRequestDetail(pastResult.data)
+                    }
+                    if (userResult !== null){
+                        setUserAddress(userResult.data.data.addressList)
+                        setUserName(userResult.data.data.fullName)
+                    }
+
+                }
+        });
+
+        fetchRequestInfo().then(res=>{
+            console.log("success")
+        })
     },[])
 
 
+    const options = [
+        { value: 'Easy to do', label: 'Easy to do' },
+        { value: 'Shopping', label: 'Shopping' },
+        { value: 'Cleaning', label: 'Cleaning' },
+        { value: 'Tool needed', label: 'Tool needed' },
+        { value: 'Grocery', label: 'Grocery' },
+    ]
 
-    const fetchAddress = async () => {
+    const openPostWindow = () => {
         setModalIsOpen(true)
-        // console.log(user)
-        if (user != null) {
-            const result = await Axios.get(
-                "http://localhost:8080/users/" + user.uid,
-            );
-            console.log(result)
-            setUserAddress(result.data.data.addressList)
-        }
-
     }
 
     const [text, setText] = useState("");
@@ -51,7 +73,7 @@ const PostRequest = () => {
     const [title, setTitle] = useState("")
     const [address, setAddress] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
-
+    const [past, setPast] = useState(false)
 
 
     const handleCheckBox = () => {
@@ -71,11 +93,11 @@ const PostRequest = () => {
             address: address,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
-            createTime: time + " " + date
+            createTime: time + " " + date,
+            tags: tags
         }
 
-        console.log(requestBean)
-        if (text!=="" && title!=="" && address!=="" && phoneNumber!==""){
+        if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){
             // console.log(text, title, address, phoneNumber)
             await RequestService.request(user.uid, requestBean).then(res=>{
                 toast.success("save request to backend success")
@@ -87,53 +109,53 @@ const PostRequest = () => {
             toast.error("please fill all required information")
         }
 
+    }
 
+    const onGoingData =  requestDetail.map(res=>({
+        key: res.title,
+        status: res.status===1?"Volunteer on the way":"request sent",
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title,
+        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: res.createTime
+    }));
 
+    const pastData =  pastRequestDetail.map(res=>({
+        key: res.title,
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title,
+        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: res.createTime
+    }));
+
+    const handleChange = (e) => {
+        if (e.target.value === "past"){
+            setPast(true)
+        }else {
+            setPast(false)
+        }
 
     }
 
-    // const data =  requestDetail.map(res=>({
-    //     key: res,
-    //     status: res.status===1?"Volunteer on the way":"request sent",
-    //     tags: res.tags===null?[]:res.tags,
-    //     requestTitle: res.title,
-    //     volunteer: res.volunteer === null? "Pending" : res.volunteer,
-    //     requestTime: res.createTime
-    // }))
-    const data = [
-        {
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-            tags: ['nice', 'developer'],
-        },
-        {
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-            tags: ['nice', 'developer'],
-        },
-        {
-            key: '1',
-            name: 'John Brown',
-            age: 32,
-            address: 'New York No. 1 Lake Park',
-            tags: ['nice', 'developer'],
-        },
-    ];
+    const addTags = (e) => {
+        if (e != null){
+            const result = e.map(res=>(res.value))
+            setTags(result)
+            console.log(result)
+        }
+    }
+
 
     return (
         <div>
 
-            <h1 className="float-left">GoodMorning, Gary</h1>
+            <h1 className="float-left">Welcome{user==null?"":", "+userName}</h1>
             <div className="grid">
                 <div className="row">
                     <div className="col-sm-1">
-                        <select className="ml-3" style={{border:'none', color:'darkgreen'}} defaultValue="default">
-                            <option value="default">Ongoing Requests</option>
-                            <option >Past Requests</option>
+                        <select className="ml-3" style={{border:'none', color:'darkgreen', outline:'none'}} defaultValue="onGoing" onChange={handleChange}>
+                            <option value="onGoing">Ongoing Requests</option>
+                            <option value="past">Past Requests</option>
                         </select>
                     </div>
                 </div>
@@ -142,9 +164,11 @@ const PostRequest = () => {
 
             {/*</div>*/}
 
-            <Table columns={columns} dataSource={data} pagination={{defaultPageSize: 2}} />
+            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 2}} /> :
+                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 2}} />
+            }
 
-            <Button type="primary" style={{background:'green'}} shape="round" onClick={fetchAddress}>Post New Request</Button>
+            <Button type="primary" style={{background:'green', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
 
 
             <MuiThemeProvider>
@@ -156,10 +180,10 @@ const PostRequest = () => {
                             <TextField style={{marginBottom:'30px', marginLeft:'20px'}} required id="standard-basic" label="Enter a title"
                               onChange={e=>setTitle(e.target.value)}/>
                             </label>
-                            <div className="form-inline" style={{height:'20px'}}>
-                                <p className="pl-2">tag1</p>
-                                <p className="pl-2">tag2</p>
-                                <p className="pl-2">tag3</p>
+                            <div >
+                                <div className="tags-input">
+                                    <Select isMulti={true} options={options} onChange={addTags} />
+                                </div>
                             </div>
                         </div>
                         <div>
