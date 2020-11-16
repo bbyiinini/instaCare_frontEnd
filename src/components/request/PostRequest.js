@@ -12,50 +12,12 @@ import {ongoingColumns, modalStyle, pastColumns} from "../../style/PostRequestTa
 import Select from 'react-select'
 
 const PostRequest = () => {
-    const dispatch = useDispatch();
     const {user} = useSelector((state)=>({...state}))
-    const [userAddress, setUserAddress] = useState([])
+    const profile = useSelector(state=>state.userProfile)
+    const requestDetail = useSelector((state)=>state.requestDetail)
     const [tags, setTags] = useState([])
-    const [userName, setUserName] = useState("")
     const [ModalIsOpen, setModalIsOpen] = useState(false);
-    const [requestDetail, setRequestDetail] = useState([])
-    const [pastRequestDetail, setPastRequestDetail] = useState([])
 
-
-    useEffect( ()=>{
-       const fetchRequestInfo = (async ()=>{
-                if (user != null) {
-                    const requestResult = await Axios.get(
-                        "http://localhost:8080/request/" + user.uid,
-                    );
-                    const pastResult = await Axios.get(
-                        "http://localhost:8080/request/past/" + user.uid,
-                    );
-                    // console.log(pastResult.data)
-                    const userResult = await Axios.get(
-                        "http://localhost:8080/users/" + user.uid,
-                    );
-
-                    // console.log(requestResult)
-                    if (requestResult !== null){
-                        setRequestDetail(requestResult.data.data)
-                    }
-                    if (pastResult !== null){
-
-                        setPastRequestDetail(pastResult.data.data)
-                    }
-                    if (userResult !== null){
-                        setUserAddress(userResult.data.data.addressList)
-                        setUserName(userResult.data.data.fullName)
-                    }
-
-                }
-        });
-
-        fetchRequestInfo().then(res=>{
-            console.log("success")
-        })
-    },[])
 
 
     const options = [
@@ -113,22 +75,7 @@ const PostRequest = () => {
 
     }
 
-    const onGoingData =  requestDetail.map((res,index)=>({
-        key: index,
-        status: res.status===1?"Volunteer on the way":"request sent",
-        tags: res.tags===null?[]:res.tags,
-        requestTitle: res.title,
-        volunteer: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: res.createTime
-    }));
 
-    const pastData =  pastRequestDetail.map((res,index)=>({
-        key: index,
-        tags: res.tags===null?[]:res.tags,
-        requestTitle: res.title,
-        volunteer: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: res.createTime
-    }));
 
     const handleChange = (e) => {
         if (e.target.value === "past"){
@@ -148,10 +95,34 @@ const PostRequest = () => {
     }
 
 
+    if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
+        return null
+    }
+
+    let {fullName, addressList} = profile
+    let {ongoingRequest} = requestDetail
+    const onGoingData = ongoingRequest.map((res,index)=>({
+        key: index,
+        status: res.status===1?"Volunteer on the way":"request sent",
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title,
+        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: res.createTime
+    }));
+
+    const pastData = requestDetail.pastRequest.map((res,index)=>({
+        key: index,
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title,
+        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: res.createTime
+    }));
+
+
     return (
         <div style={customStyle}>
 
-            <h1 className="float-left">Welcome{user==null?"":", "+userName}</h1>
+            <h1 className="float-left">Welcome{user==null?"":", "+fullName}</h1>
             <div className="grid">
                 <div className="row">
                     <div className="col-sm-1">
@@ -162,9 +133,6 @@ const PostRequest = () => {
                     </div>
                 </div>
             </div>
-            {/*<div className="flex-content">*/}
-
-            {/*</div>*/}
 
             {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 2}} /> :
                 <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 2}} />
@@ -205,10 +173,9 @@ const PostRequest = () => {
                                 <option value="selected" disabled hidden>
                                     Select your address
                                 </option>
-                                {userAddress.length !== 0? userAddress.map((address) =>
+                                {addressList.length !== 0? addressList.map((address) =>
                                     <option key={address}>{address}</option>
                                 ):  <option key="default">No address record in database</option>}
-
                             </select>
                         </div>
                         <div className="form-group form-check">
