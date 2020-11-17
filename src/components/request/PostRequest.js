@@ -125,7 +125,7 @@ const PostRequest = () => {
     // react select of address list
     const addressOptions = addressList.length !== 0? addressList.map(address=>({
          value: address, label:address
-      })) : {value:"default", label:"no address recorded in database"}
+      })) : [{value:"default", label:"no address recorded in database"}]
 
 
     return (
