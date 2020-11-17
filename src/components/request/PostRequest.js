@@ -29,6 +29,8 @@ const PostRequest = () => {
         { value: 'Grocery', label: 'Grocery' },
     ]
 
+
+
     const openPostWindow = () => {
         setModalIsOpen(true)
     }
@@ -110,7 +112,6 @@ const PostRequest = () => {
         volunteer: res.volunteer === null? "Pending" : res.volunteer,
         requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
-    console.log(onGoingData)
 
 
     const pastData = requestDetail.pastRequest.map((res,index)=>({
@@ -120,6 +121,11 @@ const PostRequest = () => {
         volunteer: res.volunteer === null? "Pending" : res.volunteer,
         requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
+
+    // react select of address list
+    const addressOptions = addressList.length !== 0? addressList.map(address=>({
+         value: address, label:address
+      })) : {value:"default", label:"no address recorded in database"}
 
 
     return (
@@ -155,7 +161,7 @@ const PostRequest = () => {
                             </label>
                             <div >
                                 <div className="tags-input">
-                                    <Select isMulti={true} options={options} onChange={addTags} />
+                                    <Select isMulti={true} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
                                 </div>
                             </div>
                         </div>
@@ -172,14 +178,7 @@ const PostRequest = () => {
                                    onChange={e=>setPhoneNumber(e.target.value)}/>
                         </div>
                         <div className="form-group mt-3">
-                            <select className="form-control" onChange={e=>setAddress(e.target.value)} defaultValue="selected">
-                                <option value="selected" disabled hidden>
-                                    Select your address
-                                </option>
-                                {addressList.length !== 0? addressList.map((address) =>
-                                    <option key={address}>{address}</option>
-                                ):  <option key="default">No address record in database</option>}
-                            </select>
+                            <Select options={addressOptions} placeholder={<div>Select your address</div>}/>
                         </div>
                         <div className="form-group form-check">
                             <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
@@ -206,5 +205,6 @@ const customStyle = {
     marginTop: '5%'
     // transform: 'translate(10%, 10%)',
 }
+
 
 export default PostRequest;
