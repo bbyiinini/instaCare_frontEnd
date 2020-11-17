@@ -10,6 +10,7 @@ import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {ongoingColumns, modalStyle, pastColumns} from "../../style/PostRequestTable";
 import Select from 'react-select'
+import moment from 'moment';
 
 const PostRequest = () => {
     const {user} = useSelector((state)=>({...state}))
@@ -107,15 +108,17 @@ const PostRequest = () => {
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
         volunteer: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: res.createTime
+        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
+    console.log(onGoingData)
+
 
     const pastData = requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
         volunteer: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: res.createTime
+        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
 
 
