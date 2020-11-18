@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
+import {useHistory} from "react-router-dom";
 import Modal from "react-modal";
-import {Button, Table} from "antd";
+import {Button, Table, Pagination, Space, Tag} from "antd";
 import Axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RequestService from "../../service/RequestService";
@@ -8,7 +9,7 @@ import {toast} from "react-toastify";
 import "../../style/PostRequest.css";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {ongoingColumns, modalStyle, pastColumns} from "../../style/PostRequestTable";
+import {modalStyle, pastColumns} from "../../style/PostRequestTable";
 import Select from 'react-select'
 import moment from 'moment';
 
@@ -18,7 +19,9 @@ const PostRequest = () => {
     const requestDetail = useSelector((state)=>state.requestDetail)
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
-
+    
+    let history = useHistory();
+    const dispatch = useDispatch();
 
 
     const options = [
@@ -78,6 +81,14 @@ const PostRequest = () => {
 
     }
 
+    const handleRequestMange = (key) =>{
+        dispatch({
+            type: 'OREQBYID',
+            payload: requestDetail.ongoingRequest[key],
+        });
+        history.push('/requestmangement');
+    }
+
 
 
     const handleChange = (e) => {
@@ -128,8 +139,68 @@ const PostRequest = () => {
     // react select of address list
     const addressOptions = addressList.length !== 0? addressList.map(address=>({
          value: address, label:address
-      })) : [{value:"default", label:"no address recorded in database"}]
+      })) : [{value:"default", label:"no address recorded in database"}];
 
+    const ongoingColumns = [
+
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width: '15%'
+        },
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '15%'
+        },
+        {
+            title: 'Volunteer',
+            dataIndex: 'volunteer',
+            key: 'volunteer',
+            width: '10%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width:'5%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = tag.length > 5 ? 'geekblue' : 'green';
+                        if (tag === 'Grocery') {
+                            color = 'volcano';
+                        }
+                        return (
+                            <Tag color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '20%'
+        },
+    
+        {
+            key: 'action',
+            render: (text,record) => (
+    
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <Button type="primary" style={{background:'green'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                </Space>
+            ),
+        },
+    ];
 
     return (
         <div style={customStyle}>

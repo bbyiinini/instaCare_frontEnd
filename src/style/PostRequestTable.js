@@ -27,66 +27,66 @@ export const modalStyle = {
 
 
 
-export const ongoingColumns = [
+// export const ongoingColumns = [
 
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        width: '15%'
-    },
-    {
-        title: 'Request title',
-        dataIndex: 'requestTitle',
-        key: 'requestTitle',
-        width: '15%'
-    },
-    {
-        title: 'Volunteer',
-        dataIndex: 'volunteer',
-        key: 'volunteer',
-        width: '10%'
-    },
-    {
-        title: 'Tags',
-        key: 'tags',
-        dataIndex: 'tags',
-        width:'5%',
-        render: tags => (
-            <>
-                {tags.map(tag => {
-                    let color = tag.length > 5 ? 'geekblue' : 'green';
-                    if (tag === 'Grocery') {
-                        color = 'volcano';
-                    }
-                    return (
-                        <Tag color={color} key={tag}>
-                            {tag}
-                        </Tag>
-                    );
-                })}
-            </>
-        ),
-    },
-    {
-        title: 'Request Time',
-        dataIndex: 'requestTime',
-        key: 'requestTime',
-        width: '20%'
-    },
+//     {
+//         title: 'Status',
+//         dataIndex: 'status',
+//         key: 'status',
+//         width: '15%'
+//     },
+//     {
+//         title: 'Request title',
+//         dataIndex: 'requestTitle',
+//         key: 'requestTitle',
+//         width: '15%'
+//     },
+//     {
+//         title: 'Volunteer',
+//         dataIndex: 'volunteer',
+//         key: 'volunteer',
+//         width: '10%'
+//     },
+//     {
+//         title: 'Tags',
+//         key: 'tags',
+//         dataIndex: 'tags',
+//         width:'5%',
+//         render: tags => (
+//             <>
+//                 {tags.map(tag => {
+//                     let color = tag.length > 5 ? 'geekblue' : 'green';
+//                     if (tag === 'Grocery') {
+//                         color = 'volcano';
+//                     }
+//                     return (
+//                         <Tag color={color} key={tag}>
+//                             {tag}
+//                         </Tag>
+//                     );
+//                 })}
+//             </>
+//         ),
+//     },
+//     {
+//         title: 'Request Time',
+//         dataIndex: 'requestTime',
+//         key: 'requestTime',
+//         width: '20%'
+//     },
 
-    {
-        key: 'action',
-        render: () => (
+//     {
+//         key: 'action',
+//         render: () => (
 
-            <Space size="middle">
-                {/*<a>Invite {record.name}</a>*/}
-                {/*<a>Delete</a>*/}
-                <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement" style={{textDecoration:'none'}}>request management</Link></Button>
-            </Space>
-        ),
-    },
-];
+//             <Space size="middle">
+//                 {/*<a>Invite {record.name}</a>*/}
+//                 {/*<a>Delete</a>*/}
+//                 <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement" style={{textDecoration:'none'}} onclick={handleRequestMange}>request management</Link></Button>
+//             </Space>
+//         ),
+//     },
+// ];
 
 
 
