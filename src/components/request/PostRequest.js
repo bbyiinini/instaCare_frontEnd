@@ -136,7 +136,7 @@ const PostRequest = () => {
 
             <h1 className="float-left">Welcome{user==null?"":", "+fullName}</h1>
             <div className="grid">
-                <div className="row">
+                <div>
                     <div className="col-sm-1">
                         <select className="ml-3" style={{border:'none', color:'darkgreen', outline:'none'}} defaultValue="onGoing" onChange={handleChange}>
                             <option value="onGoing">Ongoing Requests</option>
