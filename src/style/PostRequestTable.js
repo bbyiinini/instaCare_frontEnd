@@ -82,7 +82,7 @@ export const ongoingColumns = [
             <Space size="middle">
                 {/*<a>Invite {record.name}</a>*/}
                 {/*<a>Delete</a>*/}
-                <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement">request management</Link></Button>
+                <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement" style={{textDecoration:'none'}}>request management</Link></Button>
             </Space>
         ),
     },
@@ -145,7 +145,7 @@ export const pastColumns = [
             <Space size="middle">
                 {/*<a>Invite {record.name}</a>*/}
                 {/*<a>Delete</a>*/}
-                <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement">request management</Link></Button>
+                <Button type="primary" style={{background:'green'}} shape="round" ><Link to="/requestmangement" style={{textDecoration:'none'}}>request management</Link></Button>
             </Space>
         ),
     },
