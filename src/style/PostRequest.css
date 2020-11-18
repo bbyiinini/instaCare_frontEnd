@@ -14,6 +14,7 @@
     /*width: 5px;*/
     padding: 30px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    background: white;
     /*border: 1px solid black;*/
 }
 /* row tags */
@@ -26,4 +27,11 @@
     height: 5px;
     padding-left: 30px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+    background: white;
+}
+.ant-table-thead>tr.ant-table-row-hover:not(.ant-table-expanded-row)>td,
+.ant-table-tbody>tr.ant-table-row-hover:not(.ant-table-expanded-row)>td,
+.ant-table-thead>tr:hover:not(.ant-table-expanded-row)>td,
+.ant-table-tbody>tr:hover:not(.ant-table-expanded-row)>td {
+    background: unset;
 }
