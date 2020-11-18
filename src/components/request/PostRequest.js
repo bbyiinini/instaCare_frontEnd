@@ -155,7 +155,7 @@ const PostRequest = () => {
                     <form >
                         <div>
                             <label className="form-inline" style={{height:'50px'}}>Title
-                            <TextField style={{marginBottom:'30px', marginLeft:'20px'}} required id="standard-basic" label="Enter a title"
+                            <TextField style={{marginBottom:'12px', marginLeft:'10px'}} required id="standard-basic" label="Enter a title"
                               onChange={e=>setTitle(e.target.value)}/>
                             </label>
                             <div >
