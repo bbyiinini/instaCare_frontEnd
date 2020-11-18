@@ -52,15 +52,14 @@ const PostRequest = () => {
         if (user == null){
             return;
         }
-        let date = new Date().toLocaleDateString();
-        let time = new Date().toLocaleTimeString('en-US', { hour12: false });
+        let date = new Date()
         let requestBean ={
             requestContent:text,
             title: title,
             address: address,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
-            createTime: time + " " + date,
+            createTime: date,
             tags: tags
         }
 
@@ -73,6 +72,7 @@ const PostRequest = () => {
             })
              window.location.reload();
         }else {
+            console.log(text, title, address, phoneNumber)
             toast.error("please fill all required information")
         }
 
@@ -97,6 +97,9 @@ const PostRequest = () => {
         }
     }
 
+    const addAddress = (e) => {
+        setAddress(e.value)
+    }
 
     if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
         return null
@@ -178,7 +181,7 @@ const PostRequest = () => {
                                    onChange={e=>setPhoneNumber(e.target.value)}/>
                         </div>
                         <div className="form-group mt-3">
-                            <Select options={addressOptions} placeholder={<div>Select your address</div>}/>
+                            <Select options={addressOptions} placeholder={<div>Select your address</div>} onChange={addAddress}/>
                         </div>
                         <div className="form-group form-check">
                             <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
@@ -205,6 +208,7 @@ const customStyle = {
     marginTop: '5%'
     // transform: 'translate(10%, 10%)',
 }
+
 
 
 export default PostRequest;
