@@ -135,15 +135,11 @@ const PostRequest = () => {
         <div style={customStyle}>
 
             <h1 className="float-left">Welcome{user==null?"":", "+fullName}</h1>
-            <div className="grid">
-                <div>
-                    <div className="col-sm-1">
-                        <select className="ml-3" style={{border:'none', color:'darkgreen', outline:'none'}} defaultValue="onGoing" onChange={handleChange}>
-                            <option value="onGoing">Ongoing Requests</option>
-                            <option value="past">Past Requests</option>
-                        </select>
-                    </div>
-                </div>
+            <div className="col-sm-1">
+                <select className="ml-3" style={{border:'none', color:'darkgreen', outline:'none'}} defaultValue="onGoing" onChange={handleChange}>
+                    <option value="onGoing">Ongoing Requests</option>
+                    <option value="past">Past Requests</option>
+                </select>
             </div>
 
             {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 2}} /> :
