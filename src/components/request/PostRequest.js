@@ -121,7 +121,6 @@ const PostRequest = () => {
     }
 
     const handleDelete = () => {
-
     }
 
     if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
@@ -159,25 +158,25 @@ const PostRequest = () => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            width: '15%'
+            width: '18%'
         },
         {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
-            width: '15%'
+            width: '18%'
         },
         {
             title: 'Volunteer',
             dataIndex: 'volunteer',
             key: 'volunteer',
-            width: '10%'
+            width: '15%'
         },
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'5%',
+            width:'10%',
             render: tags => (
                 <>
                     {tags.map(tag => {
@@ -195,7 +194,7 @@ const PostRequest = () => {
             title: 'Request Time',
             dataIndex: 'requestTime',
             key: 'requestTime',
-            width: '15%'
+            width: '18%'
         },
 
         {
@@ -217,19 +216,19 @@ const PostRequest = () => {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
-            width: '15%'
+            width: '18%'
         },
         {
             title: 'Volunteer',
             dataIndex: 'volunteer',
             key: 'volunteer',
-            width: '10%'
+            width: '15%'
         },
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'5%',
+            width:'10%',
             render: tags => (
                 <>
                     {tags.map(tag => {
@@ -248,29 +247,27 @@ const PostRequest = () => {
             title: 'Request Time',
             dataIndex: 'requestTime',
             key: 'requestTime',
-            width: '20%'
+            width: '18%'
         },
         {
             title: 'Rating',
             dataIndex: 'rating',
             key: 'rating',
-            width: '10%'
+            width: '18%'
         },
 
         {
             key: 'action',
-            align:'center',
             render: (text,record) => (
 
                 <Space size="middle">
                     {/*<a>Invite {record.name}</a>*/}
                     {/*<a>Delete</a>*/}
                     <div className="-vertical">
-                        <div>
+                        <div className="m-2">
                             <Button type="primary" style={{background:'#00897B', width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handlePastRequestMange(record.key)}>Detail</a></Button>
-
                         </div>
-                        <div>
+                        <div className="m-2">
                             <Button type="primary" style={{background:'#00897B',  width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" onClick={()=>handleDelete} >Delete</Button>
                         </div>
                     </div>
