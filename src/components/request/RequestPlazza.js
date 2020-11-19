@@ -43,21 +43,21 @@ const PostRequest = () => {
             title: 'Request',
             dataIndex: 'requestContent',
             key: 'requestContent',
-            width: '30%'
+            width: '40%'
         },
 
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'10%',
+            width:'15%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color:'black'}} color={color} key={tag}>
+                            <Tag style={{color:'black', fontSize:'16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -69,7 +69,7 @@ const PostRequest = () => {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
-            width: '30%'
+            width: '40%'
         },
 
         {
@@ -79,7 +79,7 @@ const PostRequest = () => {
                 <Space size="middle">
                     {/*<a>Invite {record.name}</a>*/}
                     {/*<a>Delete</a>*/}
-                    <Button type="primary" style={{background:'#00897B', width:'100px'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>See Detail</a></Button>
+                    <Button type="primary" style={{background:'#00897B', width:'180px', fontSize:'16px'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>See Detail</a></Button>
                 </Space>
             ),
         },
