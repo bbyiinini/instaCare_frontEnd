@@ -2,7 +2,7 @@ import {combineReducers} from "redux";
 import {userReducer} from "./UserReducer"
 import {userProfileReducer} from "./UserProfileReducer";
 import {postRequestReducer} from "./PostRequestReducer";
-import {postRequestMangeReducer} from "./PostManager";
+import {postRequestMangeReducer} from "./PostManagerReducder";
 
 const rootReducer = combineReducers({
     user: userReducer,

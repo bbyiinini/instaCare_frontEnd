@@ -75,10 +75,6 @@ const NavHeader = () => {
                 <Link to="/post">Post a new request</Link>
             </Item>
 
-            <Item key="requestMangement" icon={<HomeOutlined />}>
-                <Link to="/requestmangement">requstM</Link>
-            </Item>
-
 
           {!user && <Item key="login" icon={<UserOutlined />} className="float-right">
                 <Link to="/login">Login</Link>
