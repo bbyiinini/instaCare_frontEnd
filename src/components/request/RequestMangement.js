@@ -1,18 +1,19 @@
-import { blue, red } from "@material-ui/core/colors";
 import React, {useEffect, useState} from "react";
 import { useSelector} from "react-redux";
 import { useHistory } from "react-router-dom";
-import {toast} from "react-toastify";
+
+import RequestService from "../../service/RequestService";
 
 import { makeStyles, createMuiTheme} from '@material-ui/core/styles';
+import Modal from "react-modal";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import Chip from '@material-ui/core/Chip';
+import Backdrop from '@material-ui/core/Backdrop';
 import { Grid, Row, Col } from "react-flexbox-grid";
 import TextField from '@material-ui/core/TextField';
 import { ThemeProvider } from '@material-ui/styles';
@@ -21,17 +22,40 @@ import { ThemeProvider } from '@material-ui/styles';
 
 const RequestMangement = () => {
 
-    const[requestId, setRequestId] = useState("");
+    const[wrapId, setWrapId] = useState("");
+    const[wrapOpen, setWrapOpen] = useState(false);
     const history = useHistory();
     const classes = useStyles();
 
     const {user} = useSelector((state)=>({...state}));
-    const requestMange= useSelector(state=>state.requestMange).ongoingRequestId;
+    const reqM = useSelector(state=>state.requestMange);
+    const requestMange = reqM === null ? null : reqM.ongoingRequestId;
     console.log(requestMange);
-    
+
+    useEffect(()=>{
+        
+    });
 
     const backHome = () =>{
         history.push('/');
+    };
+
+    const handleOpen = (type) => {
+        setWrapId(type);
+        setWrapOpen(true);
+    }
+
+    const handleEnd = async () =>{
+        if(wrapId==='end'){
+            await RequestService.addToPast(user.uid, requestMange);
+            setWrapOpen(false);
+            window.location.assign("/post");
+        }else if(wrapId==='cancel'){
+            //TODO
+            return;
+        }else{
+            return;
+        }
     }
 
     const theme = createMuiTheme({
@@ -41,7 +65,8 @@ const RequestMangement = () => {
                 contrastText:'#004D40',
             },
             secondary: {
-                main: '#11cb5f',
+                main: '#00897B',
+                contrastText:'#ffffff',
             },
         },
     });
@@ -69,16 +94,16 @@ const RequestMangement = () => {
                         <div className={classes.paddings1}>
                             <h2>{requestMange.title}</h2>
                             <p>{requestMange.requestContent}</p>
-                            <Grid container spacing={3}>
-                                {requestMange.tags === null ? "" : requestMange.tags.map(tag => {
-                                    return(<Chip className={classes.chip} label={tag} />);
+                            <Grid spacing={3}>
+                                {requestMange.tags === null ? "" : requestMange.tags.map((tag,index) => {
+                                    return(<Chip key={index} className={classes.chip} label={tag} />);
                                 })}
                             </Grid>
                         </div>
                         <div className={classes.paddings1}>
                             <ThemeProvider theme={theme}>
-                                <Button color="primary" variant="contained" className={classes.bHeight}>End My Appointment</Button>
-                                <Button color="primary" variant="contained" className={classes.bHeight}>Cancel My Appointment</Button>
+                                <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('end')}>End My Appointment</Button>
+                                <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('cancel')}>Cancel My Appointment</Button>
                             </ThemeProvider>
                         </div>
                         <div className={classes.paddings1}>
@@ -129,19 +154,12 @@ const RequestMangement = () => {
                                             </Typography>
                                         </CardContent>
                                 </Card>
-                                <TextField
-                                    id="filled-full-width"
-                                    label="Label"
-                                    style={{ margin: 0 }}
-                                    placeholder="Commentss"
-                                    fullWidth
-                                    margin="normal"
+                                <TextField id="filled-full-width" label="Label" style={{ margin: 0 }} placeholder="Commentss" fullWidth margin="normal"
                                     InputLabelProps={{
                                         shrink: true,
-                                    }}
-                                    variant="filled"
+                                    }} variant="filled"
                                     />
-                                <Button variant="contained" color="primary" style={{marginBottom:"20px"}}>Post</Button>
+                                <Button variant="contained" color="secondary" style={{marginBottom:"20px"}}>Post</Button>
                             </div>
                         </div>
                     </div>
@@ -149,6 +167,16 @@ const RequestMangement = () => {
                 <Col className="nav-column" xs={12} sm={6}>
                     Map
                 </Col>
+                
+                <Modal style={modalStyle} isOpen={wrapOpen} appElement={document.getElementById('root')}>
+                    <h2 className="text-left">{wrapId.substring(0,1).toUpperCase()}{wrapId.substring(1,wrapId.length)} My Appointment?</h2>
+                    <p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
+                    <div className="text-right">
+                        <Button color="secondary" variant="contained" style={{borderRadius:"15px"}} onClick={handleEnd}>Confirm</Button>
+                        <Button color="secondary" onClick={() => setWrapOpen(false)}>Cancel</Button>
+                    </div>
+                </Modal>
+
             </Grid>}
         </>
     );
@@ -179,7 +207,30 @@ const useStyles = makeStyles((theme) => ({
     },
     chip: {
         margin: theme.spacing(0.5),
+    },backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
     },
   }));
+
+const modalStyle = {
+    overlay:{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)'
+    },
+    content: {
+        top: '30%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '30%',
+        borderRadius:'30px',
+        transform: 'translate(-40%, -10%)',
+    },
+}
 
 export default RequestMangement;

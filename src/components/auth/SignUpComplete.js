@@ -10,7 +10,7 @@ const SignUpComplete = ({props}) => {
         let email = (window.localStorage.getItem('email'))
         let password = window.localStorage.getItem('password')
         let userType = window.localStorage.getItem('userType')
-        let UserBean = {userType:userType}
+        let UserBean = {usertype: parseInt(userType)};
         if (email != null) {
             db.auth().signInWithEmailLink(email, window.location.href).then( async ()=>{
                 toast.success("Sign Up success")
