@@ -26,7 +26,8 @@ const RequestMangement = () => {
     const classes = useStyles();
 
     const {user} = useSelector((state)=>({...state}));
-    const requestMange= useSelector(state=>state.requestMange).ongoingRequestId;
+    const reqM = useSelector(state=>state.requestMange);
+    const requestMange = reqM === null ? null : reqM.ongoingRequestId;
     console.log(requestMange);
     
 
@@ -41,7 +42,8 @@ const RequestMangement = () => {
                 contrastText:'#004D40',
             },
             secondary: {
-                main: '#11cb5f',
+                main: '#00897B',
+                contrastText:'#ffffff',
             },
         },
     });
@@ -141,7 +143,7 @@ const RequestMangement = () => {
                                     }}
                                     variant="filled"
                                     />
-                                <Button variant="contained" color="primary" style={{marginBottom:"20px"}}>Post</Button>
+                                <Button variant="contained" color="secondary" style={{marginBottom:"20px"}}>Post</Button>
                             </div>
                         </div>
                     </div>
