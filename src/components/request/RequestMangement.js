@@ -131,17 +131,10 @@ const RequestMangement = () => {
                                             </Typography>
                                         </CardContent>
                                 </Card>
-                                <TextField
-                                    id="filled-full-width"
-                                    label="Label"
-                                    style={{ margin: 0 }}
-                                    placeholder="Commentss"
-                                    fullWidth
-                                    margin="normal"
+                                <TextField id="filled-full-width" label="Label" style={{ margin: 0 }} placeholder="Commentss" fullWidth margin="normal"
                                     InputLabelProps={{
                                         shrink: true,
-                                    }}
-                                    variant="filled"
+                                    }} variant="filled"
                                     />
                                 <Button variant="contained" color="secondary" style={{marginBottom:"20px"}}>Post</Button>
                             </div>
