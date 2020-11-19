@@ -58,7 +58,7 @@ const Signup = (props) => {
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
-    const [type, setType] = useState("");
+    const [type, setType] = useState(-1);
     const [seniorBorder, setSenior] = useState("");
     const [volunteerBorder, setVolunteer] = useState("");
 
@@ -72,15 +72,13 @@ const Signup = (props) => {
     };
 
     const typeChange = (type) => {
-        return (e) => {
-            setType(type)
-            if(type){
-                setSenior("")
-                setVolunteer("2px solid #12897b")
-            }else{
-                setVolunteer("")
-                setSenior("2px solid #12897b")
-            }
+        setType(type)
+        if(type){
+            setSenior("")
+            setVolunteer("2px solid #12897b")
+        }else{
+            setVolunteer("")
+            setSenior("2px solid #12897b")
         }
     }
 
@@ -145,7 +143,7 @@ const Signup = (props) => {
                                 <img
                                 style={{border:seniorBorder}}
                                 className={classes.imgstyle}
-                                onClick={typeChange(0)}
+                                onClick={() => typeChange(0)}
                                 src={senior}
                                 alt={"senior"}/>
 
@@ -163,7 +161,7 @@ const Signup = (props) => {
                             >
                             <img
                                 value={1}
-                                onClick={typeChange(1)}
+                                onClick={() => typeChange(1)}
                                 style={{border:volunteerBorder}}
                                 className={classes.imgstyle} src={volunteer} alt={"volunteer"}/>
                                 <span style={{
