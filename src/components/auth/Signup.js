@@ -58,7 +58,7 @@ const Signup = (props) => {
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
-    const [type, setType] = useState(-1);
+    const [type, setType] = useState(0);
     const [seniorBorder, setSenior] = useState("");
     const [volunteerBorder, setVolunteer] = useState("");
 
