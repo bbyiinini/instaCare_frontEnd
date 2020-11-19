@@ -1,27 +1,31 @@
-import { blue, red } from "@material-ui/core/colors";
 import React, {useEffect, useState} from "react";
 import { useSelector} from "react-redux";
 import { useHistory } from "react-router-dom";
-import {toast} from "react-toastify";
+
+
+import RequestService from "../../service/RequestService";
 
 import { makeStyles, createMuiTheme} from '@material-ui/core/styles';
+import Modal from "react-modal";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import Chip from '@material-ui/core/Chip';
+import Backdrop from '@material-ui/core/Backdrop';
 import { Grid, Row, Col } from "react-flexbox-grid";
 import TextField from '@material-ui/core/TextField';
 import { ThemeProvider } from '@material-ui/styles';
+import { setRef } from "@material-ui/core";
 
 
 
 const RequestMangement = () => {
 
     const[requestId, setRequestId] = useState("");
+    const[endOpen, setEndOpen] = useState(false);
     const history = useHistory();
     const classes = useStyles();
 
@@ -29,10 +33,24 @@ const RequestMangement = () => {
     const reqM = useSelector(state=>state.requestMange);
     const requestMange = reqM === null ? null : reqM.ongoingRequestId;
     console.log(requestMange);
-    
+
+    useEffect(()=>{
+        
+    });
 
     const backHome = () =>{
         history.push('/');
+    };
+
+    const handleClose = () => {
+        setEndOpen(false);
+    }
+
+    const handleEnd = async () =>{
+        await RequestService.addToPast(user.uid, requestMange);
+        handleClose();
+        window.location.assign("/post");
+        setRequestId("abc");
     }
 
     const theme = createMuiTheme({
@@ -79,7 +97,7 @@ const RequestMangement = () => {
                         </div>
                         <div className={classes.paddings1}>
                             <ThemeProvider theme={theme}>
-                                <Button color="primary" variant="contained" className={classes.bHeight}>End My Appointment</Button>
+                                <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => setEndOpen(true)}>End My Appointment</Button>
                                 <Button color="primary" variant="contained" className={classes.bHeight}>Cancel My Appointment</Button>
                             </ThemeProvider>
                         </div>
@@ -144,6 +162,17 @@ const RequestMangement = () => {
                 <Col className="nav-column" xs={12} sm={6}>
                     Map
                 </Col>
+                
+                <Modal style={modalStyle} isOpen={endOpen} appElement={document.getElementById('root')}>
+                    <h2 className="text-left">Cancel My Appointment?</h2>
+                    <p>Are you sure to cancel this appointment? you will not be able to undo this action once it is completed.</p>
+                    <div className="text-right">
+                        
+                        <Button color="secondary" variant="contained" style={{borderRadius:"15px"}} onClick={handleEnd}>Yes</Button>
+                        <Button color="secondary" onClick={() => setEndOpen(false)}>No</Button>
+                    </div>
+                </Modal>
+
             </Grid>}
         </>
     );
@@ -174,7 +203,30 @@ const useStyles = makeStyles((theme) => ({
     },
     chip: {
         margin: theme.spacing(0.5),
+    },backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
     },
   }));
+
+const modalStyle = {
+    overlay:{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.6)'
+    },
+    content: {
+        top: '30%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '30%',
+        borderRadius:'30px',
+        transform: 'translate(-40%, -10%)',
+    },
+}
 
 export default RequestMangement;
