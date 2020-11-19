@@ -172,7 +172,7 @@ const RequestMangement = () => {
                     <h2 className="text-left">{wrapId.substring(0,1).toUpperCase()}{wrapId.substring(1,wrapId.length)} My Appointment?</h2>
                     <p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
                     <div className="text-right">
-                        <Button color="secondary" variant="contained" style={{borderRadius:"15px"}} onClick={handleEnd}>Confirm</Button>
+                        <Button color="secondary" variant="contained" style={{borderRadius:"15px", border:"none"}} onClick={handleEnd}>Confirm</Button>
                         <Button color="secondary" onClick={() => setWrapOpen(false)}>Cancel</Button>
                     </div>
                 </Modal>
