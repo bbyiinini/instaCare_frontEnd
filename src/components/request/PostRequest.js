@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
+import {Link, useHistory} from "react-router-dom";
 import Modal from "react-modal";
-import {Button, Table} from "antd";
+import {Button, Table, Pagination, Space, Tag} from "antd";
 import Axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RequestService from "../../service/RequestService";
@@ -8,7 +9,7 @@ import {toast} from "react-toastify";
 import "../../style/PostRequest.css";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {ongoingColumns, modalStyle, pastColumns} from "../../style/PostRequestTable";
+import {modalStyle, pastColumns} from "../../style/PostRequestTable";
 import Select from 'react-select'
 import moment from 'moment';
 
@@ -19,6 +20,8 @@ const PostRequest = () => {
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
 
+    let history = useHistory();
+    const dispatch = useDispatch();
 
 
     const options = [
@@ -60,7 +63,7 @@ const PostRequest = () => {
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
             createTime: date,
-            tags: tags
+            tags: tags,
         }
 
         if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){
@@ -70,12 +73,28 @@ const PostRequest = () => {
             }).catch(res=>{
                 toast.error("save failed")
             })
-             window.location.reload();
+            window.location.reload();
         }else {
             console.log(text, title, address, phoneNumber)
             toast.error("please fill all required information")
         }
 
+    }
+
+    const handleRequestMange = (key) =>{
+        dispatch({
+            type: 'OREQBYID',
+            payload:requestDetail.ongoingRequest[key],
+        });
+        history.push('/requestmangement');
+    }
+
+    const handlePastRequestMange = (key) =>{
+        dispatch({
+            type: 'OREQBYID',
+            payload:requestDetail.pastRequest[key],
+        });
+        history.push('/requestmangement');
     }
 
 
@@ -99,6 +118,10 @@ const PostRequest = () => {
 
     const addAddress = (e) => {
         setAddress(e.value)
+    }
+
+    const handleDelete = () => {
+
     }
 
     if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
@@ -127,26 +150,152 @@ const PostRequest = () => {
 
     // react select of address list
     const addressOptions = addressList.length !== 0? addressList.map(address=>({
-         value: address, label:address
-      })) : [{value:"default", label:"no address recorded in database"}]
+        value: address, label:address
+    })) : [{value:"default", label:"no address recorded in database"}];
 
+    const ongoingColumns = [
+
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+            width: '15%'
+        },
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '15%'
+        },
+        {
+            title: 'Volunteer',
+            dataIndex: 'volunteer',
+            key: 'volunteer',
+            width: '10%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width:'5%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+                        return (
+                            <Tag style={{color:'black', fontSize:'16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '15%'
+        },
+
+        {
+            key: 'action',
+            render: (text,record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <Button type="primary" style={{background:'#00897B', fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                </Space>
+            ),
+        },
+    ];
+
+    const pastColumns = [
+
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '15%'
+        },
+        {
+            title: 'Volunteer',
+            dataIndex: 'volunteer',
+            key: 'volunteer',
+            width: '10%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width:'5%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+
+                        return (
+                            <Tag style={{color:'black',fontSize:'16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '20%'
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            key: 'rating',
+            width: '10%'
+        },
+
+        {
+            key: 'action',
+            align:'center',
+            render: (text,record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <div className="-vertical">
+                        <div>
+                            <Button type="primary" style={{background:'#00897B', width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handlePastRequestMange(record.key)}>Detail</a></Button>
+
+                        </div>
+                        <div>
+                            <Button type="primary" style={{background:'#00897B',  width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" onClick={()=>handleDelete} >Delete</Button>
+                        </div>
+                    </div>
+
+                </Space>
+            ),
+        },
+    ];
 
     return (
         <div style={customStyle}>
-
-            <h1 className="float-left">Welcome{user==null?"":", "+fullName}</h1>
+            <h1 style={{marginTop:'-50px', marginBottom: '80px', float:'left'}}>Welcome{user==null?"":", "+fullName}</h1>
             <div className="col-sm-1">
-                <select className="ml-3" style={{border:'none', color:'darkgreen', outline:'none'}} defaultValue="onGoing" onChange={handleChange}>
+                <select className="ml-3" style={{border:'none', color:'#004D40', outline:'none'}} onChange={handleChange}>
                     <option value="onGoing">Ongoing Requests</option>
                     <option value="past">Past Requests</option>
                 </select>
             </div>
 
-            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 2}} /> :
-                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 2}} />
+
+            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
+                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />
             }
 
-            <Button type="primary" style={{background:'green', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
+            <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
 
 
             <MuiThemeProvider>
@@ -155,8 +304,8 @@ const PostRequest = () => {
                     <form >
                         <div>
                             <label className="form-inline" style={{height:'50px'}}>Title
-                            <TextField style={{marginTop:'5px', marginLeft:'10px', width:'50%'}} required id="standard-basic"
-                              onChange={e=>setTitle(e.target.value)}/>
+                                <TextField style={{marginTop:'5px', marginLeft:'10px'}} required id="standard-basic"
+                                           onChange={e=>setTitle(e.target.value)}/>
                             </label>
                             <div >
                                 <div className="tags-input">
@@ -183,8 +332,8 @@ const PostRequest = () => {
                             <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
                             <label className="form-check-label" >Physical contact needed</label>
                         </div>
-                        <Button type="primary" style={{background:'green'}} shape="round" className="float-right" onClick={handleSubmit}>Post</Button>
-                        <label style={{color:'green', cursor:'pointer'}} className="float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</label>
+                        <Button type="primary" style={{background:'#00897B', width:'80px'}} shape="round" className="float-right" onClick={handleSubmit}>Post</Button>
+                        <label style={{color:'#00897B', cursor:'pointer'}} className="float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</label>
                     </form>
                 </Modal>
             </MuiThemeProvider>
