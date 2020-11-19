@@ -35,8 +35,11 @@ const App = () => {
     // check if user profile is completed
     firestore.collection("users").doc(user.uid).get().then((doc)=>{
       const data = doc.data()
-      if(data.id==null){
+      if(!data){
         //  user hasn't finished setup
+        setStatus(false)
+        console.log("still false")
+      }else if(data.id==null){
         setStatus(false)
         console.log("still false")
       }
