@@ -71,9 +71,9 @@ const RequestMangement = () => {
                         <div className={classes.paddings1}>
                             <h2>{requestMange.title}</h2>
                             <p>{requestMange.requestContent}</p>
-                            <Grid container spacing={3}>
-                                {requestMange.tags === null ? "" : requestMange.tags.map(tag => {
-                                    return(<Chip className={classes.chip} label={tag} />);
+                            <Grid spacing={3}>
+                                {requestMange.tags === null ? "" : requestMange.tags.map((tag,index) => {
+                                    return(<Chip key={index} className={classes.chip} label={tag} />);
                                 })}
                             </Grid>
                         </div>
