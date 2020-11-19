@@ -170,7 +170,7 @@ const PostRequest = () => {
             title: 'Volunteer',
             dataIndex: 'volunteer',
             key: 'volunteer',
-            width: '15%'
+            width: '18%'
         },
         {
             title: 'Tags',
@@ -279,7 +279,7 @@ const PostRequest = () => {
 
     return (
         <div style={customStyle}>
-            <h1 style={{marginTop:'-50px', marginBottom: '80px', float:'left'}}>Welcome{user==null?"":", "+fullName}</h1>
+            <h1 style={{marginTop:'-50px', marginBottom: '70px', float:'left'}}>Welcome{user==null?"":", "+fullName}</h1>
             <div className="col-sm-1">
                 <select className="ml-3" style={{border:'none', color:'#004D40', outline:'none'}} onChange={handleChange}>
                     <option value="onGoing">Ongoing Requests</option>
