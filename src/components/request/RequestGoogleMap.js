@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {GoogleMap, LoadScript, useLoadScript, Marker} from '@react-google-maps/api';
 import styled from 'styled-components';
 import db, {firestore} from "../../base";
@@ -29,8 +29,9 @@ function RequestGoogleMap(props) {
     // })
 
     let intervalId
-    let currentLat
-    let currentLng
+    const [currentLat, setCurrentLat] = useState(0);
+    const [currentLng, setCurrentLng] = useState(0);
+
 
     const locateStyle = {
         position: 'absolute',
@@ -65,8 +66,8 @@ function RequestGoogleMap(props) {
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude,
             })
-            currentLat = pos.coords.latitude
-            currentLng = pos.coords.longitude
+            setCurrentLat(pos.coords.latitude);
+            setCurrentLng(pos.coords.longitude);
             // console.log(pos.coords)
             firestore.collection('mapApi').doc(props.id).set({
                 volunteerLat:pos.coords.latitude,
@@ -127,8 +128,7 @@ function RequestGoogleMap(props) {
                 onUnmount={onUnmount}
                 options={options}
             >
-                { /* Child components, such as markers, info windows, etc. */}
-                <>{ (currentLat&&currentLng) ? <Marker position={{lat:currentLat,lng:currentLng}}/>:<div></div>}</>
+                <Marker position={{lat:currentLat,lng:currentLng}}/>
             </GoogleMap></LoadScript>
     )
 }
