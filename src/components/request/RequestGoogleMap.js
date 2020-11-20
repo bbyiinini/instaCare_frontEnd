@@ -29,8 +29,8 @@ function RequestGoogleMap(props) {
     // })
 
     let intervalId
-    const [currentLat, setCurrentLat] = useState(0);
-    const [currentLng, setCurrentLng] = useState(0);
+    const [currentLat, setCurrentLat] = useState(200);
+    const [currentLng, setCurrentLng] = useState(200);
 
 
     const locateStyle = {
