@@ -60,7 +60,10 @@ function RequestGoogleMap(props) {
                 lng: pos.coords.longitude,
             })
             // console.log(pos.coords)
-            firestore.collection('mapApi').doc(props.id).set({volunteerGeo:pos.coords}).then((res)=>{
+            firestore.collection('mapApi').doc(props.id).set({
+                volunteerLat:pos.coords.latitude,
+                volunteerlng:pos.coords.longitude,
+            }).then((res)=>{
                 console.log(res)
             }).catch((err)=>{console.log(err)})
         },(err) => {
