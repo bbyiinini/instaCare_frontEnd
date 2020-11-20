@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {GoogleMap, LoadScript, useLoadScript} from '@react-google-maps/api';
+import {GoogleMap, LoadScript, useLoadScript, Marker} from '@react-google-maps/api';
 import styled from 'styled-components';
 import db, {firestore} from "../../base";
 import { useSelector} from "react-redux";
@@ -29,6 +29,8 @@ function RequestGoogleMap(props) {
     // })
 
     let intervalId
+    let currentLat
+    let currentLng
     const locateStyle = {
         position: 'absolute',
         top: '1rem',
@@ -59,6 +61,8 @@ function RequestGoogleMap(props) {
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude,
             })
+            currentLat = pos.coords.latitude
+            currentLng = pos.coords.longitude
             // console.log(pos.coords)
             firestore.collection('mapApi').doc(props.id).set({
                 volunteerLat:pos.coords.latitude,
@@ -120,7 +124,7 @@ function RequestGoogleMap(props) {
                 options={options}
             >
                 { /* Child components, such as markers, info windows, etc. */}
-                <></>
+                <>{{currentLat}&& {currentLng}?<Marker position={{lat:currentLat,lng:currentLng}}/>:<div></div>}</>
             </GoogleMap></LoadScript>
     )
 }
