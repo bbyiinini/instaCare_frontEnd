@@ -78,14 +78,16 @@ const RequestMangement = () => {
     }
 
     const handleSubmit = () => {
-        let temp = commentCollection;
-        temp.push({
-            content: textField,
-            userId: user.uid
-        });
-        console.log(temp);
-        setCommentCollection(temp);
-        setTextField("");
+        if(textField !== ""){
+            let temp = commentCollection;
+            temp.push({
+                content: textField,
+                userId: user.uid
+            });
+            console.log(temp);
+            setCommentCollection(temp);
+            setTextField(""); 
+        }   
     }
 
     const theme = createMuiTheme({
