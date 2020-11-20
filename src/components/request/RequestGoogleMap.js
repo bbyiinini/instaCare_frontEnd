@@ -31,6 +31,7 @@ function RequestGoogleMap(props) {
     let intervalId
     let currentLat
     let currentLng
+
     const locateStyle = {
         position: 'absolute',
         top: '1rem',
@@ -56,6 +57,9 @@ function RequestGoogleMap(props) {
         })
     }
     function updatePosition() {
+
+
+
         navigator.geolocation.getCurrentPosition((pos) => {
             panTo({
                 lat: pos.coords.latitude,
@@ -124,7 +128,7 @@ function RequestGoogleMap(props) {
                 options={options}
             >
                 { /* Child components, such as markers, info windows, etc. */}
-                <>{{currentLat}&& {currentLng}?<Marker position={{lat:currentLat,lng:currentLng}}/>:<div></div>}</>
+                <>{ (currentLat&&currentLng) ? <Marker position={{lat:currentLat,lng:currentLng}}/>:<div></div>}</>
             </GoogleMap></LoadScript>
     )
 }
