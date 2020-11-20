@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useSelector} from "react-redux";
 import { useHistory } from "react-router-dom";
+import db,{firestore} from "../../base";
 
 import RequestService from "../../service/RequestService";
 
@@ -22,19 +23,29 @@ import { ThemeProvider } from '@material-ui/styles';
 
 const RequestMangement = () => {
 
+    const {user} = useSelector((state)=>({...state}));
+    const reqM = useSelector(state=>state.requestMange);
+    const originReq = reqM === null ? null : reqM.ongoingRequestId;
+
+
     const[wrapId, setWrapId] = useState("");
     const[wrapOpen, setWrapOpen] = useState(false);
+    const[requestMange, setRequestMange] = useState(null);
     const history = useHistory();
     const classes = useStyles();
 
-    const {user} = useSelector((state)=>({...state}));
-    const reqM = useSelector(state=>state.requestMange);
-    const requestMange = reqM === null ? null : reqM.ongoingRequestId;
-    console.log(requestMange);
-
-    useEffect(()=>{
-        
-    });
+    if(!requestMange){
+        if(!user){
+            return
+        }else{
+            const requestRef = firestore.collection("requests")
+            const userRef = requestRef.doc(user.uid)
+            userRef.collection('onGoing').doc(originReq.id).onSnapshot(function(doc) {
+                console.log("Current data: ", doc.data());
+                setRequestMange(doc.data());
+            });
+        }
+    };
 
     const backHome = () =>{
         history.push('/');
@@ -93,7 +104,7 @@ const RequestMangement = () => {
                         </div>
                         <div className={classes.paddings1}>
                             <h2>{requestMange.title}</h2>
-                            <p>{requestMange.requestContent}</p>
+                            <p>{requestMange.request_content}</p>
                             <Grid spacing={3}>
                                 {requestMange.tags === null ? "" : requestMange.tags.map((tag,index) => {
                                     return(<Chip key={index} className={classes.chip} label={tag} />);
