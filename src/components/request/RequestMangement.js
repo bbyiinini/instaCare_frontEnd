@@ -31,12 +31,16 @@ const RequestMangement = () => {
     const[wrapId, setWrapId] = useState("");
     const[wrapOpen, setWrapOpen] = useState(false);
     const[requestMange, setRequestMange] = useState(null);
+    const[textField, setTextField] = useState("");
+    const[commentCollection, setCommentCollection] = useState([]);
+
+
     const history = useHistory();
     const classes = useStyles();
 
     if(!requestMange){
-        if(!user){
-            return
+        if(!user || !originReq){
+            
         }else{
             const requestRef = firestore.collection("requests")
             const userRef = requestRef.doc(user.uid)
@@ -69,6 +73,21 @@ const RequestMangement = () => {
         }
     }
 
+    const handleTextFieldChange = (e) => {
+        setTextField(e.target.value);
+    }
+
+    const handleSubmit = () => {
+        let temp = commentCollection;
+        temp.push({
+            content: textField,
+            userId: user.uid
+        });
+        console.log(temp);
+        setCommentCollection(temp);
+        setTextField("");
+    }
+
     const theme = createMuiTheme({
         palette: {
             primary: {
@@ -89,7 +108,8 @@ const RequestMangement = () => {
                <p>waiting for redirection, back to <a onClick={backHome} style={{color:"blue"}}>HOME</a></p>
            </div>
            :<Grid fluid className="row">
-                <Col className="content-column" xs>
+                <ThemeProvider theme={theme}>
+                    <Col className="content-column" xs>
                     <div className="request-card">
                         <div className={classes.paddings1}>
                             <CardHeader className=""
@@ -165,29 +185,49 @@ const RequestMangement = () => {
                                             </Typography>
                                         </CardContent>
                                 </Card>
-                                <TextField id="filled-full-width" label="Label" style={{ margin: 0 }} placeholder="Commentss" fullWidth margin="normal"
+                                {commentCollection.map((comment,index)=>{
+                                    return(<Card style={{ margin: "15px 0" }} key={index}>
+                                        <CardHeader avatar={
+                                            <Avatar aria-label="recipe" className={classes.avSmall}>
+                                                T
+                                            </Avatar>
+                                            }
+                                            action={""}
+                                            title="Name"
+                                            subheader={comment.userId}/>
+                                            <CardContent>
+                                                <Typography variant="body2" color="textSecondary" component="p">
+                                                    {comment.content}
+                                                </Typography>
+                                            </CardContent>
+                                    </Card>);
+                                })}
+                                <TextField color="secondary" id="filled-full-width" label="Label" style={{ margin: 0 }} placeholder="Commentss" fullWidth margin="normal"
                                     InputLabelProps={{
                                         shrink: true,
                                     }} variant="filled"
+                                    value={textField}
+                                    onChange={handleTextFieldChange}
                                     />
-                                <Button variant="contained" color="secondary" style={{marginBottom:"20px"}}>Post</Button>
+                                <Button variant="contained" color="secondary" style={{marginBottom:"20px"}} onClick={handleSubmit}>Post</Button>
                             </div>
                         </div>
                     </div>
                 </Col>
+                </ThemeProvider>
                 <Col className="nav-column" xs={12} sm={6}>
                     Map
                 </Col>
-                
-                <Modal style={modalStyle} isOpen={wrapOpen} appElement={document.getElementById('root')}>
-                    <h2 className="text-left">{wrapId.substring(0,1).toUpperCase()}{wrapId.substring(1,wrapId.length)} My Appointment?</h2>
-                    <p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
-                    <div className="text-right">
-                        <Button color="secondary" variant="contained" style={{borderRadius:"15px", border:"none"}} onClick={handleEnd}>Confirm</Button>
-                        <Button color="secondary" onClick={() => setWrapOpen(false)}>Cancel</Button>
-                    </div>
-                </Modal>
-
+                <ThemeProvider theme={theme}>
+                    <Modal style={modalStyle} isOpen={wrapOpen} appElement={document.getElementById('root')}>
+                        <h2 className="text-left">{wrapId.substring(0,1).toUpperCase()}{wrapId.substring(1,wrapId.length)} My Appointment?</h2>
+                        <p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
+                        <div className="text-right">
+                            <Button color="secondary" variant="contained" style={{borderRadius:"15px", border:"none"}} onClick={handleEnd}>Confirm</Button>
+                            <Button color="secondary" onClick={() => setWrapOpen(false)}>Cancel</Button>
+                        </div>
+                    </Modal>
+                </ThemeProvider>
             </Grid>}
         </>
     );
