@@ -18,6 +18,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import { Grid, Row, Col } from "react-flexbox-grid";
 import TextField from '@material-ui/core/TextField';
 import { ThemeProvider } from '@material-ui/styles';
+import RequestGoogleMap from "./RequestGoogleMap";
 
 
 
@@ -218,7 +219,7 @@ const RequestMangement = () => {
                 </Col>
                 </ThemeProvider>
                 <Col className="nav-column" xs={12} sm={6}>
-                    Map
+                    <RequestGoogleMap id={requestMange.id} ></RequestGoogleMap>
                 </Col>
                 <ThemeProvider theme={theme}>
                     <Modal style={modalStyle} isOpen={wrapOpen} appElement={document.getElementById('root')}>
