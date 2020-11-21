@@ -63,7 +63,9 @@ const PostRequest = () => {
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
             createTime: date,
-            tags: tags
+            tags: tags,
+            seniorId: user.uid,
+            status: 0
         }
 
         if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){

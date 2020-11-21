@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import Chip from '@material-ui/core/Chip';
 import Backdrop from '@material-ui/core/Backdrop';
+import Rating from '@material-ui/lab/Rating';
 import { Grid, Row, Col } from "react-flexbox-grid";
 import TextField from '@material-ui/core/TextField';
 import { ThemeProvider } from '@material-ui/styles';
@@ -24,15 +25,16 @@ import RequestGoogleMap from "./RequestGoogleMap";
 
 const RequestMangement = () => {
 
-    const {user} = useSelector((state)=>({...state}));
+    const user = useSelector(state=>(state.userProfile));
     const reqM = useSelector(state=>state.requestMange);
-    const originReq = reqM === null ? null : reqM.ongoingRequestId;
-
-
+    
+    
+    const[originReq, setOriginReq] = useState(reqM === null ? null : reqM.ongoingRequestId);
     const[wrapId, setWrapId] = useState("");
     const[wrapOpen, setWrapOpen] = useState(false);
     const[requestMange, setRequestMange] = useState(null);
     const[textField, setTextField] = useState("");
+    const[rating, setRating] = useState(0);
     const[commentCollection, setCommentCollection] = useState([]);
 
 
@@ -40,14 +42,14 @@ const RequestMangement = () => {
     const classes = useStyles();
 
     if(!requestMange){
-        if(!user || !originReq){
-            
+        if(!user || !originReq || wrapId === 'rating'){
+            console.log("failed")
         }else{
             const requestRef = firestore.collection("requests")
-            const userRef = requestRef.doc(user.uid)
+            const userRef = requestRef.doc(originReq.seniorId)
             userRef.collection('onGoing').doc(originReq.id).onSnapshot(function(doc) {
                 console.log("Current data: ", doc.data());
-                setRequestMange(doc.data());
+                doc.data() ? setRequestMange(doc.data()) : setRequestMange(originReq);
             });
         }
     };
@@ -56,16 +58,16 @@ const RequestMangement = () => {
         history.push('/');
     };
 
-    const handleOpen = (type) => {
+    const handleOpen = (type) =>{
         setWrapId(type);
         setWrapOpen(true);
     }
 
     const handleEnd = async () =>{
         if(wrapId==='end'){
-            await RequestService.addToPast(user.uid, requestMange);
-            setWrapOpen(false);
-            window.location.assign("/post");
+            setWrapId("rating");
+            setOriginReq(requestMange)
+            await RequestService.addToPast(requestMange.senior_id, requestMange).then();
         }else if(wrapId==='cancel'){
             //TODO
             return;
@@ -74,21 +76,25 @@ const RequestMangement = () => {
         }
     }
 
-    const handleTextFieldChange = (e) => {
+    const handleTextFieldChange = (e) =>{
         setTextField(e.target.value);
     }
 
-    const handleSubmit = () => {
+    const handleComment = () => {
         if(textField !== ""){
             let temp = commentCollection;
             temp.push({
                 content: textField,
-                userId: user.uid
+                userId: user.id
             });
             console.log(temp);
             setCommentCollection(temp);
             setTextField(""); 
         }   
+    }
+
+    const handleRating = () =>{ 
+        window.location.assign("/post");
     }
 
     const theme = createMuiTheme({
@@ -121,7 +127,7 @@ const RequestMangement = () => {
                                     G
                                 </Avatar>
                                 }
-                                title={<div className={classes.ftSmall}><a>{user.displayName}</a><div>{user.email}</div></div>}
+                                title={<div className={classes.ftSmall}><a>{user.fullName}</a><div>{user.email}</div></div>}
                                 subheader='Rating:'{... requestMange.rating}
                             />
                         </div>
@@ -138,6 +144,7 @@ const RequestMangement = () => {
                             <ThemeProvider theme={theme}>
                                 <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('end')}>End My Appointment</Button>
                                 <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('cancel')}>Cancel My Appointment</Button>
+                                <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('rating')}>Rating Test</Button>
                             </ThemeProvider>
                         </div>
                         <div className={classes.paddings1}>
@@ -212,23 +219,32 @@ const RequestMangement = () => {
                                     value={textField}
                                     onChange={handleTextFieldChange}
                                     />
-                                <Button variant="contained" color="secondary" style={{marginBottom:"20px"}} onClick={handleSubmit}>Post</Button>
+                                <Button variant="contained" color="secondary" style={{marginBottom:"20px"}} onClick={handleComment}>Post</Button>
                             </div>
                         </div>
                     </div>
                 </Col>
                 </ThemeProvider>
-                <Col className="nav-column" xs={12} sm={6}>
-                    <RequestGoogleMap id={requestMange.id} ></RequestGoogleMap>
+                <Col className="nav-column" xs={12} sm={6}>{user.userType===0? 
+                  <> <RequestGoogleMap id={requestMange.id} ></RequestGoogleMap> {requestMange.status===0 ? <h1>Waiting for taken</h1> : <h1>taken</h1>} </>: 
+                    <h1>Take</h1>}
                 </Col>
                 <ThemeProvider theme={theme}>
                     <Modal style={modalStyle} isOpen={wrapOpen} appElement={document.getElementById('root')}>
-                        <h2 className="text-left">{wrapId.substring(0,1).toUpperCase()}{wrapId.substring(1,wrapId.length)} My Appointment?</h2>
-                        <p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
-                        <div className="text-right">
-                            <Button color="secondary" variant="contained" style={{borderRadius:"15px", border:"none"}} onClick={handleEnd}>Confirm</Button>
-                            <Button color="secondary" onClick={() => setWrapOpen(false)}>Cancel</Button>
-                        </div>
+                        {(wrapId==="end" || wrapId==="cancel" )? <> 
+                            <h2 className="text-left">{wrapId.substring(0,1).toUpperCase()}{wrapId.substring(1,wrapId.length)} My Appointment?</h2>
+                            <p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
+                            <div className="text-right">
+                                <Button color="secondary" variant="contained" style={{borderRadius:"15px", border:"none"}} onClick={handleEnd}>Confirm</Button>
+                                <Button color="secondary" onClick={() => setWrapOpen(false)}>Cancel</Button>
+                            </div>
+                        </> :<>
+                            <h2 className="text-center">Thank you for using InstaCare</h2>
+                            <Rating className={classes.centerItem} name="simple-controlled" value={rating} onChange={(event, newValue) => {setRating(newValue)}}/>
+                            <div>
+                                <Button className={classes.centerButton} color="secondary" variant="contained" style={{borderRadius:"15px", border:"none"}} onClick={handleRating}>Submit</Button>
+                            </div>
+                        </>}
                     </Modal>
                 </ThemeProvider>
             </Grid>}
@@ -261,10 +277,23 @@ const useStyles = makeStyles((theme) => ({
     },
     chip: {
         margin: theme.spacing(0.5),
-    },backdrop: {
+    },
+    backdrop: {
         zIndex: theme.zIndex.drawer + 1,
         color: '#fff',
     },
+    centerItem: {
+        marginLeft: "50%",
+        marginTop: "40px",
+        marginBottom: "20px",
+        transform:"translateX(-50%) scale(2)"
+    },
+    centerButton: {
+        marginLeft: "50%",
+        marginTop: "20px",
+        marginBottom: "20px",
+        transform:"translateX(-50%)"
+    }
   }));
 
 const modalStyle = {
