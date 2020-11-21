@@ -170,13 +170,13 @@ const PostRequest = () => {
             title: 'Volunteer',
             dataIndex: 'volunteer',
             key: 'volunteer',
-            width: '18%'
+            width: '15%'
         },
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'10%',
+            width:'12%',
             render: tags => (
                 <>
                     {tags.map(tag => {
