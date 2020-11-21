@@ -142,9 +142,9 @@ const PostRequest = () => {
     const pastData = requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        requestTitle: res.title,
+        requestTitle: res.title === null? "":res.title,
         volunteer: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
 
     // react select of address list
