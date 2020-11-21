@@ -19,7 +19,6 @@ const PostRequest = () => {
     const requestDetail = useSelector((state)=>state.requestDetail)
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
-
     let history = useHistory();
     const dispatch = useDispatch();
 
@@ -64,6 +63,8 @@ const PostRequest = () => {
             neededPhysicalContact: checked,
             createTime: date,
             tags: tags,
+            seniorId: user.uid,
+            status: 0,
         }
 
         if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){
@@ -149,8 +150,8 @@ const PostRequest = () => {
 
     // react select of address list
     const addressOptions = addressList.length !== 0? addressList.map(address=>({
-        value: address, label:address
-    })) : [{value:"default", label:"no address recorded in database"}];
+         value: address, label:address
+      })) : [{value:"default", label:"no address recorded in database"}];
 
     const ongoingColumns = [
 
@@ -223,6 +224,7 @@ const PostRequest = () => {
             dataIndex: 'volunteer',
             key: 'volunteer',
             width: '15%'
+
         },
         {
             title: 'Tags',
@@ -271,7 +273,6 @@ const PostRequest = () => {
                             <Button type="primary" style={{background:'#00897B',  width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" onClick={()=>handleDelete} >Delete</Button>
                         </div>
                     </div>
-
                 </Space>
             ),
         },
@@ -280,6 +281,7 @@ const PostRequest = () => {
     return (
         <div style={customStyle}>
             <h1 style={{marginTop:'-50px', marginBottom: '70px', float:'left'}}>Welcome{user==null?"":", "+fullName}</h1>
+
             <div className="col-sm-1">
                 <select className="ml-3" style={{border:'none', color:'#004D40', outline:'none'}} onChange={handleChange}>
                     <option value="onGoing">Ongoing Requests</option>
