@@ -23,10 +23,6 @@ const options = {
 
 
 function RequestGoogleMap(props) {
-    // const { isLoaded, loadError } = useLoadScript({
-    //     googleMapsApiKey: "AIzaSyDLB3etEpCoDoo4CLRW9JFCbL0dzY5CaOM",
-    //     libraries,
-    // })
 
     let intervalId
     const [currentLat, setCurrentLat] = useState(200);
@@ -41,26 +37,30 @@ function RequestGoogleMap(props) {
         border: 'none',
         zIndex: '10',
     }
+
     const mapRef = React.useRef();
-    function GetGeoLocation(){
-        console.log("GetGeoLocation function")
-        // panTo({
-        //     lat: 43,
-        //     lng: 79,
-        // })
-        navigator.geolocation.getCurrentPosition((pos) => {
-            panTo({
-                lat: pos.coords.latitude,
-                lng: pos.coords.longitude,
-            })
-        },(err) => {
-            console.log(err)
-        })
+
+    const onLoad = React.useCallback((map) => {
+        mapRef.current = map;
+    }, [])
+
+    const onUnmount = React.useCallback(function callback(map) {
+        clearInterval(intervalId);
+    }, [])
+
+    const panTo = React.useCallback(({lat,lng}) =>{
+        mapRef.current.panTo({lat, lng});
+    },[])
+
+    function Tracking({panTo}){
+        return <button style={locateStyle} onClick={TrackingGeoLocation}><div>Start sending my location</div></button>
     }
+    function TrackingGeoLocation(){
+        console.log("TrackingGeoLocation function")
+        intervalId = setInterval(updatePosition,10000)
+    }
+
     function updatePosition() {
-
-
-
         navigator.geolocation.getCurrentPosition((pos) => {
             panTo({
                 lat: pos.coords.latitude,
@@ -81,44 +81,9 @@ function RequestGoogleMap(props) {
             enableHighAccuracy: true,
         })
     }
-    function TrackingGeoLocation(){
-        console.log("TrackingGeoLocation function")
-        // panTo({
-        //     lat: 43,
-        //     lng: 79,
-        // })
-        intervalId = setInterval(updatePosition,10000)
-    }
-    function Locate({panTo}){
-        return <button style={locateStyle} onClick={GetGeoLocation}><div>locate me</div></button>
-    }
-
-
-    function Tracking({panTo}){
-        return <button style={locateStyle} onClick={TrackingGeoLocation}><div>Start sending my location</div></button>
-    }
-
-    const onLoad = React.useCallback((map) => {
-        // const bounds = new window.google.maps.LatLngBounds();
-        // map.fitBounds(bounds);
-        // setMap(map)
-        mapRef.current = map;
-    }, [])
-
-    const onUnmount = React.useCallback(function callback(map) {
-        // setMap(null)
-        clearInterval(intervalId);
-    }, [])
-
-    const panTo = React.useCallback(({lat,lng}) =>{
-        mapRef.current.panTo({lat, lng});
-    },[])
-
 
     return (
-        // <Tracking panTo={panTo}></Tracking>
-        <LoadScript googleMapsApiKey="AIzaSyDLB3etEpCoDoo4CLRW9JFCbL0dzY5CaOM">
-            {/*<Locate panTo={panTo}></Locate>*/}
+        <LoadScript googleMapsApiKey="AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y">
             <Tracking panTo={panTo}></Tracking>
             <GoogleMap
                 mapContainerStyle={mapContainerStyle}
