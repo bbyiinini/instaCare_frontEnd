@@ -85,7 +85,16 @@ const App = () => {
         dispatch({
           type: 'PAST',
           payload: pastRequestDetail
-        })
+        });
+
+        const onGoingResult = await Axios.get(
+            "http://localhost:8080/request/all",
+        );
+        const allOnGoingRequest = onGoingResult.data.data;
+        dispatch({
+          type: 'ALL_ONGOING_REQUEST',
+          payload: allOnGoingRequest
+        });
 
       }else{
         console.log("you have logout")

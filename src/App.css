@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  font-family: 'Rasa', serif;
+  font-size: 24px;
 }
 
 .App-logo {
@@ -83,8 +85,5 @@
   box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
   min-width: 28px;
   font-weight: 500;
-}
-
-.google-map-custom-control:hover {
   font-weight: 900 !important;
 }

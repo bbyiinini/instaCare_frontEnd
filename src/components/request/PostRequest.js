@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import Modal from "react-modal";
 import {Button, Table, Pagination, Space, Tag} from "antd";
 import Axios from "axios";
@@ -19,7 +19,6 @@ const PostRequest = () => {
     const requestDetail = useSelector((state)=>state.requestDetail)
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
-    
     let history = useHistory();
     const dispatch = useDispatch();
 
@@ -65,7 +64,7 @@ const PostRequest = () => {
             createTime: date,
             tags: tags,
             seniorId: user.uid,
-            status: 0
+            status: 0,
         }
 
         if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){
@@ -75,7 +74,7 @@ const PostRequest = () => {
             }).catch(res=>{
                 toast.error("save failed")
             })
-             window.location.reload();
+            window.location.reload();
         }else {
             console.log(text, title, address, phoneNumber)
             toast.error("please fill all required information")
@@ -86,7 +85,15 @@ const PostRequest = () => {
     const handleRequestMange = (key) =>{
         dispatch({
             type: 'OREQBYID',
-            payload: requestDetail.ongoingRequest[key],
+            payload:requestDetail.ongoingRequest[key],
+        });
+        history.push('/requestmangement');
+    }
+
+    const handlePastRequestMange = (key) =>{
+        dispatch({
+            type: 'OREQBYID',
+            payload:requestDetail.pastRequest[key],
         });
         history.push('/requestmangement');
     }
@@ -114,6 +121,9 @@ const PostRequest = () => {
         setAddress(e.value)
     }
 
+    const handleDelete = () => {
+    }
+
     if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
         return null
     }
@@ -133,9 +143,9 @@ const PostRequest = () => {
     const pastData = requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        requestTitle: res.title,
+        requestTitle: res.title === null? "":res.title,
         volunteer: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
 
     // react select of address list
@@ -149,34 +159,31 @@ const PostRequest = () => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            width: '15%'
+            width: '18%'
         },
         {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
-            width: '15%'
+            width: '18%'
         },
         {
             title: 'Volunteer',
             dataIndex: 'volunteer',
             key: 'volunteer',
-            width: '10%'
+            width: '15%'
         },
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'5%',
+            width:'12%',
             render: tags => (
                 <>
                     {tags.map(tag => {
-                        let color = tag.length > 5 ? 'geekblue' : 'green';
-                        if (tag === 'Grocery') {
-                            color = 'volcano';
-                        }
+                        let color = '#B2DFDB';
                         return (
-                            <Tag color={color} key={tag}>
+                            <Tag style={{color:'black', fontSize:'16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -188,17 +195,84 @@ const PostRequest = () => {
             title: 'Request Time',
             dataIndex: 'requestTime',
             key: 'requestTime',
-            width: '20%'
+            width: '18%'
         },
-    
+
         {
             key: 'action',
             render: (text,record) => (
-    
+
                 <Space size="middle">
                     {/*<a>Invite {record.name}</a>*/}
                     {/*<a>Delete</a>*/}
-                    <Button type="primary" style={{background:'green'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                    <Button type="primary" style={{background:'#00897B', fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                </Space>
+            ),
+        },
+    ];
+
+    const pastColumns = [
+
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '18%'
+        },
+        {
+            title: 'Volunteer',
+            dataIndex: 'volunteer',
+            key: 'volunteer',
+            width: '15%'
+
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width:'10%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+
+                        return (
+                            <Tag style={{color:'black',fontSize:'16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '18%'
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            key: 'rating',
+            width: '18%'
+        },
+
+        {
+            key: 'action',
+            render: (text,record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <div className="-vertical">
+                        <div className="m-2">
+                            <Button type="primary" style={{background:'#00897B', width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handlePastRequestMange(record.key)}>Detail</a></Button>
+                        </div>
+                        <div className="m-2">
+                            <Button type="primary" style={{background:'#00897B',  width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" onClick={()=>handleDelete} >Delete</Button>
+                        </div>
+                    </div>
                 </Space>
             ),
         },
@@ -206,19 +280,21 @@ const PostRequest = () => {
 
     return (
         <div style={customStyle}>
-            <h1 className="float-left">Welcome{user==null?"":", "+fullName}</h1>
+            <h1 style={{marginTop:'-50px', marginBottom: '70px', float:'left'}}>Welcome{user==null?"":", "+fullName}</h1>
+
             <div className="col-sm-1">
-                <select className="ml-3" style={{border:'none', color:'darkgreen', outline:'none'}} defaultValue="onGoing" onChange={handleChange}>
+                <select className="ml-3" style={{border:'none', color:'#004D40', outline:'none'}} onChange={handleChange}>
                     <option value="onGoing">Ongoing Requests</option>
                     <option value="past">Past Requests</option>
                 </select>
             </div>
 
-            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 2}} /> :
-                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 2}} />
+
+            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
+                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />
             }
 
-            <Button type="primary" style={{background:'green', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
+            <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
 
 
             <MuiThemeProvider>
@@ -227,8 +303,8 @@ const PostRequest = () => {
                     <form >
                         <div>
                             <label className="form-inline" style={{height:'50px'}}>Title
-                            <TextField style={{marginBottom:'30px', marginLeft:'20px'}} required id="standard-basic" label="Enter a title"
-                              onChange={e=>setTitle(e.target.value)}/>
+                                <TextField style={{marginTop:'5px', marginLeft:'10px'}} required id="standard-basic"
+                                           onChange={e=>setTitle(e.target.value)}/>
                             </label>
                             <div >
                                 <div className="tags-input">
@@ -255,8 +331,8 @@ const PostRequest = () => {
                             <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
                             <label className="form-check-label" >Physical contact needed</label>
                         </div>
-                        <Button type="primary" style={{background:'green'}} shape="round" className="float-right" onClick={handleSubmit}>Post</Button>
-                        <label style={{color:'green', cursor:'pointer'}} className="float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</label>
+                        <Button type="primary" style={{background:'#00897B', width:'80px'}} shape="round" className="float-right" onClick={handleSubmit}>Post</Button>
+                        <label style={{color:'#00897B', cursor:'pointer'}} className="float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</label>
                     </form>
                 </Modal>
             </MuiThemeProvider>
