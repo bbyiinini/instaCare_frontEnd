@@ -1,15 +1,15 @@
-import React, {Component, useState} from 'react';
-import {GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer} from '@react-google-maps/api';
+import React, { Component, useState } from 'react';
+import { GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 import styled from 'styled-components';
-import db, {firestore} from "../../base";
-import { useSelector} from "react-redux";
+import db, { firestore } from "../../base";
+import { useSelector } from "react-redux";
 import Axios from "axios";
 import PropTypes from 'prop-types'
 import "../../App.css"
 
 const center = {
-    lat: 43,
-    lng: -79,
+    lat: 32.8755662,
+    lng: -117.23232519999999,
 };
 
 const mapContainerStyle = {
@@ -28,17 +28,18 @@ const options = {
 const GOOGLE_API_KEY = "AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y"
 
 
-const RequestGoogleMap = (props)=>  {
+const RequestGoogleMap = (props) => {
 
     let intervalId
-    const [currentLat, setCurrentLat] = useState(200);
-    const [currentLng, setCurrentLng] = useState(200);
+    const [currentLat, setCurrentLat] = useState(32.8755662);
+    const [currentLng, setCurrentLng] = useState(-117.23232519999999);
 
     const [targetAddress, setTargetAddress] = useState(null);
     const [currentAddress, setCurrentAddress] = useState(null);
     const [response, setResponse] = useState(null);
     const [travelMode, setTravelMode] = useState('DRIVING');
-    if(!targetAddress){
+
+    if (!targetAddress) {
         // const requestRef = firestore.collection("requests")
         // const userRef = requestRef.doc(props.id)
         // userRef.collection('onGoing').doc(originReq.id).onSnapshot(function(doc) {
@@ -49,7 +50,7 @@ const RequestGoogleMap = (props)=>  {
         setTargetAddress('8775 Costa Verde Blvd San Diego CA')
     }
 
-    if(!currentAddress){
+    if (!currentAddress) {
         // const requestRef = firestore.collection("requests")
         // const userRef = requestRef.doc(props.id)
         // userRef.collection('onGoing').doc(originReq.id).onSnapshot(function(doc) {
@@ -58,8 +59,8 @@ const RequestGoogleMap = (props)=>  {
         // });
 
 
-        setCurrentAddress( Axios.get("https://maps.googleapis.com/maps/api/geocode/json" +
-            "?latlng="+currentLat+","+currentLng+"&key="+GOOGLE_API_KEY))
+        setCurrentAddress(currentLat + "," + currentLng)
+
     }
 
     // const locateStyle = {
@@ -81,13 +82,13 @@ const RequestGoogleMap = (props)=>  {
         clearInterval(intervalId);
     }, [])
 
-    const panTo = React.useCallback(({lat,lng}) =>{
-        mapRef.current.panTo({lat, lng});
-    },[])
+    const panTo = React.useCallback(({ lat, lng }) => {
+        mapRef.current.panTo({ lat, lng });
+    }, [])
 
-    function TrackingGeoLocation(){
+    function TrackingGeoLocation() {
         console.log("TrackingGeoLocation function")
-        intervalId = setInterval(updatePosition,10000)
+        intervalId = setInterval(updatePosition, 10000)
     }
 
     function updatePosition() {
@@ -100,14 +101,14 @@ const RequestGoogleMap = (props)=>  {
             setCurrentLng(pos.coords.longitude);
             // console.log(pos.coords)
             firestore.collection('mapApi').doc(props.id).set({
-                volunteerLat:pos.coords.latitude,
-                volunteerlng:pos.coords.longitude,
-            }).then((res)=>{
+                volunteerLat: pos.coords.latitude,
+                volunteerlng: pos.coords.longitude,
+            }).then((res) => {
                 console.log(res)
-            }).catch((err)=>{console.log(err)})
-        },(err) => {
+            }).catch((err) => { console.log(err) })
+        }, (err) => {
             console.log(err)
-        },{
+        }, {
             enableHighAccuracy: true,
         })
     }
@@ -128,116 +129,115 @@ const RequestGoogleMap = (props)=>  {
         checked && setTravelMode('WALKING')
     }
 
-    const directionsCallback = (response) => {
-        console.log(response)
+    const directionsCallback = (res) => {
+        console.log(res)
 
-        if (response !== null) {
-            if (response.status === 'OK') {
-                setResponse(response)
+        if (res !== null && (response===null || response.request.travelMode!==res.request.travelMode || response.geocoded_waypoints[0].place_id!==res.geocoded_waypoints[0].place_id)){
+            if (res.status === 'OK') {
+                setResponse(res)
             } else {
-                console.log('response: ', response)
+                console.log('response: ', res)
             }
         }
     }
 
     return (
-        <div>
-            <div className='d-flex flex-wrap'>
-                <div className='form-group custom-control custom-radio mr-4'>
-                    <input
-                        id='DRIVING'
-                        className='custom-control-input'
-                        name='travelMode'
-                        type='radio'
-                        checked={travelMode === 'DRIVING'}
-                        onChange={checkDriving}
-                    />
-                    <label className='custom-control-label' htmlFor='DRIVING'>
-                        Driving
+        <>
+            <LoadScript googleMapsApiKey="AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y">
+
+                {/*<button style={locateStyle} onClick={TrackingGeoLocation}><div>Start sending my location</div></button>*/}
+                <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    center={center}
+                    zoom={14}
+                    onLoad={onLoad}
+                    onUnmount={onUnmount}
+                    options={options}
+                >
+                    <div className='d-flex flex-wrap'>
+                        <div className='form-group custom-control custom-radio mr-4'>
+                            <input
+                                id='DRIVING'
+                                className='custom-control-input'
+                                name='travelMode'
+                                type='radio'
+                                checked={travelMode === 'DRIVING'}
+                                onChange={checkDriving}
+                            />
+                            <label className='custom-control-label' htmlFor='DRIVING'>
+                                Driving
                     </label>
-                </div>
+                        </div>
 
-                <div className='form-group custom-control custom-radio mr-4'>
-                    <input
-                        id='BICYCLING'
-                        className='custom-control-input'
-                        name='travelMode'
-                        type='radio'
-                        checked={travelMode === 'BICYCLING'}
-                        onChange={checkBicycling}
-                    />
-                    <label className='custom-control-label' htmlFor='BICYCLING'>
-                        Bicycling
+                        <div className='form-group custom-control custom-radio mr-4'>
+                            <input
+                                id='BICYCLING'
+                                className='custom-control-input'
+                                name='travelMode'
+                                type='radio'
+                                checked={travelMode === 'BICYCLING'}
+                                onChange={checkBicycling}
+                            />
+                            <label className='custom-control-label' htmlFor='BICYCLING'>
+                                Bicycling
                     </label>
-                </div>
+                        </div>
 
-                <div className='form-group custom-control custom-radio mr-4'>
-                    <input
-                        id='TRANSIT'
-                        className='custom-control-input'
-                        name='travelMode'
-                        type='radio'
-                        checked={travelMode === 'TRANSIT'}
-                        onChange={checkTransit}
-                    />
-                    <label className='custom-control-label' htmlFor='TRANSIT'>
-                        Transit
+                        <div className='form-group custom-control custom-radio mr-4'>
+                            <input
+                                id='TRANSIT'
+                                className='custom-control-input'
+                                name='travelMode'
+                                type='radio'
+                                checked={travelMode === 'TRANSIT'}
+                                onChange={checkTransit}
+                            />
+                            <label className='custom-control-label' htmlFor='TRANSIT'>
+                                Transit
                     </label>
-                </div>
+                        </div>
 
-                <div className='form-group custom-control custom-radio mr-4'>
-                    <input
-                        id='WALKING'
-                        className='custom-control-input'
-                        name='travelMode'
-                        type='radio'
-                        checked={travelMode === 'WALKING'}
-                        onChange={checkWalking}
-                    />
-                    <label className='custom-control-label' htmlFor='WALKING'>
-                        Walking
+                        <div className='form-group custom-control custom-radio mr-4'>
+                            <input
+                                id='WALKING'
+                                className='custom-control-input'
+                                name='travelMode'
+                                type='radio'
+                                checked={travelMode === 'WALKING'}
+                                onChange={checkWalking}
+                            />
+                            <label className='custom-control-label' htmlFor='WALKING'>
+                                Walking
                     </label>
-                </div>
-            </div>
-        <LoadScript googleMapsApiKey={GOOGLE_API_KEY}>
-            <div className="gmnoprint google-map-custom-control-container">
-                <div className="gm-style-mtc">
-                    <div className="google-map-custom-control" title="Start sending my location">Start sending my location</div>
-                </div>
-            </div>
-            {/*<button style={locateStyle} onClick={TrackingGeoLocation}><div>Start sending my location</div></button>*/}
-            <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={center}
-                zoom={14}
-                onLoad={onLoad}
-                onUnmount={onUnmount}
-                options={options}
-            >
-                {!targetAddress && !currentAddress  && (
-                    <DirectionsService
-                        // eslint-disable-next-line react-perf/jsx-no-new-object-as-prop
-                        options={{
-                            destination: targetAddress,
-                            origin: currentAddress,
-                            travelMode: travelMode,
-                        }}
-                        callback={directionsCallback}
-                    />
-                )}
+                        </div>
+                    </div>
+                    <div className="gmnoprint google-map-custom-control-container">
+                        <div className="gm-style-mtc">
+                            <div className="google-map-custom-control" title="Start sending my location">Start sending my location</div>
+                        </div>
+                    </div>
+                    {targetAddress && currentAddress && (
+                        <DirectionsService
+                            options={{
+                                destination: targetAddress,
+                                origin: currentAddress,
+                                travelMode: travelMode,
+                            }}
+                            callback={directionsCallback}
+                        />
+                    )}
 
-                {this.state.response !== null && (
-                    <DirectionsRenderer
-                        // eslint-disable-next-line react-perf/jsx-no-new-object-as-prop
-                        options={{
-                            directions: response,
-                        }}
-                    />
-                )}
+                    {response !== null && (
+                        <DirectionsRenderer
+                            options={{
+                                directions: response,
+                            }}
+                        />
+                    )}
 
-                {/*<Marker position={{lat:currentLat,lng:currentLng}}/>*/}
-            </GoogleMap></LoadScript>
-        </div>
+                    {/*<Marker position={{lat:currentLat,lng:currentLng}}/>*/}
+                </GoogleMap></LoadScript>
+        </>
     )
 }
 
