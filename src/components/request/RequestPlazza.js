@@ -126,9 +126,10 @@ const PostRequest = () => {
                     <label  style={{color:'rgba(0, 0, 0, 0.3)'}}>Distance:</label>
                     <select style={{border:'none', outline:'none'}} id='foo'>
                         <option value='1'>Within 100 miles</option>
-                        <option value='2'>Within 200 miles</option>
-                        <option value='3'>Within 300 miles</option>
-                        <option value='4'>Within 400 miles</option>
+                        <option value='2'>Within 5 miles</option>
+                        <option value='3'>Within 10 miles</option>
+                        <option value='4'>Within 20 miles</option>
+                        <option value='4'>Within 30 miles</option>
                     </select>
                 </div>
                 <div style={customSelect}>
@@ -164,17 +165,6 @@ const customSelect = {
 
 }
 
-const searchContainer = {
-    border: '1px solid rgba(0, 0, 0, 0.3)',
-    display: 'inline',
-    height:'38px',
-    float:'left',
-    marginLeft:'30px',
-    borderRadius: '6px',
-    marginBottom: '50px',
-    width: '200px',
-
-}
 
 const searchInput = {
     marginTop: '5px',
