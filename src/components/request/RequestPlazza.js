@@ -14,7 +14,10 @@ const PostRequest = () => {
     const dispatch = useDispatch();
     const [ongoing, setOngoing] = useState([]);
     const [tag, setTag] = useState("All tags");
-
+    const [temp, setTemp] = useState([]);
+    const [flag, setFlag] = useState(true);
+    const [prevState, setPrevState] = useState("");
+    const [filterResult, setFilterResult] = useState([]);
     const handleRequestMange = (key) =>{
         dispatch({
             type: 'OREQBYID',
@@ -31,7 +34,7 @@ const PostRequest = () => {
     }
 
     let {allOnGoingRequest} = requestDetail
-    if (ongoing.length === 0 && tag === 'All tags'){
+    if (ongoing.length === 0 && flag === true){
         setOngoing(allOnGoingRequest);
     }
     const onGoingData = ongoing.map((res,index)=>({
@@ -43,27 +46,56 @@ const PostRequest = () => {
 
 
     const handleFilter = (e) => {
-
         let result = allOnGoingRequest.filter(name=>name.tags.includes(e.target.value))
-
+        setFilterResult(result);
         if (result.length === 0 ){
             if (e.target.value === 'All tags'){
                 setOngoing(allOnGoingRequest)
                 return;
             }
-            setTag("")
+            setTag(e.target.value)
+            setFlag(false)
             setOngoing([])
 
         }else {
+            setTag(e.target.value)
             setOngoing(result)
         }
     }
 
+
+    // console.log(tag)
     const handleSearch = (e) => {
-        let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(e.target.value))
+        let value = e.target.value.toLowerCase();
+        let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(value))
         let result = search.map(res=>(JSON.parse(res)))
-        if (e.target.value === ""){
+        if (result.length !== 0) {
+            setTemp(search)
+            setPrevState(value)
+        }
+        // console.log(temp)
+        // console.log(result)
+        if (value === "" && tag === "All tags"){
             setOngoing(allOnGoingRequest)
+        }else if (result.length === 0){
+            if (tag !== "All tags" && value===prevState){
+                // console.log(prevState)
+                temp.filter(keyword=>keyword.toLowerCase().includes(value))
+                let tempResult = temp.map(res=>(JSON.parse(res)))
+                setOngoing(tempResult)
+            }else{
+                console.log(prevState)
+                if (tag === "All tags" && value === prevState){
+                    temp.filter(keyword=>keyword.toLowerCase().includes(value))
+                    let tempResult = temp.map(res=>(JSON.parse(res)))
+                    setOngoing(tempResult)
+                    return;
+                }
+                setFlag(false)
+                setOngoing([])
+            }
+        }else if (value === "" && tag !== "All tags"){
+            setOngoing(filterResult)
         }else{
             setOngoing(result)
         }
