@@ -59,7 +59,9 @@ const App = () => {
 
         // store user profile data into redux
         const {data} = await userService.retrieve(user.uid)
+
         const profileData = data.data
+        console.log(profileData)
         dispatch({
           type:'SET_PROFILE',
           payload: profileData

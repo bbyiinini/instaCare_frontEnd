@@ -4,15 +4,9 @@ import {useHistory} from "react-router-dom"
 import db,{firestore} from "../base";
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import AppBar from 'material-ui/AppBar';
-import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import {MailOutlined} from "@ant-design/icons";
 import {Button} from "antd";
+import userService from '../service/UserService'
 
 export default function FinishSetUp(props){
   let user = useSelector(state=>state.user)
@@ -45,6 +39,7 @@ export default function FinishSetUp(props){
       phone:phone,
       address:addr
     }
+    // await userService.registed(uid,userObj)
     await firestore.collection("users").doc(uid).set(userObj)
     window.location = "/"
   }
