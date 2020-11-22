@@ -38,8 +38,9 @@ const PostRequest = () => {
         key: index,
         tags: res.tags===null?[]:res.tags,
         address: res.address,
-        requestContent: res.requestContent
+        requestContent: res.requestContent,
     }));
+
 
     const handleFilter = (e) => {
 
@@ -59,6 +60,13 @@ const PostRequest = () => {
     }
 
     const handleSearch = (e) => {
+        let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(e.target.value))
+        let result = search.map(res=>(JSON.parse(res)))
+        if (e.target.value === ""){
+            setOngoing(allOnGoingRequest)
+        }else{
+            setOngoing(result)
+        }
     }
 
 
