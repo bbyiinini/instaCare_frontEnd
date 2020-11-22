@@ -46,10 +46,11 @@ const PostRequest = () => {
 
 
     const handleFilter = (e) => {
-        let result = allOnGoingRequest.filter(name=>name.tags.includes(e.target.value))
+        let result = allOnGoingRequest.filter(name=>name.tags.map(res=>res).includes(e.target.value))
         setFilterResult(result);
         if (result.length === 0 ){
             if (e.target.value === 'All tags'){
+                setTag(e.target.value)
                 setOngoing(allOnGoingRequest)
                 return;
             }
@@ -61,10 +62,10 @@ const PostRequest = () => {
             setTag(e.target.value)
             setOngoing(result)
         }
+
     }
 
 
-    // console.log(tag)
     const handleSearch = (e) => {
         let value = e.target.value.toLowerCase();
         let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(value))
@@ -75,6 +76,7 @@ const PostRequest = () => {
         }
         // console.log(temp)
         // console.log(result)
+        // console.log(tag)
         if (value === "" && tag === "All tags"){
             setOngoing(allOnGoingRequest)
         }else if (result.length === 0){
@@ -84,7 +86,6 @@ const PostRequest = () => {
                 let tempResult = temp.map(res=>(JSON.parse(res)))
                 setOngoing(tempResult)
             }else{
-                console.log(prevState)
                 if (tag === "All tags" && value === prevState){
                     temp.filter(keyword=>keyword.toLowerCase().includes(value))
                     let tempResult = temp.map(res=>(JSON.parse(res)))
