@@ -2,11 +2,11 @@ import React, {Component, useEffect, useState} from 'react';
 import {useDispatch, useSelector,useStore} from "react-redux";
 import {useHistory} from "react-router-dom"
 import db,{firestore} from "../base";
+import UserService from "../service/UserService";
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import {Button} from "antd";
-import userService from '../service/UserService'
 
 export default function FinishSetUp(props){
   let user = useSelector(state=>state.user)
@@ -28,19 +28,23 @@ export default function FinishSetUp(props){
     setaddr(e.target.value);
   };
   let finished = fname && lname && phone && addr;
-  let history = useHistory()
   const handleFinish = async () => {
     const userObj = {
       firstName:fname,
       lastName:lname,
-      fullName:fname+lname,
+      fullName:fname +" "+ lname,
       email:email,
       id:uid,
       phone:phone,
-      address:addr
+      avatar:"https://www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png",
+      addressList:[addr],
     }
-    // await userService.registed(uid,userObj)
-    await firestore.collection("users").doc(uid).set(userObj)
+
+    await UserService.registed(uid, userObj).then(res=>{
+      console.log("saved user type to backend")
+    }).catch(res=>{
+      console.log("CORS not connected")
+    });
     window.location = "/"
   }
 

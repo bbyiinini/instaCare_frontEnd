@@ -8,6 +8,15 @@ export const userProfileReducer = (state = null, action) =>{
       return {...state,description:action.payload};
     case "Phone":
       return {...state,phone:action.payload};
+    case "Avatar":
+      return {...state,avatar:action.payload};
+    case "New Address":
+      if(!state.addressList){
+        return {...state,addressList: [action.payload]}
+      }else{
+        let newAddr = [...state.addressList,action.payload]
+        return {...state,addressList: newAddr}
+      }
     case "Address":
       let oldAddressList = [...state.addressList]
       oldAddressList[action.payload.index] = action.payload.content

@@ -13,8 +13,8 @@ import {toast} from "react-toastify";
 
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 
-import welcome from '../../Assets/welcome.png'
-import googlepng from '../../Assets/google.png'
+import welcome from '../../assets/welcome.png'
+import googlepng from '../../assets/google.png'
 
 
 const useStyles = makeStyles({

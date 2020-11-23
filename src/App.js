@@ -23,6 +23,7 @@ import Profile from './components/Profile'
 import ResetPassword from "./components/auth/ResetPassword";
 
 import userService from './service/UserService'
+import Axios from "axios";
 
 
 const App = () => {
@@ -36,6 +37,9 @@ const App = () => {
       const data = doc.data()
       if(!data){
         //  user hasn't finished setup
+        setStatus(false)
+        console.log("still false")
+      }else if(data.id==null){
         setStatus(false)
         console.log("still false")
       }
@@ -66,6 +70,33 @@ const App = () => {
           type:'SET_PROFILE',
           payload: profileData
         })
+
+        const requestResult = await Axios.get(
+            "http://localhost:8080/request/" + user.uid,
+        );
+        const requestDetail = requestResult.data.data
+        dispatch({
+          type: 'REQUEST',
+          payload: requestDetail
+        })
+
+        const pastResult = await Axios.get(
+            "http://localhost:8080/request/past/" + user.uid,
+        );
+        const pastRequestDetail = pastResult.data.data
+        dispatch({
+          type: 'PAST',
+          payload: pastRequestDetail
+        });
+
+        const onGoingResult = await Axios.get(
+            "http://localhost:8080/request/all",
+        );
+        const allOnGoingRequest = onGoingResult.data.data;
+        dispatch({
+          type: 'ALL_ONGOING_REQUEST',
+          payload: allOnGoingRequest
+        });
 
       }else{
         console.log("you have logout")
@@ -100,7 +131,7 @@ const App = () => {
               </div>
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
-            <Route exact path="/signup" component={() => <Signup />} />
+            <ProtectedRoute exact path="/signup" component={() => <Signup />} />
             <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
             <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />
             <Route exact path="/finishSetUp" component={() => <FinishSetUp/>}/>
