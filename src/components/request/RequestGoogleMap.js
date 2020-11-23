@@ -5,7 +5,7 @@ import db, { firestore } from "../../base";
 // import { useSelector } from "react-redux";
 // import Axios from "axios";
 // import PropTypes from 'prop-types'
-import "./App.css"
+import "./../../App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Row, Col,ButtonGroup, Button, ToggleButton} from "react-bootstrap";
 
