@@ -28,7 +28,7 @@ import Axios from "axios";
 
 const App = () => {
   const dispatch = useDispatch();
-  const [finishStatus,setStatus] = useState(true)
+  const [finishStatus,setStatus] = useState("unkown")
   let user = useSelector(state=>state.user)
   if(!user){user = {UnLogin:true}}
   // console.log(user)
@@ -121,8 +121,9 @@ const App = () => {
           /> */}
           <Switch>
             <Route exact path="/">
+              {/*{(!user && !finishStatus)? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
               {!finishStatus && <Redirect to="/finishSetUp"/>}
-              {!user ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}
+              {finishStatus === 'unknown' ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
             <ProtectedRoute exact path="/signup" component={() => <Signup />} />
