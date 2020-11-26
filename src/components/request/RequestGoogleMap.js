@@ -157,80 +157,15 @@ const RequestGoogleMap = (props) => {
                     onUnmount={onUnmount}
                     options={options}
                 >
-                    <Container>
+                    {props.userType===1 && <Container>
                         <Row>
                             <Col xs={7}>
-                                {/*<div className="gmnoprint google-map-custom-control-container">*/}
-                                {/*    <div className="gm-style-mtc">*/}
-                                {/*        <div className="google-map-custom-control"*/}
-                                {/*        >*/}
                                 <ButtonGroup  className="gmnoprint google-map-custom-control-container" toggle aria-label="Basic example"  size="sm">
                                     <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'DRIVING'} onChange={checkDriving}>Driving</ToggleButton>
                                     <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'BICYCLING'} onChange={checkBicycling}>Bicycling</ToggleButton>
                                     <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'TRANSIT'} onChange={checkTransit}>Transit</ToggleButton>
                                     <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'WALKING'} onChange={checkWalking}>Walking</ToggleButton>
                                 </ButtonGroup>
-                                {/*<div className='d-flex flex-wrap'>*/}
-                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
-                                {/*        <input*/}
-                                {/*            id='DRIVING'*/}
-                                {/*            className='custom-control-input'*/}
-                                {/*            name='travelMode'*/}
-                                {/*            type='radio'*/}
-                                {/*            checked={travelMode === 'DRIVING'}*/}
-                                {/*            onChange={checkDriving}*/}
-                                {/*        />*/}
-                                {/*        <label className='custom-control-label' htmlFor='DRIVING'>*/}
-                                {/*            Driving*/}
-                                {/*        </label>*/}
-                                {/*    </div>*/}
-
-                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
-                                {/*        <input*/}
-                                {/*            id='BICYCLING'*/}
-                                {/*            className='custom-control-input'*/}
-                                {/*            name='travelMode'*/}
-                                {/*            type='radio'*/}
-                                {/*            checked={travelMode === 'BICYCLING'}*/}
-                                {/*            onChange={checkBicycling}*/}
-                                {/*        />*/}
-                                {/*        <label className='custom-control-label' htmlFor='BICYCLING'>*/}
-                                {/*            Bicycling*/}
-                                {/*        </label>*/}
-                                {/*    </div>*/}
-
-                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
-                                {/*        <input*/}
-                                {/*            id='TRANSIT'*/}
-                                {/*            className='custom-control-input'*/}
-                                {/*            name='travelMode'*/}
-                                {/*            type='radio'*/}
-                                {/*            checked={travelMode === 'TRANSIT'}*/}
-                                {/*            onChange={checkTransit}*/}
-                                {/*        />*/}
-                                {/*        <label className='custom-control-label' htmlFor='TRANSIT'>*/}
-                                {/*            Transit*/}
-                                {/*        </label>*/}
-                                {/*    </div>*/}
-
-                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
-                                {/*        <input*/}
-                                {/*            id='WALKING'*/}
-                                {/*            className='custom-control-input'*/}
-                                {/*            name='travelMode'*/}
-                                {/*            type='radio'*/}
-                                {/*            checked={travelMode === 'WALKING'}*/}
-                                {/*            onChange={checkWalking}*/}
-                                {/*        />*/}
-                                {/*        <label className='custom-control-label' htmlFor='WALKING'>*/}
-                                {/*            Walking*/}
-                                {/*        </label>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
-
                             </Col>
                             <Col xs={3}>
                                 <div className="gmnoprint google-map-custom-control-container">
@@ -242,7 +177,7 @@ const RequestGoogleMap = (props) => {
                                 </div>
                             </Col>
                         </Row>
-                    </Container>
+                    </Container>}
 
 
                     {targetAddress && currentAddress && (
