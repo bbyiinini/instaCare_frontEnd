@@ -136,21 +136,34 @@ const PostRequest = () => {
 
     let {fullName, addressList} = profile
     let {ongoingRequest} = requestDetail
-    const onGoingData = ongoingRequest.map((res,index)=>({
+    const onGoingData = profile.userType===1? ongoingRequest.map((res,index)=>({
         key: index,
-        status: res.status===1?"Volunteer on the way":"request sent",
+        status: res.status===2?"Volunteer on the way":"request sent",
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
-        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        user: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+    })) : ongoingRequest.map((res,index)=>({
+        key: index,
+        status: res.status===2?"Volunteer on the way":"request sent",
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title,
+        user: res.Senior === null? "Pending" : res.Senior,
         requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
 
 
-    const pastData = requestDetail.pastRequest.map((res,index)=>({
+    const pastData = profile.userType===1? requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title === null? "":res.title,
-        volunteer: res.volunteer === null? "Pending" : res.volunteer,
+        user: res.volunteer === null? "Pending" : res.volunteer,
+        requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
+    })):requestDetail.pastRequest.map((res,index)=>({
+        key: index,
+        tags: res.tags===null?[]:res.tags,
+        requestTitle: res.title === null? "":res.title,
+        user: res.Senior === null? "Pending" : res.Senior,
         requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
     }));
 
@@ -174,9 +187,9 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: 'Volunteer',
-            dataIndex: 'volunteer',
-            key: 'volunteer',
+            title: profile.userType===1?'Volunteer':'Senior',
+            dataIndex: 'user',
+            key: 'user',
             width: '15%'
         },
         {
@@ -189,7 +202,7 @@ const PostRequest = () => {
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color:'black', fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -226,9 +239,9 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: 'Volunteer',
-            dataIndex: 'volunteer',
-            key: 'volunteer',
+            title: profile.userType===1?'Volunteer':'Senior',
+            dataIndex: 'user',
+            key: 'user',
             width: '15%'
 
         },
@@ -243,7 +256,7 @@ const PostRequest = () => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color:'black',fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color:'#004D40',fontSize:'16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -284,6 +297,7 @@ const PostRequest = () => {
         },
     ];
 
+
     return (
         <div style={customStyle}>
             <h1 style={{marginTop:'-50px', marginBottom: '70px', float:'left'}}>Welcome{user==null?"":", "+fullName}</h1>
@@ -295,10 +309,17 @@ const PostRequest = () => {
                 </select>
             </div>
 
-
-            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
-                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />
+            {profile.userType === 1 &&
+            (past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
+                    <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />)
             }
+
+            {profile.userType === 0 &&
+            (past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
+                    <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />)
+            }
+
+
 
             <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
 

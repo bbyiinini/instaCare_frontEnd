@@ -67,8 +67,8 @@ const NavHeader = () => {
             </Item>}
 
 
-            <Item key="requestPlazza" icon={<HomeOutlined />}>
-                <Link to="/request">requst plazza</Link>
+            <Item key="requestPlaza" icon={<HomeOutlined />}>
+                <Link to="/request">request plaza</Link>
             </Item>
 
             <Item key="post" icon={<HomeOutlined />}>

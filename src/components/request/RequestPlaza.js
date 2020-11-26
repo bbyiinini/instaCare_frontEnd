@@ -40,7 +40,7 @@ const PostRequest = () => {
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        address: res.address,
+        // address: res.address,
         requestContent: res.requestContent,
     }));
 
@@ -116,14 +116,14 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'15%',
+            width:'10%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color:'black', fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
