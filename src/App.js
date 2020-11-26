@@ -21,7 +21,7 @@ import RequestMangement from "./components/request/RequestMangement";
 import PostRequest from "./components/request/PostRequest";
 import Profile from './components/Profile'
 import ResetPassword from "./components/auth/ResetPassword";
-
+import Welcome from './components/auth/Welcome'
 import userService from './service/UserService'
 import Axios from "axios";
 
@@ -121,14 +121,7 @@ const App = () => {
           <Switch>
             <Route exact path="/">
               {!finishStatus && <Redirect to="/finishSetUp"/>}
-              <div className="root">
-                <header className="App-header">
-                  <img src={logo} className="App-logo" alt="logo" />
-                  <p>
-                    Welcome {user==null?"":user.displayName}
-                  </p>
-                </header>
-              </div>
+              <Welcome/>
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
             <ProtectedRoute exact path="/signup" component={() => <Signup />} />
