@@ -92,17 +92,10 @@ const App = () => {
         );
         const allOnGoingRequest = onGoingResult.data.data;
 
-          if (allOnGoingRequest.length === 0){
-            dispatch({
-              type: 'ALL_ONGOING_REQUEST',
-              payload: []
-            });
-          }else{
-            dispatch({
-              type: 'ALL_ONGOING_REQUEST',
-              payload: allOnGoingRequest
-            });
-          }
+        dispatch({
+          type: 'ALL_ONGOING_REQUEST',
+          payload: allOnGoingRequest
+        });
 
 
       }else{
