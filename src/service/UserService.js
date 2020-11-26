@@ -8,7 +8,7 @@ class UserService {
     // }
 
     registed(uid, data){
-        return Axios.put("http://localhost:8080/users/"+uid,data).then(response => {
+        return Axios.post("http://localhost:8080/users/"+uid,data).then(response => {
             console.log(response.data)
         })
         .catch(error => {
@@ -16,6 +16,15 @@ class UserService {
         });
     }
 
+    update(uid, data){
+        return Axios.put("http://localhost:8080/users/"+uid,data).then(response => {
+            console.log(response.data)
+        })
+            .catch(error => {
+                console.log(error.response)
+            });
+    }
+//t6zFmkEG2GTO1EWafXBZxHBm0Dp2
     retrieve(uid){
         return Axios.get("http://localhost:8080/users/" + uid)
     }

@@ -3,6 +3,8 @@ import {Button, Grid, Input, Modal, Backdrop, Fade, TextField} from '@material-u
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 import {useDispatch, useSelector,useStore} from "react-redux";
 import {toast} from "react-toastify";
+import { useHistory, Link} from "react-router-dom";
+import UserService from "../../service/UserService";
 
 const useStyle = makeStyles(theme=>({
   root:{
@@ -16,7 +18,7 @@ const useStyle = makeStyles(theme=>({
     margin:'auto',
     textAlign:'left',
     padding:'25px',
-    marginTop:"10vh"
+    marginTop:"5vh"
   },
   modal: {
     display: 'flex',
@@ -69,8 +71,16 @@ export default function (){
       })
     }
     handleClose()
-    // TODO: update user with profile
-    toast.success(`${modalTitle} Changed Successfully`)
+  }
+
+  const saveAll = () => {
+    profile.address_list = profile.addressList
+    UserService.update(profile.id,profile).then(res=>{
+      console.log("saved user type to backend")
+    }).catch(res=>{
+      console.log("CORS not connected")
+    });
+    toast.success(`User Profile Updated Successfully!`)
   }
 
   const handleDescription = () => {
@@ -85,6 +95,13 @@ export default function (){
     handleOpen()
   }
 
+  const handleAvatar = () => {
+    setTitle("Avatar")
+    setcontent(avatar)
+    handleOpen()
+  }
+
+
   const handleAddress = (index)=>{
     return ()=>{
       setindex(index)
@@ -92,6 +109,13 @@ export default function (){
       setcontent(addressList[index])
       handleOpen()
     }
+  }
+
+  const handleAddAddress = ()=>{
+    setindex()
+    setTitle("New Address")
+    setcontent("")
+    handleOpen()
   }
 
   const handleModalChange = (e) => {
@@ -102,6 +126,7 @@ export default function (){
     return(<div></div>)
   }
   let {addressList, avatar,email,fullName,phone,userType,description} = profile
+  console.log(profile)
   return(
       <div className={classes.root}>
     <Grid container spacing={2}>
@@ -110,19 +135,37 @@ export default function (){
           <h3>{fullName}</h3>
           <h5>{userType? "Senior" : "Volunteer"}</h5>
           <h5>{email}</h5>
-          <h5>Rating</h5>
+          <h5>Rating:</h5>
         </div>
         <div style={{textAlign:'left',width:"80%",marginTop:"15vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
-          <h4>Reset Password</h4>
+          <Link to={"/reset"}><h4>Reset Password</h4></Link>
           <h4>Contact us at <a>help@instacare.com</a></h4>
         </div>
+        <Button onClick={saveAll} style={{
+          borderStyle: "solid",
+          borderRadius: "100px",
+          borderWidth: "1px",
+          width:"80%",
+          margin:"auto",
+          textAlign:"center",
+          backgroundColor:"#12897b",
+          color:"white"
+        }}>update user profile</Button>
       </Grid>
       <Grid item xs={8}>
         <div className={classes.info}>
            <h3>Account Info</h3>
           <Grid container spacing={2}>
             <Grid item xs={3}>
-              <img src={avatar} alt={"avatar"}/>
+              <img src={profile.avatar}
+                   style={{
+                     width:"100px",
+                     height:"100px",
+                     borderRadius:"50%",
+                     margin:"10px"
+                   }}
+                   alt={"avatar"}/>
+              <span style={{color:"#064d40"}} onClick={handleAvatar}><b>Change Avatar</b></span>
             </Grid>
             <Grid item xs={9}>
 
@@ -163,8 +206,10 @@ export default function (){
             </Grid>
             )
           })}
+          <span style={{color:"#064d40"}} onClick={handleAddAddress}><b>Add address</b></span>
         </div>
       </Grid>
+
     </Grid>
         <Modal
             aria-labelledby="transition-modal-title"

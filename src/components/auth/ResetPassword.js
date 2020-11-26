@@ -44,6 +44,7 @@ const ResetPassword = () => {
   const [email, setEmail] = useState("")
   const classes = useStyles()
   const handleSubmit = async e => {
+    // TODO: fb api connect
     toast.info("You have succesfully reset your password!")
     history.push("/")
   }

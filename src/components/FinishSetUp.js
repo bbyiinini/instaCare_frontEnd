@@ -5,14 +5,7 @@ import db,{firestore} from "../base";
 import UserService from "../service/UserService";
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import AppBar from 'material-ui/AppBar';
-import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import {MailOutlined} from "@ant-design/icons";
 import {Button} from "antd";
 
 export default function FinishSetUp(props){
@@ -35,25 +28,23 @@ export default function FinishSetUp(props){
     setaddr(e.target.value);
   };
   let finished = fname && lname && phone && addr;
-  let history = useHistory()
   const handleFinish = async () => {
     const userObj = {
       firstName:fname,
       lastName:lname,
-      fullName:fname+lname,
+      fullName:fname +" "+ lname,
       email:email,
       id:uid,
       phone:phone,
-      address_list:[addr],
+      avatar:"https://www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png",
+      addressList:[addr],
     }
-    
+
     await UserService.registed(uid, userObj).then(res=>{
       console.log("saved user type to backend")
     }).catch(res=>{
       console.log("CORS not connected")
     });
-
-    // await firestore.collection("users").doc(uid).add(userObj)
     window.location = "/"
   }
 
