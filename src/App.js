@@ -30,6 +30,7 @@ const App = () => {
   const dispatch = useDispatch();
   const [finishStatus,setStatus] = useState(true)
   let user = useSelector(state=>state.user)
+  if(!user){user = {UnLogin:true}}
   // console.log(user)
   if(user && user.uid){
     // check if user profile is completed
@@ -121,7 +122,7 @@ const App = () => {
           <Switch>
             <Route exact path="/">
               {!finishStatus && <Redirect to="/finishSetUp"/>}
-              <Welcome/>
+              {!user ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
             <ProtectedRoute exact path="/signup" component={() => <Signup />} />

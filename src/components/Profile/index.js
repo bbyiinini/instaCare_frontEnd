@@ -74,7 +74,7 @@ export default function (){
   }
 
   const saveAll = () => {
-    profile.address_list = profile.addressList
+    // profile.address_list = profile.addressList
     UserService.update(profile.id,profile).then(res=>{
       console.log("saved user type to backend")
     }).catch(res=>{
