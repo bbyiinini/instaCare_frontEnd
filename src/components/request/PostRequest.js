@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Link, useHistory} from "react-router-dom";
+import React, {useState} from "react";
+import {useHistory} from "react-router-dom";
 import Modal from "react-modal";
 import {Button, Table, Pagination, Space, Tag} from "antd";
 import Axios from "axios";
@@ -9,9 +9,14 @@ import {toast} from "react-toastify";
 import "../../style/PostRequest.css";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {modalStyle, pastColumns} from "../../style/PostRequestTable";
+import {modalStyle} from "../../style/PostRequestTable";
 import Select from 'react-select'
 import moment from 'moment';
+import ReactPhoneInput from "react-phone-input-2";
+import 'react-phone-input-2/lib/style.css';
+
+
+
 
 const PostRequest = () => {
     const {user} = useSelector((state)=>({...state}))
@@ -43,7 +48,6 @@ const PostRequest = () => {
     const [address, setAddress] = useState("")
     const [phoneNumber, setPhoneNumber] = useState("")
     const [past, setPast] = useState(false)
-
 
     const handleCheckBox = () => {
         setChecked(!checked)
@@ -81,6 +85,7 @@ const PostRequest = () => {
         }
 
     }
+
 
     const handleRequestMange = (key) =>{
         dispatch({
@@ -120,6 +125,7 @@ const PostRequest = () => {
     const addAddress = (e) => {
         setAddress(e.value)
     }
+
 
     const handleDelete = () => {
     }
@@ -317,13 +323,29 @@ const PostRequest = () => {
                             <textarea className="form-control"
                                       placeholder="Required request detail" required onChange={e=>setText(e.target.value)}>
                     </textarea>
+                        </div>
+                        <div className="form-inline mt-3">
+                                <label>Phone Number </label>
+                                <ReactPhoneInput
+                                    style={{width:'50%', marginLeft: '10px'}}
+                                    country={'us'}
+                                    onlyCountries={['us']}
+                                    isValid={(value, country) => {
+                                        if (!value.match(/1/)) {
+                                            return 'Invalid area code: ' + value + ', ' + country.name;
+                                        } else {
+                                            return true;
+                                        }
+                                    }}
+                                    inputProps={{
+                                        name: "phone",
+                                        required: true,
+                                    }}
+                                    onChange={e=>(setPhoneNumber(e))}
+                                />
 
                         </div>
-                        <div className="form-inline">
-                            <label >Phone Number</label>
-                            <input style={{width:'50%'}} required type="phoneNumber" className="form-control ml-3 mt-3"
-                                   onChange={e=>setPhoneNumber(e.target.value)}/>
-                        </div>
+
                         <div className="form-group mt-3">
                             <Select options={addressOptions} placeholder={<div>Select your address</div>} onChange={addAddress}/>
                         </div>

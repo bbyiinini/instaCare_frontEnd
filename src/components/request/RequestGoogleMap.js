@@ -1,11 +1,13 @@
-import React, { Component, useState } from 'react';
-import { GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
-import styled from 'styled-components';
+import React, {Component, useState} from 'react';
+import {GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer} from '@react-google-maps/api';
+// import styled from 'styled-components';
 import db, { firestore } from "../../base";
-import { useSelector } from "react-redux";
-import Axios from "axios";
-import PropTypes from 'prop-types'
-import "../../App.css"
+// import { useSelector } from "react-redux";
+// import Axios from "axios";
+// import PropTypes from 'prop-types'
+import "./../../App.css"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Container, Row, Col,ButtonGroup, Button, ToggleButton} from "react-bootstrap";
 
 const center = {
     lat: 32.8755662,
@@ -82,8 +84,8 @@ const RequestGoogleMap = (props) => {
         clearInterval(intervalId);
     }, [])
 
-    const panTo = React.useCallback(({ lat, lng }) => {
-        mapRef.current.panTo({ lat, lng });
+    const panTo = React.useCallback(({lat, lng}) => {
+        mapRef.current.panTo({lat, lng});
     }, [])
 
     function TrackingGeoLocation() {
@@ -99,7 +101,8 @@ const RequestGoogleMap = (props) => {
             })
             setCurrentLat(pos.coords.latitude);
             setCurrentLng(pos.coords.longitude);
-            // console.log(pos.coords)
+            setCurrentAddress(currentLat + "," + currentLng)
+            console.log(pos.coords)
             firestore.collection('mapApi').doc(props.id).set({
                 volunteerLat: pos.coords.latitude,
                 volunteerlng: pos.coords.longitude,
@@ -113,26 +116,26 @@ const RequestGoogleMap = (props) => {
         })
     }
 
-    const checkDriving = ({ target: { checked } }) => {
+    const checkDriving = ({target: {checked}}) => {
         checked && setTravelMode('DRIVING')
     }
 
-    const checkBicycling = ({ target: { checked } }) => {
+    const checkBicycling = ({target: {checked}}) => {
         checked && setTravelMode('BICYCLING')
     }
 
-    const checkTransit = ({ target: { checked } }) => {
+    const checkTransit = ({target: {checked}}) => {
         checked && setTravelMode('TRANSIT')
     }
 
-    const checkWalking = ({ target: { checked } }) => {
+    const checkWalking = ({target: {checked}}) => {
         checked && setTravelMode('WALKING')
     }
 
     const directionsCallback = (res) => {
         console.log(res)
 
-        if (res !== null && (response===null || response.request.travelMode!==res.request.travelMode || response.geocoded_waypoints[0].place_id!==res.geocoded_waypoints[0].place_id)){
+        if (res !== null && (response === null || response.request.travelMode !== res.request.travelMode || response.geocoded_waypoints[0].place_id !== res.geocoded_waypoints[0].place_id)) {
             if (res.status === 'OK') {
                 setResponse(res)
             } else {
@@ -154,68 +157,94 @@ const RequestGoogleMap = (props) => {
                     onUnmount={onUnmount}
                     options={options}
                 >
-                    <div className='d-flex flex-wrap'>
-                        <div className='form-group custom-control custom-radio mr-4'>
-                            <input
-                                id='DRIVING'
-                                className='custom-control-input'
-                                name='travelMode'
-                                type='radio'
-                                checked={travelMode === 'DRIVING'}
-                                onChange={checkDriving}
-                            />
-                            <label className='custom-control-label' htmlFor='DRIVING'>
-                                Driving
-                    </label>
-                        </div>
+                    <Container>
+                        <Row>
+                            <Col xs={7}>
+                                {/*<div className="gmnoprint google-map-custom-control-container">*/}
+                                {/*    <div className="gm-style-mtc">*/}
+                                {/*        <div className="google-map-custom-control"*/}
+                                {/*        >*/}
+                                <ButtonGroup  className="gmnoprint google-map-custom-control-container" toggle aria-label="Basic example"  size="sm">
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'DRIVING'} onChange={checkDriving}>Driving</ToggleButton>
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'BICYCLING'} onChange={checkBicycling}>Bicycling</ToggleButton>
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'TRANSIT'} onChange={checkTransit}>Transit</ToggleButton>
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'WALKING'} onChange={checkWalking}>Walking</ToggleButton>
+                                </ButtonGroup>
+                                {/*<div className='d-flex flex-wrap'>*/}
+                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
+                                {/*        <input*/}
+                                {/*            id='DRIVING'*/}
+                                {/*            className='custom-control-input'*/}
+                                {/*            name='travelMode'*/}
+                                {/*            type='radio'*/}
+                                {/*            checked={travelMode === 'DRIVING'}*/}
+                                {/*            onChange={checkDriving}*/}
+                                {/*        />*/}
+                                {/*        <label className='custom-control-label' htmlFor='DRIVING'>*/}
+                                {/*            Driving*/}
+                                {/*        </label>*/}
+                                {/*    </div>*/}
 
-                        <div className='form-group custom-control custom-radio mr-4'>
-                            <input
-                                id='BICYCLING'
-                                className='custom-control-input'
-                                name='travelMode'
-                                type='radio'
-                                checked={travelMode === 'BICYCLING'}
-                                onChange={checkBicycling}
-                            />
-                            <label className='custom-control-label' htmlFor='BICYCLING'>
-                                Bicycling
-                    </label>
-                        </div>
+                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
+                                {/*        <input*/}
+                                {/*            id='BICYCLING'*/}
+                                {/*            className='custom-control-input'*/}
+                                {/*            name='travelMode'*/}
+                                {/*            type='radio'*/}
+                                {/*            checked={travelMode === 'BICYCLING'}*/}
+                                {/*            onChange={checkBicycling}*/}
+                                {/*        />*/}
+                                {/*        <label className='custom-control-label' htmlFor='BICYCLING'>*/}
+                                {/*            Bicycling*/}
+                                {/*        </label>*/}
+                                {/*    </div>*/}
 
-                        <div className='form-group custom-control custom-radio mr-4'>
-                            <input
-                                id='TRANSIT'
-                                className='custom-control-input'
-                                name='travelMode'
-                                type='radio'
-                                checked={travelMode === 'TRANSIT'}
-                                onChange={checkTransit}
-                            />
-                            <label className='custom-control-label' htmlFor='TRANSIT'>
-                                Transit
-                    </label>
-                        </div>
+                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
+                                {/*        <input*/}
+                                {/*            id='TRANSIT'*/}
+                                {/*            className='custom-control-input'*/}
+                                {/*            name='travelMode'*/}
+                                {/*            type='radio'*/}
+                                {/*            checked={travelMode === 'TRANSIT'}*/}
+                                {/*            onChange={checkTransit}*/}
+                                {/*        />*/}
+                                {/*        <label className='custom-control-label' htmlFor='TRANSIT'>*/}
+                                {/*            Transit*/}
+                                {/*        </label>*/}
+                                {/*    </div>*/}
 
-                        <div className='form-group custom-control custom-radio mr-4'>
-                            <input
-                                id='WALKING'
-                                className='custom-control-input'
-                                name='travelMode'
-                                type='radio'
-                                checked={travelMode === 'WALKING'}
-                                onChange={checkWalking}
-                            />
-                            <label className='custom-control-label' htmlFor='WALKING'>
-                                Walking
-                    </label>
-                        </div>
-                    </div>
-                    <div className="gmnoprint google-map-custom-control-container">
-                        <div className="gm-style-mtc">
-                            <div className="google-map-custom-control" title="Start sending my location">Start sending my location</div>
-                        </div>
-                    </div>
+                                {/*    <div className='form-group custom-control custom-radio mr-4'>*/}
+                                {/*        <input*/}
+                                {/*            id='WALKING'*/}
+                                {/*            className='custom-control-input'*/}
+                                {/*            name='travelMode'*/}
+                                {/*            type='radio'*/}
+                                {/*            checked={travelMode === 'WALKING'}*/}
+                                {/*            onChange={checkWalking}*/}
+                                {/*        />*/}
+                                {/*        <label className='custom-control-label' htmlFor='WALKING'>*/}
+                                {/*            Walking*/}
+                                {/*        </label>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
+                                {/*        </div>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
+
+                            </Col>
+                            <Col xs={3}>
+                                <div className="gmnoprint google-map-custom-control-container">
+                                    <div className="gm-style-mtc">
+                                        <Button className="google-map-custom-control" title="Start sending my location"
+                                                variant="light" onClick={TrackingGeoLocation} >Start sending my location
+                                        </Button>
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Container>
+
+
                     {targetAddress && currentAddress && (
                         <DirectionsService
                             options={{
