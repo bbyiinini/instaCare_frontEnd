@@ -135,7 +135,7 @@ const RequestGoogleMap = (props) => {
     const directionsCallback = (res) => {
         console.log(res)
 
-        if (res !== null && (response === null || response.request.travelMode !== res.request.travelMode || response.geocoded_waypoints[0].place_id !== res.geocoded_waypoints[0].place_id)) {
+        if (res !== null && (response === null || response.request.travelMode !== res.request.travelMode)) {
             if (res.status === 'OK') {
                 setResponse(res)
             } else {
