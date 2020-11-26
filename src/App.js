@@ -16,7 +16,7 @@ import SignUpComplete from "./components/auth/SignUpComplete";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
 import FinishSetUp from "./components/FinishSetUp";
-import Request from "./components/request/RequestPlazza";
+import Request from "./components/request/RequestPlaza";
 import RequestMangement from "./components/request/RequestMangement";
 import PostRequest from "./components/request/PostRequest";
 import Profile from './components/Profile'
@@ -72,7 +72,7 @@ const App = () => {
         })
 
         const requestResult = await Axios.get(
-            "http://localhost:8080/request/" + user.uid,
+            "http://localhost:8080/request/" + user.uid
         );
         const requestDetail = requestResult.data.data
         dispatch({
@@ -81,7 +81,7 @@ const App = () => {
         })
 
         const pastResult = await Axios.get(
-            "http://localhost:8080/request/past/" + user.uid,
+            "http://localhost:8080/request/past/" + user.uid
         );
         const pastRequestDetail = pastResult.data.data
         dispatch({
@@ -93,10 +93,12 @@ const App = () => {
             "http://localhost:8080/request/all",
         );
         const allOnGoingRequest = onGoingResult.data.data;
+
         dispatch({
           type: 'ALL_ONGOING_REQUEST',
           payload: allOnGoingRequest
         });
+
 
       }else{
         console.log("you have logout")
