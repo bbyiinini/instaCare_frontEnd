@@ -40,7 +40,7 @@ export default function FinishSetUp(props){
       addressList:[addr],
     }
 
-    await UserService.registed(uid, userObj).then(res=>{
+    await UserService.update(uid, userObj).then(res=>{
       console.log("saved user type to backend")
     }).catch(res=>{
       console.log("CORS not connected")
