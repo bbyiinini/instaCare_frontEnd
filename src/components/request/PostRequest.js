@@ -358,10 +358,16 @@ const PostRequest = () => {
                 </select>
             </div>
 
-            {past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
-                    <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />}
 
+            {past === true?
+            <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
+            <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}} />}
 
+            <div className="mt-3">
+                {past === true?
+                    (pastData.length===0?<h2>Currently no data record</h2>:null):
+                    (onGoingData.length===0?<h2>Currently no data record</h2>:null)}
+            </div>
             <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
 
 
@@ -426,15 +432,9 @@ const PostRequest = () => {
 }
 
 const customStyle = {
-    // top: '15%',
-    // left: '50%',
-    // right: 'auto',
-    // bottom: 'auto',
-    // width: '80%',
     marginLeft: '5%',
     marginRight: '5%',
     marginTop: '5%'
-    // transform: 'translate(10%, 10%)',
 }
 
 
