@@ -33,7 +33,16 @@ const PostRequest = () => {
         { value: 'Shopping', label: 'Shopping' },
         { value: 'Cleaning', label: 'Cleaning' },
         { value: 'Tool needed', label: 'Tool needed' },
-        { value: 'Grocery', label: 'Grocery' },
+        { value: 'Chore', label: 'Chore' },
+        { value: 'Remote', label: 'Remote' },
+        { value: 'Consulting', label: 'Consulting' },
+        { value: 'In-home Care', label: 'In-home Care' },
+        { value: 'Emergency', label: 'Emergency' },
+        { value: 'Need a Ride', label: 'Need a Ride' },
+        { value: 'Cloth Donation', label: 'Cloth Donation' },
+        { value: 'Babysitting', label: 'Babysitting' },
+        { value: 'Time-consuming', label: 'Time-consuming' },
+        { value: 'Medicine', label: 'Medicine' },
     ]
 
 
@@ -382,7 +391,7 @@ const PostRequest = () => {
                             </label>
                             <div >
                                 <div className="tags-input">
-                                    <Select isMulti={true} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
+                                    <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
                                 </div>
                             </div>
                         </div>
