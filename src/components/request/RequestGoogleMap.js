@@ -42,11 +42,12 @@ const RequestGoogleMap = (props) => {
     const [travelMode, setTravelMode] = useState('DRIVING');
 
     if (!targetAddress) {
-        const requestRef = firestore.collection("requestPlaza").doc(props.requestId)
-        requestRef.get(function(doc) {
-            console.log("Current data: ", doc.data());
-            doc.data() ? setRequestMange(doc.data()) : setRequestMange(originReq);
-        });
+        // const requestRef = firestore.collection("requests")
+        // const userRef = requestRef.doc(props.id)
+        // userRef.collection('onGoing').doc(originReq.id).onSnapshot(function(doc) {
+        //     console.log("Current data: ", doc.data());
+        //     doc.data() ? setRequestMange(doc.data()) : setRequestMange(originReq);
+        // });
 
         setTargetAddress('8775 Costa Verde Blvd San Diego CA')
     }
