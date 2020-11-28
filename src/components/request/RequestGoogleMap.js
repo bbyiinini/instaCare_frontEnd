@@ -31,39 +31,54 @@ const GOOGLE_API_KEY = "AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y"
 
 
 const RequestGoogleMap = (props) => {
+  let intervalId
 
-    let intervalId
+  const [targetAddress, setTargetAddress] = useState('200,200')
+  const [currentAddress, setCurrentAddress] = useState(null)
+  const [response, setResponse] = useState(null)
+  const [travelMode, setTravelMode] = useState('DRIVING')
 
+  if (!targetAddress) {
+    const requestRef = firestore.collection('requestPlaza').doc(props.requestId)
+    requestRef
+      .get()
+      .then((doc) => {
+        let data = doc.data()
+        console.log('addressId: ', data)
+        return data
+      })
+      .then((data) => {
+        let addressData = firestore
+          .collection('users')
+          .doc(data.seniorId)
+          .collection('address')
+          .doc(data.addressID)
+          .data()
+        setTargetAddress(addressData.geolocation)
+      })
+  }
 
-    const [targetAddress, setTargetAddress] = useState("200,200");
-    const [currentAddress, setCurrentAddress] = useState(null);
-    const [response, setResponse] = useState(null);
-    const [travelMode, setTravelMode] = useState('DRIVING');
+  if (!currentAddress) {
+    //senior
+    console.log('requestId' + props.requestId)
+    if (props.userType === 0) {
+      const volunteerLocationRef = firestore
+        .collection('requestPlaza')
+        .doc(props.requestId)
+        .collection('volunteerLocation')
 
-    if (!targetAddress) {
-        const requestRef = firestore.collection("requestPlaza").doc(props.requestId)
-        requestRef.get().then((doc) => {
-            let data = doc.data()
-            console.log("addressId: ", data)
-            return data
-        }).then((data) => {
-            let addressData = firestore.collection("users").doc(data.seniorId).collection("address").doc(data.addressID).data()
-            setTargetAddress(addressData.geolocation)
-        });
-
+      if (volunteerLocationRef != null) {
+        volunteerLocationRef.onSnapshot((doc) => {
+          if (doc.exists) {
+            setCurrentAddress(
+              doc.data().volunteerLat + ',' + doc.data().volunteerlng
+            )
+            console.log('Current data: ', doc.data())
+          }
+          
+        })
+      }
     }
-
-    if (!currentAddress) {
-
-        //senior
-        if (props.userType === 0) {
-            const requestRef = firestore.collection("requestPlaza").doc(props.requestId).collection("volunteerLocation").onSnapshot((doc) => {
-                console.log("Current data: ", doc.data());
-                if (doc.exists) {
-                    setCurrentAddress(doc.data().volunteerLat + "," + doc.data().volunteerlng)
-                }
-            });
-        }
 
     }
 
