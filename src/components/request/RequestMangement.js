@@ -96,7 +96,8 @@ const RequestMangement = () => {
             let temp = commentCollection;
             temp.push({
                 content: textField,
-                userId: user.id
+                userId: user.id,
+                user: user.fullName,
             });
             console.log(temp);
             setCommentCollection(temp);
@@ -134,11 +135,7 @@ const RequestMangement = () => {
                             <div className="request-card">
                                 <div className={classes.paddings1}>
                                     <CardHeader className=""
-                                        avatar={
-                                            <Avatar aria-label="recipe" className={classes.avLarge}>
-                                                G
-                                </Avatar>
-                                        }
+                                        avatar={<Avatar aria-label="recipe" className={classes.avLarge}>G</Avatar>}
                                         title={<div className={classes.ftSmall}><a>{user.fullName}</a><div>{user.email}</div></div>}
                                         subheader='Rating:'{...requestMange.rating}
                                     />
@@ -217,7 +214,7 @@ const RequestMangement = () => {
                                                     <TimelineContent>
                                                         <CardHeader 
                                                             action={""}
-                                                            title="Name"
+                                                            title={comment.user || "Null"}
                                                             subheader="time" />
                                                         <CardContent>
                                                             <Typography variant="body2" color="textSecondary" component="p">
@@ -243,7 +240,7 @@ const RequestMangement = () => {
                         </Col>
                     </ThemeProvider>
                     <Col className="nav-column" xs={12} sm={6}>{user.userType === 0 ?
-                        <> <RequestGoogleMap id={requestMange.id} userType = {user.userType} ></RequestGoogleMap> {requestMange.status === 0 ? <h1>Waiting for taken</h1> :
+                        <> {requestMange.status === 0 ? <h1>Waiting for taken</h1> :
                             <Card className={classes.volunteer}>
                                 <CardHeader 
                                     avatar={ <Avatar aria-label="recipe" className={classes.avLarge}>F</Avatar>}
