@@ -46,16 +46,21 @@ const RequestMangement = () => {
 
     const history = useHistory();
     const classes = useStyles();
+    const requestRef = firestore.collection("requestPlaza")
+    const thisRequest = oringinReq == null ? null : requestRef.doc(originReq.id)
 
     if (!requestMange) {
         if (!user || !originReq || wrapId === 'rating') {
             console.log("failed")
         } else {
-            const requestRef = firestore.collection("requests")
-            const userRef = requestRef.doc(originReq.seniorId)
-            userRef.collection('onGoing').doc(originReq.id).onSnapshot(function (doc) {
+            thisRequest.onSnapshot(function (doc) {
                 console.log("Current data: ", doc.data());
-                doc.data() ? setRequestMange(doc.data()) : setRequestMange(originReq);
+                if(doc.data()){
+                    setRequestMange(doc.data());
+                    setCommentCollection(doc.data().comments)
+                } else {
+                    setRequestMange(originReq);
+                }
             });
         }
     };
@@ -95,6 +100,7 @@ const RequestMangement = () => {
             });
             console.log(temp);
             setCommentCollection(temp);
+            thisRequest.update({comments:commentCollection});
             setTextField("");
         }
     }
@@ -245,7 +251,7 @@ const RequestMangement = () => {
                                     subheader='Rating:'{...requestMange.rating}/>
                             </Card>
                         } </> :
-                        <h1>Take</h1>}
+                        <h1>Too Young too simple</h1>}
                     </Col>
                     <ThemeProvider theme={theme}>
                         <Modal style={modalStyle} isOpen={wrapOpen} appElement={document.getElementById('root')}>
