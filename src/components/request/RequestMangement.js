@@ -96,7 +96,8 @@ const RequestMangement = () => {
             let temp = commentCollection;
             temp.push({
                 content: textField,
-                userId: user.id
+                userId: user.id,
+                user: user.fullName,
             });
             console.log(temp);
             setCommentCollection(temp);
@@ -134,11 +135,7 @@ const RequestMangement = () => {
                             <div className="request-card">
                                 <div className={classes.paddings1}>
                                     <CardHeader className=""
-                                        avatar={
-                                            <Avatar aria-label="recipe" className={classes.avLarge}>
-                                                G
-                                </Avatar>
-                                        }
+                                        avatar={<Avatar aria-label="recipe" className={classes.avLarge}>G</Avatar>}
                                         title={<div className={classes.ftSmall}><a>{user.fullName}</a><div>{user.email}</div></div>}
                                         subheader='Rating:'{...requestMange.rating}
                                     />
@@ -217,7 +214,7 @@ const RequestMangement = () => {
                                                     <TimelineContent>
                                                         <CardHeader 
                                                             action={""}
-                                                            title="Name"
+                                                            title={comment.user || "Null"}
                                                             subheader="time" />
                                                         <CardContent>
                                                             <Typography variant="body2" color="textSecondary" component="p">
