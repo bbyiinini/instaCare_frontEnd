@@ -11,8 +11,9 @@ class RequestService {
         })
     };
 
-    addToPast(uid, requestBean){
-        return Axios.post("http://localhost:8080/request/past/"+uid, requestBean).then(res=>{
+    addToPast(id, requestBean){
+        requestBean.status = 3
+        return Axios.put("http://localhost:8080/request/"+id, requestBean).then(res=>{
             toast.success("Success")
             console.log(res);
         }).catch(error => {

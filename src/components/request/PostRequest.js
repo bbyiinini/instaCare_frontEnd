@@ -68,7 +68,7 @@ const PostRequest = () => {
             createTime: date,
             tags: tags,
             seniorId: user.uid,
-            status: 0,
+            status: 1,
         }
 
         if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){

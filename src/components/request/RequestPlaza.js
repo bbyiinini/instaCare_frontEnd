@@ -21,7 +21,7 @@ const PostRequest = () => {
     const handleRequestMange = (key) =>{
         dispatch({
             type: 'OREQBYID',
-            payload: requestDetail.ongoingRequest[key],
+            payload: requestDetail.allOnGoingRequest[key],
         });
         history.push('/requestmangement');
     }
