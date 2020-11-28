@@ -51,9 +51,8 @@ const RequestMangement = () => {
         if (!user || !originReq || wrapId === 'rating') {
             console.log("failed")
         } else {
-            const requestRef = firestore.collection("requests")
-            const userRef = requestRef.doc(originReq.seniorId)
-            userRef.collection('onGoing').doc(originReq.id).onSnapshot(function (doc) {
+            const requestRef = firestore.collection("requestPlaza")
+            requestRef.doc(originReq.id).onSnapshot(function (doc) {
                 console.log("Current data: ", doc.data());
                 doc.data() ? setRequestMange(doc.data()) : setRequestMange(originReq);
             });
@@ -73,7 +72,7 @@ const RequestMangement = () => {
         if (wrapId === 'end') {
             setWrapId("rating");
             setOriginReq(requestMange)
-            await RequestService.addToPast(requestMange.senior_id, requestMange).then();
+            await RequestService.addToPast(requestMange.id, requestMange).then();
         } else if (wrapId === 'cancel') {
             //TODO
             return;
