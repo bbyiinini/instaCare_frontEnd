@@ -1,13 +1,13 @@
 import React, {Component, useState} from 'react';
 import {GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer} from '@react-google-maps/api';
 // import styled from 'styled-components';
-import db, { firestore } from "../../base";
+import db, {firestore} from "../../base";
 // import { useSelector } from "react-redux";
 // import Axios from "axios";
 // import PropTypes from 'prop-types'
 import "./../../App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Container, Row, Col,ButtonGroup, Button, ToggleButton} from "react-bootstrap";
+import {Container, Row, Col, ButtonGroup, Button, ToggleButton} from "react-bootstrap";
 
 const center = {
     lat: 32.8755662,
@@ -33,36 +33,37 @@ const GOOGLE_API_KEY = "AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y"
 const RequestGoogleMap = (props) => {
 
     let intervalId
-    const [currentLat, setCurrentLat] = useState(32.8755662);
-    const [currentLng, setCurrentLng] = useState(-117.23232519999999);
 
-    const [targetAddress, setTargetAddress] = useState(null);
+
+    const [targetAddress, setTargetAddress] = useState("200,200");
     const [currentAddress, setCurrentAddress] = useState(null);
     const [response, setResponse] = useState(null);
     const [travelMode, setTravelMode] = useState('DRIVING');
 
     if (!targetAddress) {
         const requestRef = firestore.collection("requestPlaza").doc(props.requestId)
-        requestRef.get().then((doc)=>{
-
+        requestRef.get().then((doc) => {
+            let data = doc.data()
+            console.log("addressId: ", data)
+            return data
+        }).then((data) => {
+            let addressData = firestore.collection("users").doc(data.seniorId).collection("address").doc(data.addressID).data()
+            setTargetAddress(addressData.geolocation)
         });
-        function(doc) {
-            console.log("Current data: ", doc.data());
-            doc.data() ? setRequestMange(doc.data()) : setRequestMange(originReq);
-        }
-        setTargetAddress('8775 Costa Verde Blvd San Diego CA')
+
     }
 
     if (!currentAddress) {
-        // const requestRef = firestore.collection("requests")
-        // const userRef = requestRef.doc(props.id)
-        // userRef.collection('onGoing').doc(originReq.id).onSnapshot(function(doc) {
-        //     console.log("Current data: ", doc.data());
-        //     doc.data() ? setRequestMange(doc.data()) : setRequestMange(originReq);
-        // });
 
-
-        setCurrentAddress(currentLat + "," + currentLng)
+        //senior
+        if (props.userType === 0) {
+            const requestRef = firestore.collection("requestPlaza").doc(props.requestId).collection("volunteerLocation").onSnapshot((doc) => {
+                console.log("Current data: ", doc.data());
+                if (doc.exists) {
+                    setCurrentAddress(doc.data().volunteerLat + "," + doc.data().volunteerlng)
+                }
+            });
+        }
 
     }
 
@@ -100,16 +101,16 @@ const RequestGoogleMap = (props) => {
                 lat: pos.coords.latitude,
                 lng: pos.coords.longitude,
             })
-            setCurrentLat(pos.coords.latitude);
-            setCurrentLng(pos.coords.longitude);
-            setCurrentAddress(currentLat + "," + currentLng)
+            setCurrentAddress(pos.coords.latitude + "," + pos.coords.longitude)
             console.log(pos.coords)
-            firestore.collection('mapApi').doc(props.id).set({
+            firestore.collection('requestPlaza').doc(props.requestId).collection("volunteerLocation").set({
                 volunteerLat: pos.coords.latitude,
                 volunteerlng: pos.coords.longitude,
             }).then((res) => {
                 console.log(res)
-            }).catch((err) => { console.log(err) })
+            }).catch((err) => {
+                console.log(err)
+            })
         }, (err) => {
             console.log(err)
         }, {
@@ -158,21 +159,30 @@ const RequestGoogleMap = (props) => {
                     onUnmount={onUnmount}
                     options={options}
                 >
-                    {props.userType===1 && <Container>
+                    {props.userType === 1 && <Container>
                         <Row>
                             <Col xs={7}>
-                                <ButtonGroup  className="gmnoprint google-map-custom-control-container" toggle aria-label="Basic example"  size="sm">
-                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'DRIVING'} onChange={checkDriving}>Driving</ToggleButton>
-                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'BICYCLING'} onChange={checkBicycling}>Bicycling</ToggleButton>
-                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'TRANSIT'} onChange={checkTransit}>Transit</ToggleButton>
-                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode' variant="light" checked={travelMode === 'WALKING'} onChange={checkWalking}>Walking</ToggleButton>
+                                <ButtonGroup className="gmnoprint google-map-custom-control-container" toggle
+                                             aria-label="Basic example" size="sm">
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode'
+                                                  variant="light" checked={travelMode === 'DRIVING'}
+                                                  onChange={checkDriving}>Driving</ToggleButton>
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode'
+                                                  variant="light" checked={travelMode === 'BICYCLING'}
+                                                  onChange={checkBicycling}>Bicycling</ToggleButton>
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode'
+                                                  variant="light" checked={travelMode === 'TRANSIT'}
+                                                  onChange={checkTransit}>Transit</ToggleButton>
+                                    <ToggleButton className="google-map-custom-control" type="radio" name='travelMode'
+                                                  variant="light" checked={travelMode === 'WALKING'}
+                                                  onChange={checkWalking}>Walking</ToggleButton>
                                 </ButtonGroup>
                             </Col>
                             <Col xs={3}>
                                 <div className="gmnoprint google-map-custom-control-container">
                                     <div className="gm-style-mtc">
                                         <Button className="google-map-custom-control" title="Start sending my location"
-                                                variant="light" onClick={TrackingGeoLocation} >Start sending my location
+                                                variant="light" onClick={TrackingGeoLocation}>Start sending my location
                                         </Button>
                                     </div>
                                 </div>
