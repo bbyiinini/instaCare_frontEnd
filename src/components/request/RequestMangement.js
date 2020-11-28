@@ -47,7 +47,7 @@ const RequestMangement = () => {
     const history = useHistory();
     const classes = useStyles();
     const requestRef = firestore.collection("requestPlaza")
-    const thisRequest = oringinReq == null ? null : requestRef.doc(originReq.id)
+    const thisRequest = originReq == null ? null : requestRef.doc(originReq.id)
 
     if (!requestMange) {
         if (!user || !originReq || wrapId === 'rating') {
