@@ -106,10 +106,10 @@ const RequestMangement = () => {
         if (wrapId === 'end') {
             setWrapId('rating')
             setOriginReq(requestMange)
-            await RequestService.addToPast(requestMange.id, requestMange).then(setOnGoing(false));
+            await thisRequest.update({status: 3}).then(setOnGoing(false));
         } else if (wrapId === 'cancel') {
             if(user.userType===1){
-                await RequestService.VolunteerCancelRequest(requestMange).then(setOnGoing(false));
+                await thisRequest.update({status: 1, volunteer: null, volunteerId:null}).then(setOnGoing(false));
                 window.location.assign("/post");
             }else{
                 //todo
@@ -145,7 +145,7 @@ const RequestMangement = () => {
     }
 
     const handleTake = () => {
-        RequestService.takeRequest(user, requestMange)
+        thisRequest.update({status:2,volunteerId:user.id, volunteer:user.fullName})
     }
 
     const theme = createMuiTheme({
