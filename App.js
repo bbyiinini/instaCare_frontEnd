@@ -17,14 +17,15 @@ import SignUpComplete from "./components/auth/SignUpComplete";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
 import FinishSetUp from "./components/FinishSetUp";
-import Request from "./components/request/RequestPlazza";
+import Request from "./components/request/RequestPlaza";
 import RequestMangement from "./components/request/RequestMangement";
 import PostRequest from "./components/request/PostRequest";
 import Profile from './components/Profile'
 import ResetPassword from "./components/auth/ResetPassword";
-
+import Welcome from './components/auth/Welcome'
 import userService from './service/UserService'
 import Axios from "axios";
+import PageNotFound from './components/PageNotFound';
 
 
 const App = () => {
@@ -36,8 +37,11 @@ const App = () => {
     // check if user profile is completed
     firestore.collection("users").doc(user.uid).get().then((doc)=>{
       const data = doc.data()
-      if(data.id==null){
+      if(!data){
         //  user hasn't finished setup
+        setStatus(false)
+        console.log("still false")
+      }else if(data.id==null){
         setStatus(false)
         console.log("still false")
       }
@@ -61,14 +65,16 @@ const App = () => {
 
         // store user profile data into redux
         const {data} = await userService.retrieve(user.uid)
+
         const profileData = data.data
+        console.log(profileData)
         dispatch({
           type:'SET_PROFILE',
           payload: profileData
         })
 
         const requestResult = await Axios.get(
-            "http://localhost:8080/request/" + user.uid,
+            "http://localhost:8080/request/" + user.uid
         );
         const requestDetail = requestResult.data.data
         dispatch({
@@ -77,13 +83,24 @@ const App = () => {
         })
 
         const pastResult = await Axios.get(
-            "http://localhost:8080/request/past/" + user.uid,
+            "http://localhost:8080/request/past/" + user.uid
         );
         const pastRequestDetail = pastResult.data.data
         dispatch({
           type: 'PAST',
           payload: pastRequestDetail
-        })
+        });
+
+        const onGoingResult = await Axios.get(
+            "http://localhost:8080/request/all",
+        );
+        const allOnGoingRequest = onGoingResult.data.data;
+
+        dispatch({
+          type: 'ALL_ONGOING_REQUEST',
+          payload: allOnGoingRequest
+        });
+
 
       }else{
         console.log("you have logout")
@@ -99,8 +116,8 @@ const App = () => {
 
       <div className="App">
         <Router>
-          <NavBar/>
           <NavHeader/>
+          <NavBar/>
           <ToastContainer/>
           {/* <NavBar
             loggedIn={this.state.loggedIn}
@@ -109,14 +126,7 @@ const App = () => {
           <Switch>
             <Route exact path="/">
               {!finishStatus && <Redirect to="/finishSetUp"/>}
-              <div className="root">
-                <header className="App-header">
-                  <img src={logo} className="App-logo" alt="logo" />
-                  <p>
-                    Welcome {user==null?"":user.displayName}
-                  </p>
-                </header>
-              </div>
+              <Welcome/>
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
             <ProtectedRoute exact path="/signup" component={() => <Signup />} />
@@ -128,6 +138,7 @@ const App = () => {
             <Route exact path="/post" component={() => <PostRequest />} />
             <Route exact path="/profile" component={() => <Profile />} />
             <Route exact path="/reset" component={() => <ResetPassword />} />
+            <Route path="*" component={() => <PageNotFound />} />
           </Switch>
         </Router>
       </div>
