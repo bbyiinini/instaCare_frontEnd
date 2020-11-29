@@ -65,20 +65,28 @@ const App = () => {
         const {data} = await userService.retrieve(user.uid)
 
         const profileData = data.data
-        console.log(profileData)
         dispatch({
           type:'SET_PROFILE',
           payload: profileData
         })
 
-        const requestResult = await Axios.get(
-            "http://localhost:8080/request/" + user.uid
-        );
-        const requestDetail = requestResult.data.data
+        const addressResult = await userService.getAddressByUid(user.uid);
+        const addressDetail = addressResult.data.data;
         dispatch({
-          type: 'REQUEST',
-          payload: requestDetail
+          type: 'SET_ADDRESS',
+          payload: addressDetail
         })
+        let userType = await profileData.userType;
+          const requestResult = await Axios.get(
+              "http://localhost:8080/request/" + user.uid, {params: {userType:userType}}
+          );
+          const requestDetail = requestResult.data.data
+          dispatch({
+            type: 'REQUEST',
+            payload: requestDetail
+          })
+
+
 
         const pastResult = await Axios.get(
             "http://localhost:8080/request/past/" + user.uid

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useHistory} from "react-router-dom";
 import Modal from "react-modal";
-import {Button, Table, Pagination, Space, Tag} from "antd";
+import {Button, Table, Select as AntSelect, Space, Tag, Divider, Input} from "antd";
 import Axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import RequestService from "../../service/RequestService";
@@ -14,14 +14,16 @@ import Select from 'react-select'
 import moment from 'moment';
 import ReactPhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
+import {PlusOutlined} from '@ant-design/icons';
+import SelectUSState from 'react-select-us-states';
 
 
-
-
+const {Option} =  AntSelect;
 const PostRequest = () => {
     const {user} = useSelector((state)=>({...state}))
     const profile = useSelector(state=>state.userProfile)
     const requestDetail = useSelector((state)=>state.requestDetail)
+    const addressList = useSelector((state)=>state.address)
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
     let history = useHistory();
@@ -33,7 +35,16 @@ const PostRequest = () => {
         { value: 'Shopping', label: 'Shopping' },
         { value: 'Cleaning', label: 'Cleaning' },
         { value: 'Tool needed', label: 'Tool needed' },
-        { value: 'Grocery', label: 'Grocery' },
+        { value: 'Chore', label: 'Chore' },
+        { value: 'Remote', label: 'Remote' },
+        { value: 'Consulting', label: 'Consulting' },
+        { value: 'In-home Care', label: 'In-home Care' },
+        { value: 'Emergency', label: 'Emergency' },
+        { value: 'Need a Ride', label: 'Need a Ride' },
+        { value: 'Cloth Donation', label: 'Cloth Donation' },
+        { value: 'Babysitting', label: 'Babysitting' },
+        { value: 'Time-consuming', label: 'Time-consuming' },
+        { value: 'Medicine', label: 'Medicine' },
     ]
 
 
@@ -42,12 +53,24 @@ const PostRequest = () => {
         setModalIsOpen(true)
     }
 
+    const [flag, setFlag] = useState(true);
     const [text, setText] = useState("");
-    const [checked, setChecked] = useState(false)
-    const [title, setTitle] = useState("")
-    const [address, setAddress] = useState("")
-    const [phoneNumber, setPhoneNumber] = useState("")
-    const [past, setPast] = useState(false)
+    const [checked, setChecked] = useState(false);
+    const [title, setTitle] = useState("");
+    const [addressId, setAddressId] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [past, setPast] = useState(false);
+    const [addList, setAddList] = useState([{add:"", id:""}]);
+    const [addressModal, setAddressModal] = useState(false);
+
+    // add address bean
+    const [street1, setStreet1] = useState("");
+    const [street2, setStreet2] = useState("");
+    const [state, setState] = useState("");
+    const [city, setCity] = useState("");
+    const [zipCode, setZipCode] = useState("");
+
+
 
     const handleCheckBox = () => {
         setChecked(!checked)
@@ -62,17 +85,14 @@ const PostRequest = () => {
         let requestBean ={
             requestContent:text,
             title: title,
-            address: address,
+            addressID: addressId,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
-            createTime: date,
             tags: tags,
             seniorId: user.uid,
-            status: 0,
         }
 
-        if (text!=="" && title!=="" && address!=="" && phoneNumber!=="" && tags.length > 0){
-            // console.log(text, title, address, phoneNumber)
+        if (text!=="" && title!=="" && addressId!=="" && phoneNumber!=="" && tags.length > 0){
             await RequestService.request(user.uid, requestBean).then(res=>{
                 toast.success("save request to backend success")
             }).catch(res=>{
@@ -80,7 +100,6 @@ const PostRequest = () => {
             })
             window.location.reload();
         }else {
-            console.log(text, title, address, phoneNumber)
             toast.error("please fill all required information")
         }
 
@@ -118,13 +137,14 @@ const PostRequest = () => {
         if (e != null){
             const result = e.map(res=>(res.value))
             setTags(result)
-            console.log(result)
         }
     }
 
-    const addAddress = (e) => {
-        setAddress(e.value)
+    const selectAddress = (e) => {
+        console.log(e)
+        setAddressId(e)
     }
+
 
 
     const handleDelete = () => {
@@ -134,9 +154,24 @@ const PostRequest = () => {
         return null
     }
 
-    let {fullName, addressList} = profile
+    let {fullName} = profile
+
+    if (addressList.length !== 0 && flag){
+        let addressDetail = addressList.map(res=>({
+            add:  res.streetAddressL2 === ""? res.streetAddressL1 +
+                ", " + res.city + ", " + res.state + " " + res.zipCode :
+                res.streetAddressL1 + ", " + res.streetAddressL2 + ", " +
+                res.city + ", " + res.state + " " + res.zipCode,
+            id: res.addressId
+        }
+
+        ));
+        setAddList(addressDetail);
+        setFlag(false)
+    }
+
     let {ongoingRequest} = requestDetail
-    const onGoingData = profile.userType===1? ongoingRequest.map((res,index)=>({
+    const onGoingData = profile.userType===0? ongoingRequest.map((res,index)=>({
         key: index,
         status: res.status===2?"Volunteer on the way":"request sent",
         tags: res.tags===null?[]:res.tags,
@@ -153,7 +188,7 @@ const PostRequest = () => {
     }));
 
 
-    const pastData = profile.userType===1? requestDetail.pastRequest.map((res,index)=>({
+    const pastData = profile.userType===0? requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title === null? "":res.title,
@@ -168,11 +203,45 @@ const PostRequest = () => {
     }));
 
     // react select of address list
-    const addressOptions = addressList.length !== 0? addressList.map(address=>({
-         value: address, label:address
-      })) : [{value:"default", label:"no address recorded in database"}];
+    // const addressOptions = addressList.length !== 0? addressList.map(address=>({
+    //      value: address, label:address
+    //   })) : [{value:"default", label:"no address recorded in database"}];
 
-    const ongoingColumns = [
+    // ant select of add address
+    let newAdd = "";
+    const handleAdd = async () => {
+        const addressBean = {
+            streetAddressL1: street1,
+            streetAddressL2: street2,
+            city: city,
+            state: state,
+            zipCode: zipCode,
+            userId: user.uid,
+        }
+
+        if (street1 !==""  && city !=="" && state !=="" && zipCode !==""){
+            // console.log(text, title, address, phoneNumber)
+            await RequestService.insertAddress(user.uid, addressBean).then(res=>{
+                toast.success("insert address to backend success")
+            }).catch(res=>{
+                toast.error("insert failed")
+            });
+            newAdd = (street2 === ""? street1+", "+city+", "+state+" "+zipCode : street1+", "+street2+", "+city+", "+state+" "+zipCode);
+            setAddList([...addList, newAdd])
+            setStreet1("")
+            setStreet2("")
+            setCity("")
+            setState("")
+            setZipCode("")
+            setAddressModal(false);
+        }else {
+            toast.error("please fill all the information")
+        }
+
+    }
+
+
+    const ongoingColumns = profile.userType===0?[
 
         {
             title: 'Status',
@@ -187,7 +256,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType===1?'Volunteer':'Senior',
+            title: 'Volunteer',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -228,6 +297,55 @@ const PostRequest = () => {
                 </Space>
             ),
         },
+    ]:[
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '20%'
+    },
+        {
+            title: 'Senior',
+            dataIndex: 'user',
+            key: 'user',
+            width: '20%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width:'12%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+                        return (
+                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '20%'
+        },
+
+        {
+            key: 'action',
+            render: (text,record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <Button type="primary" style={{background:'#00897B', fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                </Space>
+            ),
+        },
     ];
 
     const pastColumns = [
@@ -239,7 +357,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType===1?'Volunteer':'Senior',
+            title: profile.userType===0?'Volunteer':'Senior',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -309,18 +427,16 @@ const PostRequest = () => {
                 </select>
             </div>
 
-            {profile.userType === 1 &&
-            (past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
-                    <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />)
-            }
 
-            {profile.userType === 0 &&
-            (past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
-                    <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />)
-            }
+            {past === true?
+            <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
+            <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}} />}
 
-
-
+            <div className="mt-3">
+                {past === true?
+                    (pastData.length===0?<h2>Currently no data record</h2>:null):
+                    (onGoingData.length===0?<h2>Currently no data record</h2>:null)}
+            </div>
             <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
 
 
@@ -335,7 +451,7 @@ const PostRequest = () => {
                             </label>
                             <div >
                                 <div className="tags-input">
-                                    <Select isMulti={true} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
+                                    <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
                                 </div>
                             </div>
                         </div>
@@ -368,7 +484,73 @@ const PostRequest = () => {
                         </div>
 
                         <div className="form-group mt-3">
-                            <Select options={addressOptions} placeholder={<div>Select your address</div>} onChange={addAddress}/>
+                            {/*<Select options={addressOptions} placeholder={<div>Select your address</div>} onChange={addAddress}/>*/}
+                            <AntSelect
+                                style={{width:'100%', fontSize:'16px'}}
+                                placeholder="Select your address"
+                                onChange={selectAddress}
+                                dropdownRender={(menu) => (
+                                    <div>
+                                        {menu}
+                                        <Divider style={{ margin: "4px 0"}} />
+                                        <div style={{ display: "flex", flexWrap: "nowrap"}}>
+                                            <a
+                                                style={{
+                                                    flex: "none",
+                                                    padding: "8px",
+                                                    display: "block",
+                                                    cursor: "pointer"
+                                                }}
+                                                onClick={e=>(setAddressModal(true))}
+                                            >
+                                                    <PlusOutlined /> Add address
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
+                            >
+                                {addList.map((address, index)=>(
+                                    <Option value={address.id} style={{fontSize:'18px'}} key={index}>{address.add}</Option>
+                                ))}
+                            </AntSelect>
+                        </div>
+
+                        <div>
+                            <Modal style={addressModalStyle} isOpen={addressModal} appElement={document.getElementById('root')}>
+                                <form>
+                                    <div className="form-group">
+                                        <label htmlFor="inputAddress">Address</label>
+                                        <input type="text" className="form-control" id="inputAddress"
+                                               placeholder="1234 Main St" onChange={e=>(setStreet1(e.target.value))}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="inputAddress2">Address 2</label>
+                                        <input type="text" className="form-control" id="inputAddress2"
+                                               placeholder="Apartment, studio, or floor"
+                                               onChange={e=>(setStreet2(e.target.value))}
+                                        />
+                                    </div>
+                                    <div className="form-row">
+                                        <div className="form-group col-md-6">
+                                            <label htmlFor="inputCity">City</label>
+                                            <input type="text" className="form-control" id="inputCity"
+                                                   onChange={e=>setCity(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="form-group col-md-4">
+                                            <label htmlFor="inputState">State</label>
+                                            <SelectUSState id="inputState" className="form-control" onChange={e=>setState(e)}/>
+                                        </div>
+                                        <div className="form-group col-md-2">
+                                            <label htmlFor="inputZip">Zip</label>
+                                            <input type="text" className="form-control" id="inputZip" onChange={e=>setZipCode(e.target.value)}/>
+                                        </div>
+                                    </div>
+                                    <Button type="primary" style={{background:'#00897B', width:'80px'}} shape="round" className="float-right" onClick={handleAdd} >add</Button>
+                                    <label style={{color:'#00897B', cursor:'pointer'}} className="float-right m-2" onClick={()=>setAddressModal(false)}>Cancel</label>
+                                </form>
+                            </Modal>
                         </div>
                         <div className="form-group form-check">
                             <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
@@ -385,17 +567,30 @@ const PostRequest = () => {
 }
 
 const customStyle = {
-    // top: '15%',
-    // left: '50%',
-    // right: 'auto',
-    // bottom: 'auto',
-    // width: '80%',
     marginLeft: '5%',
     marginRight: '5%',
     marginTop: '5%'
-    // transform: 'translate(10%, 10%)',
 }
 
+const addressModalStyle = {
+    overlay:{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+    },
+    content: {
+        top: '15%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '30%',
+        borderRadius:'30px',
+        transform: 'translate(-40%, 5%)',
+    },
+}
 
 
 export default PostRequest;
