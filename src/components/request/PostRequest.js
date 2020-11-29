@@ -27,6 +27,7 @@ const PostRequest = () => {
     const addressList = useSelector((state) => state.address)
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
+    const [deleteModal, setDeleteModal] = useState(false);
     let history = useHistory();
     const dispatch = useDispatch();
 
@@ -71,6 +72,8 @@ const PostRequest = () => {
     const [city, setCity] = useState("");
     const [zipCode, setZipCode] = useState("");
 
+    // delete request bean
+    const [deleteTarget, setDeleteTarget] = useState({})
 
     const handleCheckBox = () => {
         setChecked(!checked)
@@ -98,7 +101,12 @@ const PostRequest = () => {
             }).catch(res => {
                 toast.error("save failed")
             })
+
             window.location.reload();
+            // dispatch({
+            //     type: 'ADD_REQUEST',
+            //     payload: requestBean
+            // })
         } else {
             toast.error("please fill all required information or select valid address!")
         }
@@ -144,18 +152,34 @@ const PostRequest = () => {
         setAddressId(e[1])
     }
 
+    const handleDelete = (key) => {
+        setDeleteModal(true)
+        setDeleteTarget({content:requestDetail.pastRequest[key], key:key})
 
-    const handleDelete = () => {
     }
 
-    if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest) {
+    const handleConfirm = async () => {
+       await RequestService.deleteRequest(deleteTarget.content.id).then(res=>{
+            console.log(res)
+           dispatch({
+               type:'DELETE_ITEM',
+               payload: deleteTarget.key
+           })
+           setDeleteModal(false)
+       }).catch(error=>{
+           console.log(error.message)
+       })
+
+    }
+
+    if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest || !addressList.userAddrList) {
         return null
     }
 
     let {fullName} = profile
-
-    if (addressList.length !== 0 && flag) {
-        let addressDetail = addressList.map(res => ({
+    let addrList = addressList.userAddrList
+    if (addrList.length !== 0 && flag) {
+        let addressDetail = addrList.map(res => ({
                 add: res.streetAddressL2 === "" ? res.streetAddressL1 +
                     ", " + res.city + ", " + res.state + " " + res.zipCode :
                     res.streetAddressL1 + ", " + res.streetAddressL2 + ", " +
@@ -372,6 +396,7 @@ const PostRequest = () => {
         },
     ];
 
+
     const pastColumns = [
 
         {
@@ -442,7 +467,7 @@ const PostRequest = () => {
                                 width: '100px',
                                 fontSize: '16px',
                                 textAlign: 'center'
-                            }} shape="round" onClick={() => handleDelete}>Delete</Button>
+                            }} shape="round" onClick={()=>handleDelete(record.key)}>Delete</Button>
                         </div>
                     </div>
                 </Space>
@@ -620,6 +645,15 @@ const PostRequest = () => {
                 </Modal>
             </MuiThemeProvider>
 
+            <Modal style={deleteModalStyle} isOpen={deleteModal} appElement={document.getElementById('root')}>
+                <h2>Delete Request</h2>
+                <p>Are you sure to cancel this appointment? you will not be able to undo this action once it is completed</p>
+                <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
+                        className="float-right" onClick={handleConfirm}>Confirm</Button>
+                <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
+                       onClick={() => setDeleteModal(false)}>Cancel</label>
+            </Modal>
+
         </div>
     );
 }
@@ -650,5 +684,24 @@ const addressModalStyle = {
     },
 }
 
+const deleteModalStyle = {
+    overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+    },
+    content: {
+        top: '15%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '20%',
+        borderRadius: '30px',
+        transform: 'translate(-40%, 40%)',
+    },
+}
 
 export default PostRequest;
