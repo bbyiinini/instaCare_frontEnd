@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import NavHeader from "./components/nav/NavHeader";
+import NavBar from "./components/nav/NavBar";
 import SignUpComplete from "./components/auth/SignUpComplete";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
@@ -115,6 +116,7 @@ const App = () => {
       <div className="App">
         <Router>
           <NavHeader/>
+          <NavBar/>
           <ToastContainer/>
           {/* <NavBar
             loggedIn={this.state.loggedIn}
