@@ -93,7 +93,7 @@ const PostRequest = () => {
             seniorId: user.uid,
         }
 
-        if (text!=="" && title!=="" && addressId!=="" && phoneNumber!=="" && tags.length > 0){
+        if (text!=="" && title!=="" && addressId!=="default" && phoneNumber!=="" && tags.length > 0){
             await RequestService.request(user.uid, requestBean).then(res=>{
                 toast.success("save request to backend success")
             }).catch(res=>{
@@ -101,7 +101,7 @@ const PostRequest = () => {
             })
             window.location.reload();
         }else {
-            toast.error("please fill all required information")
+            toast.error("please fill all required information or select valid address!")
         }
 
     }
