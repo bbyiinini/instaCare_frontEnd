@@ -439,7 +439,10 @@ const PostRequest = () => {
                     (pastData.length===0?<h2>Currently no data record</h2>:null):
                     (onGoingData.length===0?<h2>Currently no data record</h2>:null)}
             </div>
-            <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
+
+            { profile.userType === 0 &&
+                <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
+            }
 
 
             <MuiThemeProvider>
