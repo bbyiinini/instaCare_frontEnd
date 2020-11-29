@@ -222,13 +222,15 @@ const PostRequest = () => {
 
         if (street1 !==""  && city !=="" && state !=="" && zipCode !==""){
             // console.log(text, title, address, phoneNumber)
+            let id = "";
             await RequestService.insertAddress(user.uid, addressBean).then(res=>{
                 toast.success("insert address to backend success")
+                id = res.data.data;
             }).catch(res=>{
                 toast.error("insert failed")
             });
             newAdd = (street2 === ""? street1+", "+city+", "+state+" "+zipCode : street1+", "+street2+", "+city+", "+state+" "+zipCode);
-            setAddList([...addList, newAdd])
+            setAddList([...addList, {add:newAdd, id:id}])
             setStreet1("")
             setStreet2("")
             setCity("")

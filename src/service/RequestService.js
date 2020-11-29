@@ -37,11 +37,7 @@ class RequestService {
     //     })
     // }
     insertAddress(uid, addressBean) {
-        return Axios.post("http://localhost:8080/address/"+uid, addressBean).then(res=>{
-            console.log(res);
-        }).catch(error => {
-            console.log(error.message);
-        })
+        return Axios.post("http://localhost:8080/address/"+uid, addressBean)
     }
 }
 
