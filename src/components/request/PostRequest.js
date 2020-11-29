@@ -171,6 +171,11 @@ const PostRequest = () => {
         setFlag(false)
     }
 
+    function parseISOString(s) {
+        var b = s.split(/\D+/);
+        return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+    }
+
     let {ongoingRequest} = requestDetail
     const onGoingData = profile.userType===0? ongoingRequest.map((res,index)=>({
         key: index,
@@ -178,17 +183,14 @@ const PostRequest = () => {
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
         user: res.volunteer === null? "Pending" : res.volunteer,
-        // requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
-        requestTime: res.createTime
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     })) : ongoingRequest.map((res,index)=>({
         key: index,
         status: res.status===2?"Volunteer on the way":"request sent",
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
         user: res.Senior === null? "Pending" : res.Senior,
-        // requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
-        requestTime: res.createTime
-
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
 
@@ -197,15 +199,13 @@ const PostRequest = () => {
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title === null? "":res.title,
         user: res.volunteer === null? "Pending" : res.volunteer,
-        // requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
-        requestTime: res.createTime
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     })):requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title === null? "":res.title,
         user: res.Senior === null? "Pending" : res.Senior,
-        // requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
-        requestTime: res.createTime
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
     // react select of address list
