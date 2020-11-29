@@ -33,7 +33,16 @@ const PostRequest = () => {
         { value: 'Shopping', label: 'Shopping' },
         { value: 'Cleaning', label: 'Cleaning' },
         { value: 'Tool needed', label: 'Tool needed' },
-        { value: 'Grocery', label: 'Grocery' },
+        { value: 'Chore', label: 'Chore' },
+        { value: 'Remote', label: 'Remote' },
+        { value: 'Consulting', label: 'Consulting' },
+        { value: 'In-home Care', label: 'In-home Care' },
+        { value: 'Emergency', label: 'Emergency' },
+        { value: 'Need a Ride', label: 'Need a Ride' },
+        { value: 'Cloth Donation', label: 'Cloth Donation' },
+        { value: 'Babysitting', label: 'Babysitting' },
+        { value: 'Time-consuming', label: 'Time-consuming' },
+        { value: 'Medicine', label: 'Medicine' },
     ]
 
 
@@ -136,7 +145,7 @@ const PostRequest = () => {
 
     let {fullName, addressList} = profile
     let {ongoingRequest} = requestDetail
-    const onGoingData = profile.userType===1? ongoingRequest.map((res,index)=>({
+    const onGoingData = profile.userType===0? ongoingRequest.map((res,index)=>({
         key: index,
         status: res.status===2?"Volunteer on the way":"request sent",
         tags: res.tags===null?[]:res.tags,
@@ -153,7 +162,7 @@ const PostRequest = () => {
     }));
 
 
-    const pastData = profile.userType===1? requestDetail.pastRequest.map((res,index)=>({
+    const pastData = profile.userType===0? requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title === null? "":res.title,
@@ -172,7 +181,7 @@ const PostRequest = () => {
          value: address, label:address
       })) : [{value:"default", label:"no address recorded in database"}];
 
-    const ongoingColumns = [
+    const ongoingColumns = profile.userType===0?[
 
         {
             title: 'Status',
@@ -187,7 +196,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType===1?'Volunteer':'Senior',
+            title: 'Volunteer',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -228,6 +237,55 @@ const PostRequest = () => {
                 </Space>
             ),
         },
+    ]:[
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '20%'
+    },
+        {
+            title: 'Senior',
+            dataIndex: 'user',
+            key: 'user',
+            width: '20%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width:'12%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+                        return (
+                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '20%'
+        },
+
+        {
+            key: 'action',
+            render: (text,record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <Button type="primary" style={{background:'#00897B', fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                </Space>
+            ),
+        },
     ];
 
     const pastColumns = [
@@ -239,7 +297,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType===1?'Volunteer':'Senior',
+            title: profile.userType===0?'Volunteer':'Senior',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -309,18 +367,16 @@ const PostRequest = () => {
                 </select>
             </div>
 
-            {profile.userType === 1 &&
-            (past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
-                    <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />)
-            }
 
-            {profile.userType === 0 &&
-            (past === true? <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
-                    <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}  />)
-            }
+            {past === true?
+            <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
+            <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}} />}
 
-
-
+            <div className="mt-3">
+                {past === true?
+                    (pastData.length===0?<h2>Currently no data record</h2>:null):
+                    (onGoingData.length===0?<h2>Currently no data record</h2>:null)}
+            </div>
             <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
 
 
@@ -335,7 +391,7 @@ const PostRequest = () => {
                             </label>
                             <div >
                                 <div className="tags-input">
-                                    <Select isMulti={true} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
+                                    <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
                                 </div>
                             </div>
                         </div>
@@ -385,15 +441,9 @@ const PostRequest = () => {
 }
 
 const customStyle = {
-    // top: '15%',
-    // left: '50%',
-    // right: 'auto',
-    // bottom: 'auto',
-    // width: '80%',
     marginLeft: '5%',
     marginRight: '5%',
     marginTop: '5%'
-    // transform: 'translate(10%, 10%)',
 }
 
 

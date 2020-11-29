@@ -182,7 +182,9 @@ const PostRequest = () => {
                 </div>
 
             <Table  columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}} />
-
+            <div className="mt-3">
+                {allOnGoingRequest.length===0?<h2>Currently no data record</h2>:null}
+            </div>
         </div>
     );
 }
