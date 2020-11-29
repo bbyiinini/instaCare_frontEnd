@@ -67,8 +67,8 @@ const RequestGoogleMap = (props) => {
                 console.log('geolocation: ', geolocation)
                 let geolocationArr = geolocation.split(",")
                 const address = {
-                    lat:Number(geolocationArr[0]),
-                    lng:Number(geolocationArr[1])
+                    lat: Number(geolocationArr[0]),
+                    lng: Number(geolocationArr[1])
                 }
                 setTargetAddress(address)
             })
@@ -76,15 +76,15 @@ const RequestGoogleMap = (props) => {
     }
 
     if (!currentAddress) {
-        //senior
-        // if (props.userType === 0) {
-        //     const requestRef = firestore.collection("requestPlaza").doc(props.requestId).collection("volunteerLocation").onSnapshot((doc) => {
-        //         console.log("Current data: ", doc.data());
-        //         if (doc.exists) {
-        //             setCurrentAddress(doc.data().volunteerLat + "," + doc.data().volunteerlng)
-        //         }
-        //     });
-        // }
+        // senior
+        if (props.userType === 0) {
+            const requestRef = firestore.collection("requestPlaza").doc(props.requestId).onSnapshot((doc) => {
+                console.log("Current data: ", doc.data());
+                if (doc.exists) {
+                    setCurrentAddress(doc.data().volunteerLocation.latitude + "," + doc.data().volunteerLocation.longitude )
+                }
+            });
+        }
     }
 
 // const locateStyle = {
@@ -127,13 +127,9 @@ const RequestGoogleMap = (props) => {
                 firestore
                     .collection('requestPlaza')
                     .doc(props.requestId)
-                    .collection('volunteerLocation')
-                    .set(
-                        new firestore.GeoPoint(pos.coords.latitude, pos.coords.longitude)
-                    )
-                    .then((res) => {
-                        console.log(res)
-                    })
+                    .update({
+                            volunteerLocation: new firebase.firestore.GeoPoint(pos.coords.latitude, pos.coords.longitude),
+                        })
                     .catch((err) => {
                         console.log(err)
                     })
@@ -280,8 +276,9 @@ const RequestGoogleMap = (props) => {
                         />
                     )}
 
-                    {targetAddress && !currentAddress && (<Marker position={{lat:targetAddress.lat,lng:targetAddress.
-                        lng}}/>)}
+                    {targetAddress && !currentAddress && (<Marker position={{
+                        lat: targetAddress.lat, lng: targetAddress.lng
+                    }}/>)}
                 </GoogleMap>
             </LoadScript>
         </>
