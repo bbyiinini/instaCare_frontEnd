@@ -60,7 +60,7 @@ const PostRequest = () => {
     const [addressId, setAddressId] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [past, setPast] = useState(false);
-    const [addList, setAddList] = useState([{add:"", id:""}]);
+    const [addList, setAddList] = useState([]);
     const [addressModal, setAddressModal] = useState(false);
 
     // add address bean
@@ -142,7 +142,6 @@ const PostRequest = () => {
     }
 
     const selectAddress = (e) => {
-        console.log(e)
         setAddressId(e)
     }
 
@@ -487,7 +486,6 @@ const PostRequest = () => {
                         </div>
 
                         <div className="form-group mt-3">
-                            {/*<Select options={addressOptions} placeholder={<div>Select your address</div>} onChange={addAddress}/>*/}
                             <AntSelect
                                 style={{width:'100%', fontSize:'16px'}}
                                 placeholder="Select your address"
@@ -512,9 +510,9 @@ const PostRequest = () => {
                                     </div>
                                 )}
                             >
-                                {addList.map((address, index)=>(
+                                {addList.length !== 0? addList.map((address, index)=>(
                                     <Option value={address.id} style={{fontSize:'18px'}} key={index}>{address.add}</Option>
-                                ))}
+                                )):<Option style={{fontSize:'18px'}}  value="default">No address found in your account, please add one</Option>}
                             </AntSelect>
                         </div>
 
