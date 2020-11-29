@@ -58,6 +58,7 @@ const PostRequest = () => {
     const [checked, setChecked] = useState(false);
     const [title, setTitle] = useState("");
     const [addressId, setAddressId] = useState("");
+    const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [past, setPast] = useState(false);
     const [addList, setAddList] = useState([]);
@@ -81,14 +82,13 @@ const PostRequest = () => {
         if (user == null){
             return;
         }
-        let date = new Date()
         let requestBean ={
             requestContent:text,
             title: title,
             addressID: addressId,
+            address: address,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
-            createTime: date,
             tags: tags,
             seniorId: user.uid,
         }
@@ -142,7 +142,8 @@ const PostRequest = () => {
     }
 
     const selectAddress = (e) => {
-        setAddressId(e)
+        setAddress(e[0])
+        setAddressId(e[1])
     }
 
 
@@ -177,14 +178,17 @@ const PostRequest = () => {
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
         user: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        // requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        requestTime: res.createTime
     })) : ongoingRequest.map((res,index)=>({
         key: index,
         status: res.status===2?"Volunteer on the way":"request sent",
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title,
         user: res.Senior === null? "Pending" : res.Senior,
-        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        // requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        requestTime: res.createTime
+
     }));
 
 
@@ -193,13 +197,15 @@ const PostRequest = () => {
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title === null? "":res.title,
         user: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        // requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        requestTime: res.createTime
     })):requestDetail.pastRequest.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
         requestTitle: res.title === null? "":res.title,
         user: res.Senior === null? "Pending" : res.Senior,
-        requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        // requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        requestTime: res.createTime
     }));
 
     // react select of address list
@@ -514,7 +520,7 @@ const PostRequest = () => {
                                 )}
                             >
                                 {addList.length !== 0? addList.map((address, index)=>(
-                                    <Option value={address.id} style={{fontSize:'18px'}} key={index}>{address.add}</Option>
+                                    <Option value={[address.add, address.id]} style={{fontSize:'18px'}} data-set={address.add} key={index}>{address.add}</Option>
                                 )):<Option style={{fontSize:'18px'}}  value="default">No address found in your account, please add one</Option>}
                             </AntSelect>
                         </div>

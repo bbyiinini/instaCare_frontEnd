@@ -1,14 +1,16 @@
 import React, {useState} from "react";
 import {useHistory} from "react-router-dom";
-import {Button, Table, Pagination, Space, Tag} from "antd";
+import {Button, Space, Table, Tag} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import "../../style/PostRequest.css";
 import {SearchOutlined} from '@ant-design/icons';
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import TextField from "@material-ui/core/TextField";
+import AddressService from "../../service/AddressService";
+
 const PostRequest = () => {
 
-
+    const {user} = useSelector((state)=>({...state}))
     const requestDetail = useSelector((state)=>state.requestDetail)
     let history = useHistory();
     const dispatch = useDispatch();
@@ -37,10 +39,29 @@ const PostRequest = () => {
     if (ongoing.length === 0 && flag === true){
         setOngoing(allOnGoingRequest);
     }
+
+    // let address = "";
+    // const getAddressByAddressId = async (seniorId, addressId) => {
+    //     await AddressService.getAddressByAddressId(seniorId, addressId).then(res=>{
+    //         const addressDetail = res.data.data;
+    //         if (!addressDetail || !addressDetail.streetAddressL1 || !addressDetail.streetAddressL2 ){
+    //             return;
+    //         }
+    //         address = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + " " + addressDetail.city + " " +
+    //             addressDetail.state + " " + addressDetail.zipCode :
+    //             addressDetail.streetAddressL1 + " " + addressDetail.streetAddressL2 + " " + addressDetail.city + " " +
+    //             addressDetail.state + " " + addressDetail.zipCode;
+    //         return address;
+    //     });
+    //
+    // }
+
+
+
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        // address:
+        address: res.address==null?"":res.address,
         requestContent: res.requestContent,
     }));
 
