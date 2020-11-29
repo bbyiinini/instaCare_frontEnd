@@ -212,46 +212,49 @@ const PostRequest = () => {
 
     // ant select of add address
     let newAdd = "";
+
     const handleAdd = async () => {
         let geolocation =""
-        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+')}&key=${GOOGLE_API_KEY}}`)
-            .then(response => {
+        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') + 
+            city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
+            .then(async response => {
             console.log(response.data);
             geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
-        })
+
+                const addressBean = {
+                    streetAddressL1: street1,
+                    streetAddressL2: street2,
+                    city: city,
+                    state: state,
+                    zipCode: zipCode,
+                    userId: user.uid,
+                    geolocation: geolocation
+                }
+
+                if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
+                    // console.log(text, title, address, phoneNumber)
+                    let id = "";
+                    await RequestService.insertAddress(user.uid, addressBean).then(res => {
+                        toast.success("insert address to backend success")
+                        id = res.data.data;
+                    }).catch(res => {
+                        toast.error("insert failed")
+                    });
+                    newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+                    setAddList([...addList, {add: newAdd, id: id}])
+                    setStreet1("")
+                    setStreet2("")
+                    setCity("")
+                    setState("")
+                    setZipCode("")
+                    setAddressModal(false);
+                } else {
+                    toast.error("please fill all the information")
+                }
+            })
             .catch(error => {
-                console.log(error.response)
+                console.log(error.message)
             });
-
-        const addressBean = {
-            streetAddressL1: street1,
-            streetAddressL2: street2,
-            city: city,
-            state: state,
-            zipCode: zipCode,
-            userId: user.uid,
-        }
-
-        if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
-            // console.log(text, title, address, phoneNumber)
-            let id = "";
-            await RequestService.insertAddress(user.uid, addressBean).then(res => {
-                toast.success("insert address to backend success")
-                id = res.data.data;
-            }).catch(res => {
-                toast.error("insert failed")
-            });
-            newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
-            setAddList([...addList, {add: newAdd, id: id}])
-            setStreet1("")
-            setStreet2("")
-            setCity("")
-            setState("")
-            setZipCode("")
-            setAddressModal(false);
-        } else {
-            toast.error("please fill all the information")
-        }
 
     }
 
