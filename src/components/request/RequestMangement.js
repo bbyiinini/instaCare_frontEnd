@@ -47,6 +47,7 @@ const RequestMangement = () => {
     const [commentCollection, setCommentCollection] = useState([]);
     const [volunteerState, setVolunteerState] = useState(user);
     const [seniorState, setSeniorState] = useState(user);
+    const [onGoing, setOnGoing] = useState(false);
 
 
     const history = useHistory();
@@ -56,11 +57,15 @@ const RequestMangement = () => {
 
     useEffect(async()  => {
         if (requestMange && user){
+            if(requestMange.status===1){
+                setOnGoing(false);
+            }
             if(requestMange.volunteerId){
                 const volunteer = (await UserService.retrieve(requestMange.volunteerId)).data.data;
                 console.log(volunteer)
-                if (requestMange.status === 2){
-                    user.userType===0 ? toast.success("Request has been take") : toast.success("Successfully take the request") ;
+                if (requestMange.status === 2 && !onGoing){
+                    user.userType===1 ? toast.success("Request has been take") : toast.success("Successfully take the request") ;
+                    setOnGoing(true);
                 }
                 setVolunteerState(volunteer);
             }
@@ -104,10 +109,10 @@ const RequestMangement = () => {
         if (wrapId === 'end') {
             setWrapId("rating");
             setOriginReq(requestMange)
-            await RequestService.addToPast(requestMange.id, requestMange).then();
+            await RequestService.addToPast(requestMange.id, requestMange).then(setOnGoing(false));
         } else if (wrapId === 'cancel') {
             if(user.userType===1){
-                await RequestService.VolunteerCancelRequest(requestMange);
+                await RequestService.VolunteerCancelRequest(requestMange).then(setOnGoing(false));
                 window.location.assign("/post");
             }else{
                 //todo
