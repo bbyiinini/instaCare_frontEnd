@@ -49,3 +49,7 @@
 .react-tel-input .form-control {
     width: 200px !important;
 }
+
+.ant-select-selector {
+    background-color: green;
+}
