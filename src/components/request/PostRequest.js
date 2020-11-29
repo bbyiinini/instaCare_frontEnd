@@ -88,7 +88,6 @@ const PostRequest = () => {
             addressID: addressId,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
-            createTime: date,
             tags: tags,
             seniorId: user.uid,
         }

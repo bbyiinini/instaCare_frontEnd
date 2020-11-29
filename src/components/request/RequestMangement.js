@@ -4,8 +4,10 @@ import { useHistory } from "react-router-dom";
 import db, { firestore } from "../../base";
 
 import RequestService from "../../service/RequestService";
+import UserService from "../../service/UserService";
 
 import { makeStyles, createMuiTheme } from '@material-ui/core/styles';
+import {toast} from "react-toastify";
 import Modal from "react-modal";
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -25,6 +27,7 @@ import TimelineItem from '@material-ui/lab/TimelineItem';
 import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
 import TimelineConnector from '@material-ui/lab/TimelineConnector';
 import TimelineContent from '@material-ui/lab/TimelineContent';
+import PhoneIcon from '@material-ui/icons/Phone';
 import TimelineDot from '@material-ui/lab/TimelineDot';
 
 
@@ -42,6 +45,8 @@ const RequestMangement = () => {
     const [textField, setTextField] = useState("");
     const [rating, setRating] = useState(0);
     const [commentCollection, setCommentCollection] = useState([]);
+    const [volunteerState, setVolunteerState] = useState(user);
+    const [seniorState, setSeniorState] = useState(user);
 
 
     const history = useHistory();
@@ -53,11 +58,22 @@ const RequestMangement = () => {
         if (!user || !originReq || wrapId === 'rating') {
             console.log("failed")
         } else {
-            thisRequest.onSnapshot(function (doc) {
+            thisRequest.onSnapshot(async function (doc) {
                 console.log("Current data: ", doc.data());
-                if(doc.data()){
+                const senior = await (await UserService.retrieve(doc.data().seniorId)).data.data;
+                setSeniorState(senior);
+                if (doc.data()) {
                     setRequestMange(doc.data());
-                    setCommentCollection(doc.data().comments)
+                    if(doc.data().comments){
+                        setCommentCollection(doc.data().comments)
+                    }
+                    if(doc.data().volunteerId){
+                        const volunteer = await (await UserService.retrieve(doc.data().volunteerId)).data.data;
+                        if (doc.data().status === 2){
+                            user.userType===0 ? toast.success("Request has been take") : toast.success("Successfully take the request") ;
+                        }
+                        setVolunteerState(volunteer);
+                    }
                 } else {
                     setRequestMange(originReq);
                 }
@@ -78,9 +94,15 @@ const RequestMangement = () => {
         if (wrapId === 'end') {
             setWrapId("rating");
             setOriginReq(requestMange)
-            await RequestService.addToPast(requestMange.senior_id, requestMange).then();
+            await RequestService.addToPast(requestMange.id, requestMange).then();
         } else if (wrapId === 'cancel') {
-            //TODO
+            if(user.userType===1){
+                await RequestService.VolunteerCancelRequest(requestMange);
+                window.location.assign("/post");
+            }else{
+                //todo
+                window.location.assign("/post");
+            }
             return;
         } else {
             return;
@@ -101,13 +123,17 @@ const RequestMangement = () => {
             });
             console.log(temp);
             setCommentCollection(temp);
-            thisRequest.update({comments:commentCollection});
+            thisRequest.update({ comments: commentCollection });
             setTextField("");
         }
     }
 
     const handleRating = () => {
         window.location.assign("/post");
+    }
+
+    const handleTake = () => {
+        RequestService.takeRequest(user,requestMange)
     }
 
     const theme = createMuiTheme({
@@ -136,13 +162,13 @@ const RequestMangement = () => {
                                 <div className={classes.paddings1}>
                                     <CardHeader className=""
                                         avatar={<Avatar aria-label="recipe" className={classes.avLarge}>G</Avatar>}
-                                        title={<div className={classes.ftSmall}><a>{user.fullName}</a><div>{user.email}</div></div>}
+                                        title={<div className={classes.ftSmall}><a>{seniorState.fullName}</a><div><PhoneIcon style={{color: "#41892c"}}/>{requestMange.phoneNumber}</div></div>}
                                         subheader='Rating:'{...requestMange.rating}
                                     />
                                 </div>
                                 <div className={classes.paddings1}>
-                                    <h2>{requestMange.title}</h2>
-                                    <p>{requestMange.request_content}</p>
+                                    <h1>{requestMange.title}</h1>
+                                    <p>{requestMange.requestContent}</p>
                                     <Grid spacing={3}>
                                         {requestMange.tags === null ? "" : requestMange.tags.map((tag, index) => {
                                             return (<Chip key={index} className={classes.chip} label={tag} />);
@@ -150,11 +176,10 @@ const RequestMangement = () => {
                                     </Grid>
                                 </div>
                                 <div className={classes.paddings1}>
-                                    <ThemeProvider theme={theme}>
+                                    {requestMange.status === 3 ? <></>: <ThemeProvider theme={theme}>
                                         <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('end')}>End My Appointment</Button>
                                         <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('cancel')}>Cancel My Appointment</Button>
-                                        <Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('rating')}>Rating Test</Button>
-                                    </ThemeProvider>
+                                    </ThemeProvider>}
                                 </div>
                                 <div className={classes.paddings1}>
                                     <h2 style={{ borderColor: "#f44336", borderBottom: "1px solid #ccc" }}>Comments</h2>
@@ -185,21 +210,6 @@ const RequestMangement = () => {
                                                 subheader="September 14, 2016" />
                                             <CardContent>
                                                 <Typography variant="body2" color="textSecondary" component="p">
-                                                    I will pay you double next time.
-                                            </Typography>
-                                            </CardContent>
-                                        </Card>
-                                        <Card style={{ margin: "15px 0" }}>
-                                            <CardHeader avatar={
-                                                <Avatar aria-label="recipe" className={classes.avSmall}>
-                                                    T
-                                        </Avatar>
-                                            }
-                                                action={""}
-                                                title="Name"
-                                                subheader="September 14, 2016" />
-                                            <CardContent>
-                                                <Typography variant="body2" color="textSecondary" component="p">
                                                     hahahaahaaaha.
                                             </Typography>
                                             </CardContent>
@@ -209,10 +219,10 @@ const RequestMangement = () => {
                                                 return (<TimelineItem key={index}>
                                                     <TimelineSeparator>
                                                         <Avatar aria-label="recipe" className={classes.avLarge}>T</Avatar>
-                                                        {index!=commentCollection.length-1 ? <TimelineConnector /> : ""}
+                                                        {index != commentCollection.length - 1 ? <TimelineConnector /> : ""}
                                                     </TimelineSeparator>
                                                     <TimelineContent>
-                                                        <CardHeader 
+                                                        <CardHeader
                                                             action={""}
                                                             title={comment.user || "Null"}
                                                             subheader="time" />
@@ -225,7 +235,7 @@ const RequestMangement = () => {
                                                 </TimelineItem>);
                                             })}
                                         </Timeline>
-                                        
+
                                         <TextField color="secondary" id="filled-full-width" label="Label" style={{ margin: 0 }} placeholder="Commentss" fullWidth margin="normal"
                                             InputLabelProps={{
                                                 shrink: true,
@@ -239,16 +249,25 @@ const RequestMangement = () => {
                             </div>
                         </Col>
                     </ThemeProvider>
-                    <Col className="nav-column" xs={12} sm={6}>{user.userType === 0 ?
-                        <> <RequestGoogleMap requestId={requestMange.id} userType = {user.userType} ></RequestGoogleMap> {requestMange.status === 0 ? <h1>Waiting for taken</h1> :
+                    <Col className="nav-column" xs={12} sm={6}>{user.userType === 1 && requestMange.status === 1 ?
+                        <><h1>Too Young too simple</h1>
+                            <Button color="primary" variant="contained" className={classes.bHeight} onClick={handleTake}>Take the request</Button></> :
+                        <> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
                             <Card className={classes.volunteer}>
-                                <CardHeader 
-                                    avatar={ <Avatar aria-label="recipe" className={classes.avLarge}>F</Avatar>}
-                                    title={<div className={classes.ftSmall}><a>{user.fullName}</a><div>{user.email}</div></div>}
-                                    subheader='Rating:'{...requestMange.rating}/>
+                                <CardHeader
+                                    avatar={<Avatar aria-label="recipe" className={classes.avLarge}></Avatar>}
+                                    title={<div className={classes.ftSmall}>Waiting for volunteer</div>}
+                                    subheader='Rating: N/A'/>
+                            </Card> :
+                            <Card className={classes.volunteer}>
+                                <CardHeader
+                                    avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={requestMange.volunteerId?volunteerState.avatar:""}></Avatar>}
+                                    title={<div className={classes.ftSmall}><a>{requestMange.volunteerId?volunteerState.fullName : "None"}</a>
+                                    <div><PhoneIcon style={{color: "#41892c"}}/>{requestMange.volunteerId?volunteerState.phone: "None"}</div></div>}
+                                    subheader='Rating:'{...requestMange.rating} />
                             </Card>
-                        } </> :
-                        <h1>Too Young too simple</h1>}
+                        } </>
+                    }
                     </Col>
                     <ThemeProvider theme={theme}>
                         <Modal style={modalStyle} isOpen={wrapOpen} appElement={document.getElementById('root')}>
@@ -321,7 +340,7 @@ const useStyles = makeStyles((theme) => ({
         bottom: "50px",
         transform: "translateX(-50%)",
         borderRadius: "15px",
-        padding:"0px 20px"
+        padding: "0px 20px"
     },
     commentsList: {
         transform: "translateX(-50%)",
