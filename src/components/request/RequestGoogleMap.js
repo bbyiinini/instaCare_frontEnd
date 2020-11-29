@@ -9,6 +9,7 @@ import "./../../App.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Row, Col, ButtonGroup, Button, ToggleButton} from "react-bootstrap";
 
+
 const center = {
     lat: 32.8755662,
     lng: -117.23232519999999,
@@ -35,19 +36,22 @@ const RequestGoogleMap = (props) => {
     let intervalId
 
 
-    const [targetAddress, setTargetAddress] = useState("200,200");
+    const [targetAddress, setTargetAddress] = useState(null);
     const [currentAddress, setCurrentAddress] = useState(null);
     const [response, setResponse] = useState(null);
     const [travelMode, setTravelMode] = useState('DRIVING');
 
     if (!targetAddress) {
+        console.log("props.requestId:",props.requestId)
         const requestRef = firestore.collection("requestPlaza").doc(props.requestId)
         requestRef.get().then((doc) => {
             let data = doc.data()
             console.log("addressId: ", data)
             return data
         }).then((data) => {
+            
             let addressData = firestore.collection("users").doc(data.seniorId).collection("address").doc(data.addressID).data()
+            console.log("geolocation: ", addressData.geolocation)
             setTargetAddress(addressData.geolocation)
         });
 
@@ -56,14 +60,14 @@ const RequestGoogleMap = (props) => {
     if (!currentAddress) {
 
         //senior
-        if (props.userType === 0) {
-            const requestRef = firestore.collection("requestPlaza").doc(props.requestId).collection("volunteerLocation").onSnapshot((doc) => {
-                console.log("Current data: ", doc.data());
-                if (doc.exists) {
-                    setCurrentAddress(doc.data().volunteerLat + "," + doc.data().volunteerlng)
-                }
-            });
-        }
+        // if (props.userType === 0) {
+        //     const requestRef = firestore.collection("requestPlaza").doc(props.requestId).collection("volunteerLocation").onSnapshot((doc) => {
+        //         console.log("Current data: ", doc.data());
+        //         if (doc.exists) {
+        //             setCurrentAddress(doc.data().volunteerLat + "," + doc.data().volunteerlng)
+        //         }
+        //     });
+        // }
 
     }
 
@@ -103,10 +107,9 @@ const RequestGoogleMap = (props) => {
             })
             setCurrentAddress(pos.coords.latitude + "," + pos.coords.longitude)
             console.log(pos.coords)
-            firestore.collection('requestPlaza').doc(props.requestId).collection("volunteerLocation").set({
-                volunteerLat: pos.coords.latitude,
-                volunteerlng: pos.coords.longitude,
-            }).then((res) => {
+            firestore.collection('requestPlaza').doc(props.requestId).collection("volunteerLocation").set(
+                new firestore.GeoPoint(pos.coords.latitude, pos.coords.longitude)
+            ).then((res) => {
                 console.log(res)
             }).catch((err) => {
                 console.log(err)

@@ -243,7 +243,7 @@ const RequestMangement = () => {
                         </Col>
                     </ThemeProvider>
                     <Col className="nav-column" xs={12} sm={6}>{user.userType === 0 ?
-                        <> <RequestGoogleMap id={requestMange.id} userType = {user.userType} ></RequestGoogleMap> {requestMange.status === 0 ? <h1>Waiting for taken</h1> :
+                        <> <RequestGoogleMap requestId={requestMange.id} userType = {user.userType} ></RequestGoogleMap> {requestMange.status === 0 ? <h1>Waiting for taken</h1> :
                             <Card className={classes.volunteer}>
                                 <CardHeader 
                                     avatar={ <Avatar aria-label="recipe" className={classes.avLarge}>F</Avatar>}
