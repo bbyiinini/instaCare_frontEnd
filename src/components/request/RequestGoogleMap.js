@@ -60,6 +60,7 @@ const RequestGoogleMap = (props) => {
                 return data
             })
             .then((doc) => {
+                console.log()
                 return firestore.doc(`/users/${doc.seniorId}/address/${doc.addressID}`).get()
             })
             .then((doc) => {
