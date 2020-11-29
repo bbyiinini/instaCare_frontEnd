@@ -51,30 +51,35 @@ const RequestMangement = () => {
     const requestRef = firestore.collection('requestPlaza')
     const thisRequest = originReq == null ? null : requestRef.doc(originReq.id)
 
+    useEffect(async()  => {
+        if (requestMange && user){
+            if(requestMange.volunteerId){
+                const volunteer = (await UserService.retrieve(requestMange.volunteerId)).data.data;
+                console.log(volunteer)
+                if (requestMange.status === 2){
+                    user.userType===0 ? toast.success("Request has been take") : toast.success("Successfully take the request") ;
+                }
+                setVolunteerState(volunteer);
+            }
+            if(requestMange.seniorId && requestMange.seniorId !== seniorState.id){
+                const senior = (await UserService.retrieve(requestMange.seniorId)).data.data;
+                console.log(senior)
+                setSeniorState(senior);
+            }
+            
+        }
+    },[requestMange]);
+
     if (!requestMange) {
         if (!user || !originReq || wrapId === 'rating') {
             console.log('failed')
         } else {
             thisRequest.onSnapshot(async function (doc) {
-                console.log('Current data: ', doc.data())
-                const senior = await (await UserService.retrieve(doc.data().seniorId))
-                    .data.data
-                setSeniorState(senior)
+                console.log("Current data: ", doc.data());
                 if (doc.data()) {
                     setRequestMange(doc.data())
                     if (doc.data().comments) {
                         setCommentCollection(doc.data().comments)
-                    }
-                    if (doc.data().volunteerId) {
-                        const volunteer = await (
-                            await UserService.retrieve(doc.data().volunteerId)
-                        ).data.data
-                        if (doc.data().status === 2) {
-                            user.userType === 0
-                                ? toast.success('Request has been take')
-                                : toast.success('Successfully take the request')
-                        }
-                        setVolunteerState(volunteer)
                     }
                 } else {
                     setRequestMange(originReq)
@@ -353,79 +358,27 @@ const RequestMangement = () => {
                             </div>
                         </Col>
                     </ThemeProvider>
-                    <Col className="nav-column" xs={12} sm={6}>
-                        {user.userType === 1 && requestMange.status === 1 ? (
-                            <>
-                                <h1>Too Young too simple</h1>
-                                <Button
-                                    color="primary"
-                                    variant="contained"
-                                    className={classes.bHeight}
-                                    onClick={handleTake}
-                                >
-                                    Take the request
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                {' '}
-                                <RequestGoogleMap
-                                    requestId={requestMange.id}
-                                    userType={user.userType}
-                                ></RequestGoogleMap>{' '}
-                                {requestMange.status === 1 ? (
-                                    <Card className={classes.volunteer}>
-                                        <CardHeader
-                                            avatar={
-                                                <Avatar
-                                                    aria-label="recipe"
-                                                    className={classes.avLarge}
-                                                ></Avatar>
-                                            }
-                                            title={
-                                                <div className={classes.ftSmall}>
-                                                    Waiting for volunteer
-                                                </div>
-                                            }
-                                            subheader="Rating: N/A"
-                                        />
-                                    </Card>
-                                ) : (
-                                    <Card className={classes.volunteer}>
-                                        <CardHeader
-                                            avatar={
-                                                <Avatar
-                                                    aria-label="recipe"
-                                                    className={classes.avLarge}
-                                                    src={
-                                                        requestMange.volunteerId
-                                                            ? volunteerState.avatar
-                                                            : ''
-                                                    }
-                                                ></Avatar>
-                                            }
-                                            title={
-                                                <div className={classes.ftSmall}>
-                                                    <a>
-                                                        {requestMange.volunteerId
-                                                            ? volunteerState.fullName
-                                                            : 'None'}
-                                                    </a>
-                                                    <div>
-                                                        <PhoneIcon style={{color: '#41892c'}}/>
-                                                        {requestMange.volunteerId
-                                                            ? volunteerState.phone
-                                                            : 'None'}
-                                                    </div>
-                                                </div>
-                                            }
-                                            subheader="Rating:"
-                                            {...requestMange.rating}
-                                        />
-                                    </Card>
-                                )}{' '}
-                            </>
-                        )}
+                    <Col className="nav-column" xs={12} sm={6}>{user.userType === 1 && requestMange.status === 1 ?
+                        <><h1>Too Young too simple</h1>
+                        <ThemeProvider theme={theme}>
+                            <Button color="primary" variant="contained" className={classes.bHeight} onClick={handleTake}>Take the request</Button>
+                        </ThemeProvider></> :
+                        <> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
+                            <Card className={classes.volunteer}>
+                                <CardHeader
+                                    avatar={<Avatar aria-label="recipe" className={classes.avLarge}></Avatar>}
+                                    title={<div className={classes.ftSmall}>Waiting for volunteer</div>}
+                                    subheader='Rating: N/A'/>
+                            </Card> :
+                            <Card className={classes.volunteer}>
+                                <CardHeader
+                                    avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={requestMange.volunteerId?volunteerState.avatar:""}></Avatar>}
+                                    title={<div className={classes.ftSmall}><a>{requestMange.volunteerId !== null?volunteerState.fullName : "N/A"}</a>
+                                    <div><PhoneIcon style={{color: "#41892c"}}/>{requestMange.volunteerId !== null?volunteerState.phone: "N/A"}</div></div>}
+                                    subheader='Rating:'{...requestMange.rating} />
+                            </Card>
+                        } </>
+                    }
                     </Col>
                     <ThemeProvider theme={theme}>
                         <Modal
