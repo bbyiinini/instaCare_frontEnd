@@ -31,8 +31,6 @@ import PhoneIcon from '@material-ui/icons/Phone'
 import TimelineDot from '@material-ui/lab/TimelineDot'
 
 const RequestMangement = () => {
-    const user = useSelector((state) => state.userProfile)
-    const reqM = useSelector((state) => state.requestMange)
 
     const user = useSelector(state => (state.userProfile));
     const reqM = useSelector(state => state.requestMange);
