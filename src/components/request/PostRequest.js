@@ -150,7 +150,7 @@ const PostRequest = () => {
     const handleDelete = () => {
     }
 
-    if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
+    if(!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
         return null
     }
 
