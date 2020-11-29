@@ -1,10 +1,12 @@
-import React, { useState }  from "react";
+import React, { useState,useEffect }  from "react";
 import {Button, Grid, Input, Modal, Backdrop, Fade, TextField} from '@material-ui/core'
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 import {useDispatch, useSelector,useStore} from "react-redux";
 import {toast} from "react-toastify";
 import { useHistory, Link} from "react-router-dom";
 import UserService from "../../service/UserService";
+import { Upload, message } from 'antd';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 const useStyle = makeStyles(theme=>({
   root:{
@@ -46,6 +48,8 @@ export default function (){
   const [modalTitle,setTitle] = useState("")
   const [modalContent,setcontent] = useState("not changed")
   const [addressIndex,setindex] = useState(0)
+  const [loading,setloading] = useState(false)
+  const [imgurl,setimgurl] = useState("")
 
   const handleOpen = () => {
     setOpen(true);
@@ -74,7 +78,7 @@ export default function (){
   }
 
   const saveAll = () => {
-    // profile.address_list = profile.addressList
+    profile.address_list = profile.addressList
     UserService.update(profile.id,profile).then(res=>{
       console.log("saved user type to backend")
     }).catch(res=>{
@@ -111,6 +115,15 @@ export default function (){
     }
   }
 
+  const handleAddressDelete = (index)=>{
+    return ()=>{
+      dispatch({
+        type:"AddressDelete",
+        payload:index
+      })
+    }
+  }
+
   const handleAddAddress = ()=>{
     setindex()
     setTitle("New Address")
@@ -122,9 +135,53 @@ export default function (){
     setcontent(e.target.value)
   }
 
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  function beforeUpload(file) {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
+  }
+
+  const handleAvatarChange = info => {
+    if (info.file.status === 'uploading') {
+      setloading(true)
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, imageUrl => {
+        setloading(false)
+        dispatch({
+          type:"Avatar",
+          payload:imageUrl
+        })
+          }
+      );
+    }
+  };
+
   if(!profile){
     return(<div></div>)
   }
+
+  const uploadButton = (
+      <div>
+        {loading ? <LoadingOutlined /> : <PlusOutlined />}
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+  );
+
   let {addressList, avatar,email,fullName,phone,userType,description} = profile
   console.log(profile)
   return(
@@ -157,15 +214,32 @@ export default function (){
            <h3>Account Info</h3>
           <Grid container spacing={2}>
             <Grid item xs={3}>
-              <img src={profile.avatar}
-                   style={{
-                     width:"100px",
-                     height:"100px",
-                     borderRadius:"50%",
-                     margin:"10px"
-                   }}
-                   alt={"avatar"}/>
-              <span style={{color:"#064d40"}} onClick={handleAvatar}><b>Change Avatar</b></span>
+              {/*<img src={profile.avatar}*/}
+              {/*     style={{*/}
+              {/*       width:"100px",*/}
+              {/*       height:"100px",*/}
+              {/*       borderRadius:"50%",*/}
+              {/*       margin:"10px"*/}
+              {/*     }}*/}
+              {/*     alt={"avatar"}/>*/}
+              <Upload
+                  name="avatar"
+                  listType="picture-card"
+                  className="avatar-uploader"
+                  showUploadList={false}
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  beforeUpload={beforeUpload}
+                  onChange={handleAvatarChange}
+                  style={{
+                    width:"100px",
+                    height:"100px",
+                    borderRadius:"50%",
+                    margin:"10px"
+                  }}
+              >
+                {avatar ? <img src={avatar} alt="avatar" style={{width:"100%"}} /> : uploadButton}
+              </Upload>
+              <span style={{color:"#064d40"}}><b>Change Avatar</b></span>
             </Grid>
             <Grid item xs={9}>
 
@@ -197,11 +271,14 @@ export default function (){
           {addressList && addressList.map((item, index)=>{
             return (
             <Grid container spacing={2}>
-              <Grid item xs={9}>
+              <Grid item xs={8}>
                 {item}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={2}>
                 <span style={{color:"#064d40"}} onClick={handleAddress(index)}><b>Change</b></span>
+              </Grid>
+              <Grid item xs={2}>
+                <span style={{color:"#064d40"}} onClick={handleAddressDelete(index)}><b>Delete</b></span>
               </Grid>
             </Grid>
             )
