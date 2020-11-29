@@ -24,7 +24,7 @@ class RequestService {
 
     takeRequest(user, requestBean){
         requestBean.status = 2
-        requestBean.volunteerID = user.id
+        requestBean.volunteerId = user.id
         requestBean.volunteer = user.fullName
         return Axios.put("http://localhost:8080/request/"+requestBean.id, requestBean).then(res=>{
             toast.success("Success")
@@ -37,7 +37,7 @@ class RequestService {
 
     VolunteerCancelRequest(requestBean){
         requestBean.status = 1
-        requestBean.volunteerID = null
+        requestBean.volunteerId = null
         requestBean.volunteer = null
         return Axios.put("http://localhost:8080/request/"+requestBean.id, requestBean).then(res=>{
             toast.success("Success")
