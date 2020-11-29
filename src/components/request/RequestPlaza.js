@@ -40,7 +40,7 @@ const PostRequest = () => {
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        // address: res.address,
+        // address:
         requestContent: res.requestContent,
     }));
 

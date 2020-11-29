@@ -522,13 +522,13 @@ const PostRequest = () => {
                                     <div className="form-group">
                                         <label htmlFor="inputAddress">Address</label>
                                         <input type="text" className="form-control" id="inputAddress"
-                                               placeholder="1234 Main St" onChange={e=>(setStreet1(e.target.value))}
+                                               placeholder="Enter your street" onChange={e=>(setStreet1(e.target.value))}
                                         />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="inputAddress2">Address 2</label>
                                         <input type="text" className="form-control" id="inputAddress2"
-                                               placeholder="Apartment, studio, or floor"
+                                               placeholder="Apartment, unit, or floor"
                                                onChange={e=>(setStreet2(e.target.value))}
                                         />
                                     </div>

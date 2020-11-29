@@ -29,9 +29,6 @@ class UserService {
         return Axios.get("http://localhost:8080/users/" + uid)
     }
 
-    getAddressByUid(uid){
-        return Axios.get("http://localhost:8080/address/" + uid)
-    }
 }
 
 export default new UserService();
