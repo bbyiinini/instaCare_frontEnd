@@ -34,17 +34,20 @@ const RequestMangement = () => {
     const user = useSelector((state) => state.userProfile)
     const reqM = useSelector((state) => state.requestMange)
 
-    const [originReq, setOriginReq] = useState(
-        reqM === null ? null : reqM.ongoingRequestId
-    )
-    const [wrapId, setWrapId] = useState('')
-    const [wrapOpen, setWrapOpen] = useState(false)
-    const [requestMange, setRequestMange] = useState(null)
-    const [textField, setTextField] = useState('')
-    const [rating, setRating] = useState(0)
-    const [commentCollection, setCommentCollection] = useState([])
-    const [volunteerState, setVolunteerState] = useState(user)
-    const [seniorState, setSeniorState] = useState(user)
+    const user = useSelector(state => (state.userProfile));
+    const reqM = useSelector(state => state.requestMange);
+
+
+    const [originReq, setOriginReq] = useState(reqM === null ? null : reqM.ongoingRequestId);
+    const [wrapId, setWrapId] = useState("");
+    const [wrapOpen, setWrapOpen] = useState(false);
+    const [requestMange, setRequestMange] = useState(null);
+    const [textField, setTextField] = useState("");
+    const [rating, setRating] = useState(0);
+    const [commentCollection, setCommentCollection] = useState([]);
+    const [volunteerState, setVolunteerState] = useState(user);
+    const [seniorState, setSeniorState] = useState(user);
+    const [onGoing, setOnGoing] = useState(false);
 
     const history = useHistory()
     const classes = useStyles()
@@ -53,11 +56,15 @@ const RequestMangement = () => {
 
     useEffect(async()  => {
         if (requestMange && user){
+            if(requestMange.status===1){
+                setOnGoing(false);
+            }
             if(requestMange.volunteerId){
                 const volunteer = (await UserService.retrieve(requestMange.volunteerId)).data.data;
                 console.log(volunteer)
-                if (requestMange.status === 2){
-                    user.userType===0 ? toast.success("Request has been take") : toast.success("Successfully take the request") ;
+                if (requestMange.status === 2 && !onGoing){
+                    user.userType===1 ? toast.success("Request has been take") : toast.success("Successfully take the request") ;
+                    setOnGoing(true);
                 }
                 setVolunteerState(volunteer);
             }
@@ -101,12 +108,12 @@ const RequestMangement = () => {
         if (wrapId === 'end') {
             setWrapId('rating')
             setOriginReq(requestMange)
-            await RequestService.addToPast(requestMange.id, requestMange).then()
+            await RequestService.addToPast(requestMange.id, requestMange).then(setOnGoing(false));
         } else if (wrapId === 'cancel') {
-            if (user.userType === 1) {
-                await RequestService.VolunteerCancelRequest(requestMange)
-                window.location.assign('/post')
-            } else {
+            if(user.userType===1){
+                await RequestService.VolunteerCancelRequest(requestMange).then(setOnGoing(false));
+                window.location.assign("/post");
+            }else{
                 //todo
                 window.location.assign('/post')
             }
