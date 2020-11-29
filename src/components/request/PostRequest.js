@@ -17,13 +17,14 @@ import 'react-phone-input-2/lib/style.css';
 import {PlusOutlined} from '@ant-design/icons';
 import SelectUSState from 'react-select-us-states';
 
+const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
-const {Option} =  AntSelect;
+const {Option} = AntSelect;
 const PostRequest = () => {
-    const {user} = useSelector((state)=>({...state}))
-    const profile = useSelector(state=>state.userProfile)
-    const requestDetail = useSelector((state)=>state.requestDetail)
-    const addressList = useSelector((state)=>state.address)
+    const {user} = useSelector((state) => ({...state}))
+    const profile = useSelector(state => state.userProfile)
+    const requestDetail = useSelector((state) => state.requestDetail)
+    const addressList = useSelector((state) => state.address)
     const [tags, setTags] = useState([])
     const [ModalIsOpen, setModalIsOpen] = useState(false);
     let history = useHistory();
@@ -31,22 +32,21 @@ const PostRequest = () => {
 
 
     const options = [
-        { value: 'Easy to do', label: 'Easy to do' },
-        { value: 'Shopping', label: 'Shopping' },
-        { value: 'Cleaning', label: 'Cleaning' },
-        { value: 'Tool needed', label: 'Tool needed' },
-        { value: 'Chore', label: 'Chore' },
-        { value: 'Remote', label: 'Remote' },
-        { value: 'Consulting', label: 'Consulting' },
-        { value: 'In-home Care', label: 'In-home Care' },
-        { value: 'Emergency', label: 'Emergency' },
-        { value: 'Need a Ride', label: 'Need a Ride' },
-        { value: 'Cloth Donation', label: 'Cloth Donation' },
-        { value: 'Babysitting', label: 'Babysitting' },
-        { value: 'Time-consuming', label: 'Time-consuming' },
-        { value: 'Medicine', label: 'Medicine' },
+        {value: 'Easy to do', label: 'Easy to do'},
+        {value: 'Shopping', label: 'Shopping'},
+        {value: 'Cleaning', label: 'Cleaning'},
+        {value: 'Tool needed', label: 'Tool needed'},
+        {value: 'Chore', label: 'Chore'},
+        {value: 'Remote', label: 'Remote'},
+        {value: 'Consulting', label: 'Consulting'},
+        {value: 'In-home Care', label: 'In-home Care'},
+        {value: 'Emergency', label: 'Emergency'},
+        {value: 'Need a Ride', label: 'Need a Ride'},
+        {value: 'Cloth Donation', label: 'Cloth Donation'},
+        {value: 'Babysitting', label: 'Babysitting'},
+        {value: 'Time-consuming', label: 'Time-consuming'},
+        {value: 'Medicine', label: 'Medicine'},
     ]
-
 
 
     const openPostWindow = () => {
@@ -58,9 +58,10 @@ const PostRequest = () => {
     const [checked, setChecked] = useState(false);
     const [title, setTitle] = useState("");
     const [addressId, setAddressId] = useState("");
+    const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [past, setPast] = useState(false);
-    const [addList, setAddList] = useState([{add:"", id:""}]);
+    const [addList, setAddList] = useState([]);
     const [addressModal, setAddressModal] = useState(false);
 
     // add address bean
@@ -71,135 +72,137 @@ const PostRequest = () => {
     const [zipCode, setZipCode] = useState("");
 
 
-
     const handleCheckBox = () => {
         setChecked(!checked)
     }
 
     const handleSubmit = async (e) => {
         // e.preventDefault();
-        if (user == null){
+        if (user == null) {
             return;
         }
-        let date = new Date()
-        let requestBean ={
-            requestContent:text,
+        let requestBean = {
+            requestContent: text,
             title: title,
             addressID: addressId,
+            address: address,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
             tags: tags,
             seniorId: user.uid,
         }
 
-        if (text!=="" && title!=="" && addressId!=="" && phoneNumber!=="" && tags.length > 0){
-            await RequestService.request(user.uid, requestBean).then(res=>{
+        if (text !== "" && title !== "" && addressId !== "default" && phoneNumber !== "" && tags.length > 0) {
+            await RequestService.request(user.uid, requestBean).then(res => {
                 toast.success("save request to backend success")
-            }).catch(res=>{
+            }).catch(res => {
                 toast.error("save failed")
             })
             window.location.reload();
-        }else {
-            toast.error("please fill all required information")
+        } else {
+            toast.error("please fill all required information or select valid address!")
         }
 
     }
 
 
-    const handleRequestMange = (key) =>{
+    const handleRequestMange = (key) => {
         dispatch({
             type: 'OREQBYID',
-            payload:requestDetail.ongoingRequest[key],
+            payload: requestDetail.ongoingRequest[key],
         });
         history.push('/requestmangement');
     }
 
-    const handlePastRequestMange = (key) =>{
+    const handlePastRequestMange = (key) => {
         dispatch({
             type: 'OREQBYID',
-            payload:requestDetail.pastRequest[key],
+            payload: requestDetail.pastRequest[key],
         });
         history.push('/requestmangement');
     }
-
 
 
     const handleChange = (e) => {
-        if (e.target.value === "past"){
+        if (e.target.value === "past") {
             setPast(true)
-        }else {
+        } else {
             setPast(false)
         }
 
     }
 
     const addTags = (e) => {
-        if (e != null){
-            const result = e.map(res=>(res.value))
+        if (e != null) {
+            const result = e.map(res => (res.value))
             setTags(result)
         }
     }
 
     const selectAddress = (e) => {
-        console.log(e)
-        setAddressId(e)
+        setAddress(e[0])
+        setAddressId(e[1])
     }
-
 
 
     const handleDelete = () => {
     }
 
-    if(!profile || !requestDetail || !requestDetail.ongoingRequest || !requestDetail.pastRequest){
+    if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest) {
         return null
     }
 
     let {fullName} = profile
 
-    if (addressList.length !== 0 && flag){
-        let addressDetail = addressList.map(res=>({
-            add:  res.streetAddressL2 === ""? res.streetAddressL1 +
-                ", " + res.city + ", " + res.state + " " + res.zipCode :
-                res.streetAddressL1 + ", " + res.streetAddressL2 + ", " +
-                res.city + ", " + res.state + " " + res.zipCode,
-            id: res.addressId
-        }
+    if (addressList.length !== 0 && flag) {
+        let addressDetail = addressList.map(res => ({
+                add: res.streetAddressL2 === "" ? res.streetAddressL1 +
+                    ", " + res.city + ", " + res.state + " " + res.zipCode :
+                    res.streetAddressL1 + ", " + res.streetAddressL2 + ", " +
+                    res.city + ", " + res.state + " " + res.zipCode,
+                id: res.addressId
+            }
 
         ));
         setAddList(addressDetail);
         setFlag(false)
     }
 
+    function parseISOString(s) {
+        var b = s.split(/\D+/);
+        return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+    }
+
     let {ongoingRequest} = requestDetail
-    const onGoingData = profile.userType===0? ongoingRequest.map((res,index)=>({
+    const onGoingData = profile.userType === 0 ? ongoingRequest.map((res, index) => ({
         key: index,
-        status: res.status===2?"Volunteer on the way":"request sent",
-        tags: res.tags===null?[]:res.tags,
+        status: res.status === 2 ? "Volunteer on the way" : "request sent",
+        tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title,
-        user: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
-    })) : ongoingRequest.map((res,index)=>({
+        user: res.volunteer === null ? "Pending" : res.volunteer,
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
+    })) : ongoingRequest.map((res, index) => ({
         key: index,
-        status: res.status===2?"Volunteer on the way":"request sent",
-        tags: res.tags===null?[]:res.tags,
+        status: res.status === 2 ? "Volunteer on the way" : "request sent",
+        tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title,
-        user: res.Senior === null? "Pending" : res.Senior,
-        requestTime: moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        user: res.Senior === null ? "Pending" : res.Senior,
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
 
-    const pastData = profile.userType===0? requestDetail.pastRequest.map((res,index)=>({
+    const pastData = profile.userType === 0 ? requestDetail.pastRequest.map((res, index) => ({
         key: index,
-        tags: res.tags===null?[]:res.tags,
-        requestTitle: res.title === null? "":res.title,
-        user: res.volunteer === null? "Pending" : res.volunteer,
-        requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
-    })):requestDetail.pastRequest.map((res,index)=>({
+        tags: res.tags === null ? [] : res.tags,
+        requestTitle: res.title === null ? "" : res.title,
+        user: res.volunteer === null ? "Pending" : res.volunteer,
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
+    })) : requestDetail.pastRequest.map((res, index) => ({
         key: index,
-        tags: res.tags===null?[]:res.tags,
-        requestTitle: res.title === null? "":res.title,
-        user: res.Senior === null? "Pending" : res.Senior,
-        requestTime: res.createTime === null? "" : moment(res.createTime).format('HH:mm MM/DD/YYYY')
+        tags: res.tags === null ? [] : res.tags,
+        requestTitle: res.title === null ? "" : res.title,
+        user: res.Senior === null ? "Pending" : res.Senior,
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
     // react select of address list
@@ -209,39 +212,54 @@ const PostRequest = () => {
 
     // ant select of add address
     let newAdd = "";
-    const handleAdd = async () => {
-        const addressBean = {
-            streetAddressL1: street1,
-            streetAddressL2: street2,
-            city: city,
-            state: state,
-            zipCode: zipCode,
-            userId: user.uid,
-        }
 
-        if (street1 !==""  && city !=="" && state !=="" && zipCode !==""){
-            // console.log(text, title, address, phoneNumber)
-            await RequestService.insertAddress(user.uid, addressBean).then(res=>{
-                toast.success("insert address to backend success")
-            }).catch(res=>{
-                toast.error("insert failed")
+    const handleAdd = async () => {
+        let geolocation =""
+        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') + 
+            city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
+            .then(async response => {
+            console.log(response.data);
+            geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
+
+                const addressBean = {
+                    streetAddressL1: street1,
+                    streetAddressL2: street2,
+                    city: city,
+                    state: state,
+                    zipCode: zipCode,
+                    userId: user.uid,
+                    geolocation: geolocation
+                }
+
+                if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
+                    // console.log(text, title, address, phoneNumber)
+                    let id = "";
+                    await RequestService.insertAddress(user.uid, addressBean).then(res => {
+                        toast.success("insert address to backend success")
+                        id = res.data.data;
+                    }).catch(res => {
+                        toast.error("insert failed")
+                    });
+                    newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+                    setAddList([...addList, {add: newAdd, id: id}])
+                    setStreet1("")
+                    setStreet2("")
+                    setCity("")
+                    setState("")
+                    setZipCode("")
+                    setAddressModal(false);
+                } else {
+                    toast.error("please fill all the information")
+                }
+            })
+            .catch(error => {
+                console.log(error.message)
             });
-            newAdd = (street2 === ""? street1+", "+city+", "+state+" "+zipCode : street1+", "+street2+", "+city+", "+state+" "+zipCode);
-            setAddList([...addList, newAdd])
-            setStreet1("")
-            setStreet2("")
-            setCity("")
-            setState("")
-            setZipCode("")
-            setAddressModal(false);
-        }else {
-            toast.error("please fill all the information")
-        }
 
     }
 
 
-    const ongoingColumns = profile.userType===0?[
+    const ongoingColumns = profile.userType === 0 ? [
 
         {
             title: 'Status',
@@ -265,13 +283,13 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'12%',
+            width: '12%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -288,22 +306,25 @@ const PostRequest = () => {
 
         {
             key: 'action',
-            render: (text,record) => (
+            render: (text, record) => (
 
                 <Space size="middle">
                     {/*<a>Invite {record.name}</a>*/}
                     {/*<a>Delete</a>*/}
-                    <Button type="primary" style={{background:'#00897B', fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                    <Button type="primary" style={{background: '#00897B', fontSize: '16px', textAlign: 'center'}}
+                            shape="round"><a style={{textDecoration: 'none'}}
+                                             onClick={() => handleRequestMange(record.key)}>request
+                        management</a></Button>
                 </Space>
             ),
         },
-    ]:[
+    ] : [
         {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
             width: '20%'
-    },
+        },
         {
             title: 'Senior',
             dataIndex: 'user',
@@ -314,13 +335,13 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'12%',
+            width: '12%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -337,12 +358,15 @@ const PostRequest = () => {
 
         {
             key: 'action',
-            render: (text,record) => (
+            render: (text, record) => (
 
                 <Space size="middle">
                     {/*<a>Invite {record.name}</a>*/}
                     {/*<a>Delete</a>*/}
-                    <Button type="primary" style={{background:'#00897B', fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handleRequestMange(record.key)}>request management</a></Button>
+                    <Button type="primary" style={{background: '#00897B', fontSize: '16px', textAlign: 'center'}}
+                            shape="round"><a style={{textDecoration: 'none'}}
+                                             onClick={() => handleRequestMange(record.key)}>request
+                        management</a></Button>
                 </Space>
             ),
         },
@@ -357,7 +381,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType===0?'Volunteer':'Senior',
+            title: profile.userType === 0 ? 'Volunteer' : 'Senior',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -367,14 +391,14 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'10%',
+            width: '10%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color:'#004D40',fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -397,17 +421,28 @@ const PostRequest = () => {
 
         {
             key: 'action',
-            render: (text,record) => (
+            render: (text, record) => (
 
                 <Space size="middle">
                     {/*<a>Invite {record.name}</a>*/}
                     {/*<a>Delete</a>*/}
                     <div className="-vertical">
                         <div className="m-2">
-                            <Button type="primary" style={{background:'#00897B', width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" ><a style={{textDecoration:'none'}} onClick={()=>handlePastRequestMange(record.key)}>Detail</a></Button>
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round"><a style={{textDecoration: 'none'}}
+                                                onClick={() => handlePastRequestMange(record.key)}>Detail</a></Button>
                         </div>
                         <div className="m-2">
-                            <Button type="primary" style={{background:'#00897B',  width:'100px',fontSize:'16px', textAlign:'center'}} shape="round" onClick={()=>handleDelete} >Delete</Button>
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round" onClick={() => handleDelete}>Delete</Button>
                         </div>
                     </div>
                 </Space>
@@ -418,82 +453,93 @@ const PostRequest = () => {
 
     return (
         <div style={customStyle}>
-            <h1 style={{marginTop:'-50px', marginBottom: '70px', float:'left'}}>Welcome{user==null?"":", "+fullName}</h1>
+            <h1 style={{
+                marginTop: '-50px',
+                marginBottom: '70px',
+                float: 'left'
+            }}>Welcome{user == null ? "" : ", " + fullName}</h1>
 
             <div className="col-sm-1">
-                <select className="ml-3" style={{border:'none', color:'#004D40', outline:'none'}} onChange={handleChange}>
+                <select className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
+                        onChange={handleChange}>
                     <option value="onGoing">Ongoing Requests</option>
                     <option value="past">Past Requests</option>
                 </select>
             </div>
 
 
-            {past === true?
-            <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}} /> :
-            <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}} />}
+            {past === true ?
+                <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}}/> :
+                <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}/>}
 
             <div className="mt-3">
-                {past === true?
-                    (pastData.length===0?<h2>Currently no data record</h2>:null):
-                    (onGoingData.length===0?<h2>Currently no data record</h2>:null)}
+                {past === true ?
+                    (pastData.length === 0 ? <h2>Currently no data record</h2> : null) :
+                    (onGoingData.length === 0 ? <h2>Currently no data record</h2> : null)}
             </div>
-            <Button type="primary" style={{background:'#00897B', width:'250px', height:'40px', fontSize:'18px', marginTop:'10px'}} shape="round" onClick={openPostWindow}>Post New Request</Button>
+
+            {profile.userType === 0 &&
+            <Button type="primary"
+                    style={{background: '#00897B', width: '250px', height: '40px', fontSize: '18px', marginTop: '10px'}}
+                    shape="round" onClick={openPostWindow}>Post New Request</Button>
+            }
 
 
             <MuiThemeProvider>
                 <Modal style={modalStyle} isOpen={ModalIsOpen} appElement={document.getElementById('root')}>
                     <h1 className="text-center">Post Request</h1>
-                    <form >
+                    <form>
                         <div>
-                            <label className="form-inline" style={{height:'50px'}}>Title
-                                <TextField style={{marginTop:'5px', marginLeft:'10px'}} required id="standard-basic"
-                                           onChange={e=>setTitle(e.target.value)}/>
+                            <label className="form-inline" style={{height: '50px'}}>Title
+                                <TextField style={{marginTop: '5px', marginLeft: '10px'}} required id="standard-basic"
+                                           onChange={e => setTitle(e.target.value)}/>
                             </label>
-                            <div >
+                            <div>
                                 <div className="tags-input">
-                                    <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags} placeholder={<div>Select tags</div>}/>
+                                    <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags}
+                                            placeholder={<div>Select tags</div>}/>
                                 </div>
                             </div>
                         </div>
                         <div>
                             <label htmlFor="validationTextarea"/>
                             <textarea className="form-control"
-                                      placeholder="Required request detail" required onChange={e=>setText(e.target.value)}>
+                                      placeholder="Required request detail" required
+                                      onChange={e => setText(e.target.value)}>
                     </textarea>
                         </div>
                         <div className="form-inline mt-3">
-                                <label>Phone Number </label>
-                                <ReactPhoneInput
-                                    style={{width:'50%', marginLeft: '10px'}}
-                                    country={'us'}
-                                    onlyCountries={['us']}
-                                    isValid={(value, country) => {
-                                        if (!value.match(/1/)) {
-                                            return 'Invalid area code: ' + value + ', ' + country.name;
-                                        } else {
-                                            return true;
-                                        }
-                                    }}
-                                    inputProps={{
-                                        name: "phone",
-                                        required: true,
-                                    }}
-                                    onChange={e=>(setPhoneNumber(e))}
-                                />
+                            <label>Phone Number </label>
+                            <ReactPhoneInput
+                                style={{width: '50%', marginLeft: '10px'}}
+                                country={'us'}
+                                onlyCountries={['us']}
+                                isValid={(value, country) => {
+                                    if (!value.match(/1/)) {
+                                        return 'Invalid area code: ' + value + ', ' + country.name;
+                                    } else {
+                                        return true;
+                                    }
+                                }}
+                                inputProps={{
+                                    name: "phone",
+                                    required: true,
+                                }}
+                                onChange={e => (setPhoneNumber(e))}
+                            />
 
                         </div>
 
                         <div className="form-group mt-3">
-                            {/*<Select options={addressOptions} placeholder={<div>Select your address</div>} onChange={addAddress}/>*/}
                             <AntSelect
-                                style={{width:'100%', fontSize:'16px'}}
+                                style={{width: '100%', fontSize: '16px'}}
                                 placeholder="Select your address"
                                 onChange={selectAddress}
                                 dropdownRender={(menu) => (
                                     <div>
                                         {menu}
-                                        <Divider style={{ margin: "4px 0"}} />
-                                        <div style={{ display: "flex", flexWrap: "nowrap"}}>
+                                        <Divider style={{margin: "4px 0"}}/>
+                                        <div style={{display: "flex", flexWrap: "nowrap"}}>
                                             <a
                                                 style={{
                                                     flex: "none",
@@ -501,63 +547,75 @@ const PostRequest = () => {
                                                     display: "block",
                                                     cursor: "pointer"
                                                 }}
-                                                onClick={e=>(setAddressModal(true))}
+                                                onClick={e => (setAddressModal(true))}
                                             >
-                                                    <PlusOutlined /> Add address
+                                                <PlusOutlined/> Add address
                                             </a>
                                         </div>
                                     </div>
                                 )}
                             >
-                                {addList.map((address, index)=>(
-                                    <Option value={address.id} style={{fontSize:'18px'}} key={index}>{address.add}</Option>
-                                ))}
+                                {addList.length !== 0 ? addList.map((address, index) => (
+                                        <Option value={[address.add, address.id]} style={{fontSize: '18px'}}
+                                                data-set={address.add} key={index}>{address.add}</Option>
+                                    )) :
+                                    <Option style={{fontSize: '18px'}} value="default">No address found in your account,
+                                        please add one</Option>}
                             </AntSelect>
                         </div>
 
                         <div>
-                            <Modal style={addressModalStyle} isOpen={addressModal} appElement={document.getElementById('root')}>
+                            <Modal style={addressModalStyle} isOpen={addressModal}
+                                   appElement={document.getElementById('root')}>
                                 <form>
                                     <div className="form-group">
                                         <label htmlFor="inputAddress">Address</label>
                                         <input type="text" className="form-control" id="inputAddress"
-                                               placeholder="1234 Main St" onChange={e=>(setStreet1(e.target.value))}
+                                               placeholder="Enter your street"
+                                               onChange={e => (setStreet1(e.target.value))}
                                         />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="inputAddress2">Address 2</label>
                                         <input type="text" className="form-control" id="inputAddress2"
-                                               placeholder="Apartment, studio, or floor"
-                                               onChange={e=>(setStreet2(e.target.value))}
+                                               placeholder="Apartment, unit, or floor"
+                                               onChange={e => (setStreet2(e.target.value))}
                                         />
                                     </div>
                                     <div className="form-row">
                                         <div className="form-group col-md-6">
                                             <label htmlFor="inputCity">City</label>
                                             <input type="text" className="form-control" id="inputCity"
-                                                   onChange={e=>setCity(e.target.value)}
+                                                   onChange={e => setCity(e.target.value)}
                                             />
                                         </div>
                                         <div className="form-group col-md-4">
                                             <label htmlFor="inputState">State</label>
-                                            <SelectUSState id="inputState" className="form-control" onChange={e=>setState(e)}/>
+                                            <SelectUSState id="inputState" className="form-control"
+                                                           onChange={e => setState(e)}/>
                                         </div>
                                         <div className="form-group col-md-2">
                                             <label htmlFor="inputZip">Zip</label>
-                                            <input type="text" className="form-control" id="inputZip" onChange={e=>setZipCode(e.target.value)}/>
+                                            <input type="text" className="form-control" id="inputZip"
+                                                   onChange={e => setZipCode(e.target.value)}/>
                                         </div>
                                     </div>
-                                    <Button type="primary" style={{background:'#00897B', width:'80px'}} shape="round" className="float-right" onClick={handleAdd} >add</Button>
-                                    <label style={{color:'#00897B', cursor:'pointer'}} className="float-right m-2" onClick={()=>setAddressModal(false)}>Cancel</label>
+                                    <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
+                                            className="float-right" onClick={handleAdd}>add</Button>
+                                    <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
+                                           onClick={() => setAddressModal(false)}>Cancel</label>
                                 </form>
                             </Modal>
                         </div>
                         <div className="form-group form-check">
-                            <input type="checkbox" className="form-check-input" checked={checked} onChange={handleCheckBox}/>
-                            <label className="form-check-label" >Physical contact needed</label>
+                            <input type="checkbox" className="form-check-input" checked={checked}
+                                   onChange={handleCheckBox}/>
+                            <label className="form-check-label">Physical contact needed</label>
                         </div>
-                        <Button type="primary" style={{background:'#00897B', width:'80px'}} shape="round" className="float-right" onClick={handleSubmit}>Post</Button>
-                        <label style={{color:'#00897B', cursor:'pointer'}} className="float-right m-2" onClick={()=>setModalIsOpen(false)}>Cancel</label>
+                        <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
+                                className="float-right" onClick={handleSubmit}>Post</Button>
+                        <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
+                               onClick={() => setModalIsOpen(false)}>Cancel</label>
                     </form>
                 </Modal>
             </MuiThemeProvider>
@@ -573,7 +631,7 @@ const customStyle = {
 }
 
 const addressModalStyle = {
-    overlay:{
+    overlay: {
         position: 'fixed',
         top: 0,
         left: 0,
@@ -587,7 +645,7 @@ const addressModalStyle = {
         right: 'auto',
         bottom: 'auto',
         width: '30%',
-        borderRadius:'30px',
+        borderRadius: '30px',
         transform: 'translate(-40%, 5%)',
     },
 }

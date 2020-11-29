@@ -24,6 +24,7 @@ import ResetPassword from "./components/auth/ResetPassword";
 import Welcome from './components/auth/Welcome'
 import userService from './service/UserService'
 import Axios from "axios";
+import AddressService from "./service/AddressService";
 
 
 const App = () => {
@@ -70,7 +71,7 @@ const App = () => {
           payload: profileData
         })
 
-        const addressResult = await userService.getAddressByUid(user.uid);
+        const addressResult = await AddressService.getAddressByUid(user.uid);
         const addressDetail = addressResult.data.data;
         dispatch({
           type: 'SET_ADDRESS',
