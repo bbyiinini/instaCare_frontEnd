@@ -172,7 +172,7 @@ const PostRequest = () => {
 
     }
 
-    if (!profile || !requestDetail || !addressList) {
+    if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest || !addressList.userAddrList) {
         return <h1>Loading...</h1>
     }
 
