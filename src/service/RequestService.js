@@ -19,6 +19,10 @@ class RequestService {
         })
     }
 
+    deleteRequest(rid){
+        return Axios.delete("http://localhost:8080/request/"+rid)
+    }
+
     // getRequest(uid){
     //     return Axios.get("http://localhost:8080/request/"+uid).then(res=>{
     //         console.log(res)

@@ -12,6 +12,7 @@ const PostRequest = () => {
 
     const {user} = useSelector((state)=>({...state}))
     const requestDetail = useSelector((state)=>state.requestDetail)
+    const addrList = useSelector((state)=>state.address)
     let history = useHistory();
     const dispatch = useDispatch();
     const [ongoing, setOngoing] = useState([]);
@@ -20,6 +21,8 @@ const PostRequest = () => {
     const [flag, setFlag] = useState(true);
     const [prevState, setPrevState] = useState("");
     const [filterResult, setFilterResult] = useState([]);
+    const [addrFlag, setAddrFlag] = useState(true);
+
     const handleRequestMange = (key) =>{
         dispatch({
             type: 'OREQBYID',
@@ -31,7 +34,7 @@ const PostRequest = () => {
 
 
 
-    if(!requestDetail || !requestDetail.allOnGoingRequest){
+    if(!requestDetail || !requestDetail.allOnGoingRequest || !addrList){
         return null
     }
 
@@ -40,28 +43,15 @@ const PostRequest = () => {
         setOngoing(allOnGoingRequest);
     }
 
-    // let address = "";
-    // const getAddressByAddressId = async (seniorId, addressId) => {
-    //     await AddressService.getAddressByAddressId(seniorId, addressId).then(res=>{
-    //         const addressDetail = res.data.data;
-    //         if (!addressDetail || !addressDetail.streetAddressL1 || !addressDetail.streetAddressL2 ){
-    //             return;
-    //         }
-    //         address = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + " " + addressDetail.city + " " +
-    //             addressDetail.state + " " + addressDetail.zipCode :
-    //             addressDetail.streetAddressL1 + " " + addressDetail.streetAddressL2 + " " + addressDetail.city + " " +
-    //             addressDetail.state + " " + addressDetail.zipCode;
-    //         return address;
-    //     });
-    //
-    // }
 
-
+    if (!addrList.addressList){
+        return null;
+    }
 
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        address: res.address==null?"":res.address,
+        address: addrList.addressList.filter(addr => addr.id===index)[0].addr,
         requestContent: res.requestContent,
     }));
 
