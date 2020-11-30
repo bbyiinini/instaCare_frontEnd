@@ -43,30 +43,6 @@ const PostRequest = () => {
         setOngoing(allOnGoingRequest);
     }
 
-    let address = [];
-    ongoing.map(async (res, index) => {
-        await AddressService.getAddressByAddressId(res.seniorId, res.addressID).then(res=>{
-            const addressDetail = res.data.data;
-            let result = null;
-               if (addressDetail){
-                  result = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + ", " + addressDetail.city + ", " +
-                               addressDetail.state + " " + addressDetail.zipCode :
-                               addressDetail.streetAddressL1 + ", " + addressDetail.streetAddressL2 + ", " + addressDetail.city + ", " +
-                               addressDetail.state + " " + addressDetail.zipCode;
-                  address = [...address, {addr:result, id: index}]
-               }else{
-                   address = [...address, {addr: "", id: index}]
-               }
-            if ((address.length === ongoing.length) && addrFlag){
-                setAddrFlag(false)
-                dispatch({
-                    type:'ADD_ADDRESS_LIST',
-                    payload: address
-                })
-
-            }
-        })
-    })
 
     if (!addrList.addressList){
         return null;
