@@ -156,6 +156,7 @@ const App = () => {
           /> */}
           <Switch>
             <Route exact path="/">
+              <Welcome/>
               {/*{(!user && !finishStatus)? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
               {!finishStatus && <Redirect to="/finishSetUp"/>}
               {/*{finishStatus === 'unknown' ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}

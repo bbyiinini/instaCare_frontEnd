@@ -26,11 +26,11 @@ const SignUpComplete = ({props}) => {
                     console.log("update success")
                 }
                 //pass uid to backend
-                await UserService.registed(user.uid, UserBean).then(res=>{
-                    toast.success("saved user type to backend")
-                }).catch(res=>{
-                    console.log("CORS not connected")
-                })
+                // await UserService.registed(user.uid, UserBean).then(res=>{
+                //     toast.success("saved user type to backend")
+                // }).catch(res=>{
+                //     console.log("CORS not connected")
+                // })
 
             }).catch((error)=>{
                 console.log(error)
