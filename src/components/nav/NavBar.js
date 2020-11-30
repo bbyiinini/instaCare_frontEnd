@@ -6,7 +6,7 @@ import {Link, useHistory} from 'react-router-dom';
 import db from "../../base";
 import {useDispatch, useSelector} from "react-redux";
 import {toast} from "react-toastify";
-import icLogo from './logoWithText.svg';
+import icLogo from '../../assets/logoWithText.svg';
 import warning from '../../assets/forgot.png';
 import {Button, Table, Pagination, Space, Tag} from "antd";
 import Avatar from '@material-ui/core/Avatar';
