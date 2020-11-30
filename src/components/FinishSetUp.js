@@ -45,8 +45,6 @@ const useStyles = makeStyles({
 export default function FinishSetUp(props){
   const classes = useStyles()
   let user = useSelector(state=>state.user)
-  // let user = db.auth().currentUser
-  console.log(user)
   const {email, uid} = user
   let [fname,setfname] = useState("")
   let [lname,setlname] = useState("")

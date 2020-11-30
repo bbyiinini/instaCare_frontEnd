@@ -39,7 +39,7 @@ const SignUpComplete = ({props}) => {
     window.localStorage.removeItem('email')
     window.localStorage.removeItem('password')
     window.localStorage.removeItem('userType')
-        history.push("/")
+    history.push("/")
     },[])
 
     return (
