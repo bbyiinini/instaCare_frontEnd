@@ -21,6 +21,10 @@ export const userProfileReducer = (state = null, action) =>{
       let oldAddressList = [...state.addressList]
       oldAddressList[action.payload.index] = action.payload.content
       return {...state,addressList:oldAddressList}
+    case "AddressDelete":
+      let oldList = [...state.addressList]
+      oldList.splice(action.payload,1)
+      return {...state,addressList: oldList}
     default:
       return state;
   }
