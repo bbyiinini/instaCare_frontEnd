@@ -2,17 +2,12 @@ import React, {useState} from "react";
 import { Menu } from 'antd';
 import {Input, Modal, Backdrop, Fade, TextField} from '@material-ui/core'
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
-import {
-    HomeOutlined,
-    UserOutlined,
-    UserAddOutlined, LogoutOutlined, SettingOutlined
-} from '@ant-design/icons';
 import {Link, useHistory} from 'react-router-dom';
 import db from "../../base";
 import {useDispatch, useSelector} from "react-redux";
 import {toast} from "react-toastify";
 import icLogo from './logoWithText.svg';
-import warning from '../../assets/warning.jpg';
+import warning from '../../assets/forgot.png';
 import {Button, Table, Pagination, Space, Tag} from "antd";
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';

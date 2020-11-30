@@ -255,7 +255,7 @@ const RequestMangement = () => {
 												placeholder="Commentss"
 												fullWidth
 												margin="normal"
-												InputLabelProps={{shrink: true,}}
+												InputLabelProps={{ shrink: true, }}
 												variant="filled"
 												value={textField}
 												onChange={handleTextFieldChange}
@@ -274,7 +274,7 @@ const RequestMangement = () => {
 						<Col className="nav-column" xs={12} sm={6}>{user.userType === 1 && requestMange.status === 1 ?
 							<><h1>Too Young too simple</h1>
 								<ThemeProvider theme={theme}>
-									<Button color="primary" variant="contained" className={classes.bHeight} onClick={handleTake}>Take the request</Button>
+									<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('covid')}>Take the request</Button>
 								</ThemeProvider></> :
 							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
 								<Card className={classes.volunteer}>
@@ -299,47 +299,90 @@ const RequestMangement = () => {
 								isOpen={wrapOpen}
 								appElement={document.getElementById('root')}
 							>
-								{wrapId === 'end' || wrapId === 'cancel' ? (
-									<>
-										<h2 className="text-left">
-											{wrapId.substring(0, 1).toUpperCase()}
-											{wrapId.substring(1, wrapId.length)} My Appointment?</h2>
-										<p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
-										<div className="text-right">
-											<Button
-												color="secondary"
-												variant="contained"
-												style={{ borderRadius: '15px', border: 'none' }}
-												onClick={handleEnd}
-											>Confirm </Button>
-											<Button
-												color="secondary"
-												onClick={() => setWrapOpen(false)}
-											>Cancel</Button>
-										</div>
-									</>
-								) : (
-										<>
-											<h2 className="text-center">Thank you for using InstaCare</h2>
-											<Rating
-												className={classes.centerItem}
-												name="simple-controlled"
-												value={rating}
-												onChange={(event, newValue) => {
-													setRating(newValue)
-												}}
-											/>
-											<div>
-												<Button
-													className={classes.centerButton}
-													color="secondary"
-													variant="contained"
-													style={{ borderRadius: '15px', border: 'none' }}
-													onClick={handleRating}
-												>Submit</Button>
+								{(() => {
+									if (wrapId === 'end' || wrapId === 'cancel') {
+										return(
+											<>
+												<h2 className="text-left">
+													{wrapId.substring(0, 1).toUpperCase()}
+													{wrapId.substring(1, wrapId.length)} My Appointment?</h2>
+												<p>Are you sure to {wrapId} this appointment? you will not be able to undo this action once it is completed.</p>
+												<div className="text-right">
+													<Button
+														color="secondary"
+														variant="contained"
+														style={{ borderRadius: '15px', border: 'none' }}
+														onClick={handleEnd}
+													>Confirm </Button>
+													<Button
+														color="secondary"
+														onClick={() => setWrapOpen(false)}
+													>Cancel</Button>
+												</div>
+											</>
+										)
+									} else if (wrapId === "rating") {
+										return (
+											<>
+												<h2 className="text-center">Thank you for using InstaCare</h2>
+												<Rating
+													className={classes.centerItem}
+													name="simple-controlled"
+													value={rating}
+													onChange={(event, newValue) => {
+														setRating(newValue)
+													}}
+												/>
+												<div>
+													<Button
+														className={classes.centerButton}
+														color="secondary"
+														variant="contained"
+														style={{ borderRadius: '15px', border: 'none' }}
+														onClick={handleRating}
+													>Submit</Button>
+												</div>
+											</>
+										)
+									} else {
+										return (
+											<div className={classes.paper}>
+												<h2 id="transition-modal-title">COVID-19 Self Health Check</h2>
+												<h6>Are you currently experiencing any of the following symptoms that started within the last 14 days?</h6>
+												<ul>
+													<li>Fever or chills</li>
+													<li>Cough</li>
+													<li>Shortness of breath or difficulty breathing</li>
+													<li>Fatigue</li>
+													<li>Muscle or body aches</li>
+													<li>Headache</li>
+													<li>Loss of taste or smell</li>
+													<li>Sore throat</li>
+													<li>Congestion or runny nose</li>
+													<li>Nausea or vomiting</li>
+													<li>Diarrhea</li>
+												</ul>
+												<h6>Over the past 14 days, have you been informed by a public health agency or a healthcare system that you have been exposed to COVID-19?</h6>
+												<br></br>
+												<h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19 infection?</h6>
+												<br></br>
+												<h4>If your answer is YES for any of the questions above, we advice you to stay home and avoid physical contacts.</h4>
+												{/* <TextField
+												className={classes.textfield}
+												label={`Enter new ${modalTitle}`}
+												onChange={handleModalChange}
+												defaultValue={modalContent}
+												multiline
+												rows={modalTitle === "Description" ? 6 : 1}
+											/> */}
+												<div>
+													{/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
+													<Button onClick={handleTake} style={{ float: "right", color: "white", backgroundColor: "#00897B" }}>I acknowledge</Button>
+												</div>
 											</div>
-										</>
-									)}
+										)
+									}
+								})()}
 							</Modal>
 						</ThemeProvider>
 					</Grid>

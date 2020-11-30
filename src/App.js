@@ -25,6 +25,7 @@ import Welcome from './components/auth/Welcome'
 import userService from './service/UserService'
 import Axios from "axios";
 import AddressService from "./service/AddressService";
+// import NavBar from "./components/nav/NavBar";
 
 
 const App = () => {
