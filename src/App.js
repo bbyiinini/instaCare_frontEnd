@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import NavHeader from "./components/nav/NavHeader";
+import NavBar from "./components/nav/NavBar";
 import SignUpComplete from "./components/auth/SignUpComplete";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
@@ -24,15 +25,13 @@ import ResetPassword from "./components/auth/ResetPassword";
 import Welcome from './components/auth/Welcome'
 import userService from './service/UserService'
 import Axios from "axios";
-import AddressService from "./service/AddressService";
-// import NavBar from "./components/nav/NavBar";
+import PageNotFound from './components/PageNotFound';
 
 
 const App = () => {
   const dispatch = useDispatch();
-  const [finishStatus,setStatus] = useState("unkown")
+  const [finishStatus,setStatus] = useState(true)
   let user = useSelector(state=>state.user)
-  if(!user){user = {UnLogin:true}}
   // console.log(user)
   if(user && user.uid){
     // check if user profile is completed
@@ -68,28 +67,20 @@ const App = () => {
         const {data} = await userService.retrieve(user.uid)
 
         const profileData = data.data
+        console.log(profileData)
         dispatch({
           type:'SET_PROFILE',
           payload: profileData
         })
 
-        const addressResult = await AddressService.getAddressByUid(user.uid);
-        const addressDetail = addressResult.data.data;
+        const requestResult = await Axios.get(
+            "http://localhost:8080/request/" + user.uid
+        );
+        const requestDetail = requestResult.data.data
         dispatch({
-          type: 'SET_ADDRESS',
-          payload: addressDetail
+          type: 'REQUEST',
+          payload: requestDetail
         })
-        let userType = await profileData.userType;
-          const requestResult = await Axios.get(
-              "http://localhost:8080/request/" + user.uid, {params: {userType:userType}}
-          );
-          const requestDetail = requestResult.data.data
-          dispatch({
-            type: 'REQUEST',
-            payload: requestDetail
-          })
-
-
 
         const pastResult = await Axios.get(
             "http://localhost:8080/request/past/" + user.uid
@@ -110,28 +101,6 @@ const App = () => {
           payload: allOnGoingRequest
         });
 
-        let address = [];
-        allOnGoingRequest.map(async (res, index) => {
-          await AddressService.getAddressByAddressId(res.seniorId, res.addressID).then(res=>{
-            const addressDetail = res.data.data;
-            let result = null;
-            if (addressDetail){
-              result = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + ", " + addressDetail.city + ", " +
-                  addressDetail.state + " " + addressDetail.zipCode :
-                  addressDetail.streetAddressL1 + ", " + addressDetail.streetAddressL2 + ", " + addressDetail.city + ", " +
-                  addressDetail.state + " " + addressDetail.zipCode;
-              address = [...address, {addr:result, id: index}]
-            }else{
-              address = [...address, {addr: "", id: index}]
-            }
-            if ((address.length === allOnGoingRequest.length)){
-              dispatch({
-                type:'ADD_ADDRESS_LIST',
-                payload: address
-              })
-            }
-          })
-        })
 
       }else{
         console.log("you have logout")
@@ -148,6 +117,7 @@ const App = () => {
       <div className="App">
         <Router>
           <NavHeader/>
+          <NavBar/>
           <ToastContainer/>
           {/* <NavBar
             loggedIn={this.state.loggedIn}
@@ -155,9 +125,8 @@ const App = () => {
           /> */}
           <Switch>
             <Route exact path="/">
-              {/*{(!user && !finishStatus)? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
               {!finishStatus && <Redirect to="/finishSetUp"/>}
-              {finishStatus === 'unknown' ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}
+              <Welcome/>
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
             <ProtectedRoute exact path="/signup" component={() => <Signup />} />
@@ -169,6 +138,7 @@ const App = () => {
             <Route exact path="/post" component={() => <PostRequest />} />
             <Route exact path="/profile" component={() => <Profile />} />
             <Route exact path="/reset" component={() => <ResetPassword />} />
+            <Route path="*" component={() => <PageNotFound />} />
           </Switch>
         </Router>
       </div>
