@@ -65,6 +65,7 @@ const App = () => {
           }
         })
 
+
         // store user profile data into redux
         const {data} = await userService.retrieve(user.uid)
 
@@ -74,13 +75,8 @@ const App = () => {
           payload: profileData
         })
 
-        const addressResult = await AddressService.getAddressByUid(user.uid);
-        const addressDetail = addressResult.data.data;
-        dispatch({
-          type: 'SET_ADDRESS',
-          payload: addressDetail
-        })
-        let userType = await profileData.userType;
+        if (profileData !== null) {
+          let userType = profileData.userType;
           const requestResult = await Axios.get(
               "http://localhost:8080/request/" + user.uid, {params: {userType:userType}}
           );
@@ -89,7 +85,13 @@ const App = () => {
             type: 'REQUEST',
             payload: requestDetail
           })
-
+        }
+        const addressResult = await AddressService.getAddressByUid(user.uid);
+        const addressDetail = addressResult.data.data;
+        dispatch({
+          type: 'SET_ADDRESS',
+          payload: addressDetail
+        })
 
 
         const pastResult = await Axios.get(
