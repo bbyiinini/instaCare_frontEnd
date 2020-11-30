@@ -29,6 +29,7 @@ import AddressService from "./service/AddressService";
 
 
 const App = () => {
+  let history = useHistory();
   const dispatch = useDispatch();
   const [finishStatus,setStatus] = useState("unkown")
   let user = useSelector(state=>state.user)
@@ -157,7 +158,7 @@ const App = () => {
             <Route exact path="/">
               {/*{(!user && !finishStatus)? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
               {!finishStatus && <Redirect to="/finishSetUp"/>}
-              {finishStatus === 'unknown' ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}
+              {/*{finishStatus === 'unknown' ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
             <ProtectedRoute exact path="/signup" component={() => <Signup />} />
