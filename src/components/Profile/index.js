@@ -190,7 +190,7 @@ export default function (){
       <Grid item xs={4}>
         <div className={classes.info}>
           <h3>{fullName}</h3>
-          <h5>{userType? "Senior" : "Volunteer"}</h5>
+          <h5>{!userType? "Senior" : "Volunteer"}</h5>
           <h5>{email}</h5>
           <h5>Rating:</h5>
         </div>
