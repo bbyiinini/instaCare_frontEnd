@@ -82,7 +82,7 @@ const RequestGoogleMap = (props) => {
             const requestRef = firestore.collection("requestPlaza").doc(props.requestId).onSnapshot((doc) => {
                 console.log("Current data: ", doc.data());
                 if (doc.exists) {
-                    setCurrentAddress(doc.data().volunteerLocation.latitude + "," + doc.data().volunteerLocation.longitude )
+                    setCurrentAddress(doc.data().volunteerLocation)
                 }
             });
         }
@@ -123,13 +123,14 @@ const RequestGoogleMap = (props) => {
                     lat: pos.coords.latitude,
                     lng: pos.coords.longitude,
                 })
-                setCurrentAddress(pos.coords.latitude + ',' + pos.coords.longitude)
+                let geoPoint = new firebase.firestore.GeoPoint(pos.coords.latitude, pos.coords.longitude)
+                setCurrentAddress(geoPoint)
                 console.log(pos.coords)
                 firestore
                     .collection('requestPlaza')
                     .doc(props.requestId)
                     .update({
-                            volunteerLocation: new firebase.firestore.GeoPoint(pos.coords.latitude, pos.coords.longitude),
+                            volunteerLocation: geoPoint,
                         })
                     .catch((err) => {
                         console.log(err)
@@ -262,7 +263,7 @@ const RequestGoogleMap = (props) => {
                         <DirectionsService
                             options={{
                                 destination: targetAddress,
-                                origin: currentAddress,
+                                origin: currentAddress.longitude + "," + currentAddress.latitude,
                                 travelMode: travelMode,
                             }}
                             callback={directionsCallback}
