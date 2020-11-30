@@ -29,6 +29,7 @@ import PageNotFound from './components/PageNotFound';
 
 
 const App = () => {
+  let history = useHistory();
   const dispatch = useDispatch();
   const [finishStatus,setStatus] = useState(true)
   let user = useSelector(state=>state.user)
@@ -125,8 +126,10 @@ const App = () => {
           /> */}
           <Switch>
             <Route exact path="/">
-              {!finishStatus && <Redirect to="/finishSetUp"/>}
               <Welcome/>
+              {/*{(!user && !finishStatus)? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
+              {!finishStatus && <Redirect to="/finishSetUp"/>}
+              {/*{finishStatus === 'unknown' ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
             </Route>
             <ProtectedRoute exact path="/login" component={() => <Login />} />
             <ProtectedRoute exact path="/signup" component={() => <Signup />} />
