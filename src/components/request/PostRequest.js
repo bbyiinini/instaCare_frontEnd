@@ -172,8 +172,8 @@ const PostRequest = () => {
 
     }
 
-    if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest || !addressList.userAddrList) {
-        return null
+    if (!profile || !requestDetail || !addressList) {
+        return <h1>Loading...</h1>
     }
 
     let {fullName} = profile
