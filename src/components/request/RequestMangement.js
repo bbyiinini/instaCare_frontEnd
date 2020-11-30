@@ -131,7 +131,8 @@ const RequestMangement = () => {
 			temp.push({
 				content: textField,
 				userId: user.id,
-				user: user.fullName,
+        user: user.fullName,
+        avatar: user.avatar,
 			})
 			console.log(temp)
 			setCommentCollection(temp)
@@ -145,7 +146,8 @@ const RequestMangement = () => {
 	}
 
 	const handleTake = () => {
-		thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
+    thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
+    setWrapOpen(false)
 	}
 
 	const theme = createMuiTheme({
@@ -167,9 +169,7 @@ const RequestMangement = () => {
 				<div>
 					<p>
 						waiting for redirection, back to{' '}
-						<a onClick={backHome} style={{ color: 'blue' }}>
-							HOME
-                        </a>
+						<a onClick={backHome} style={{ color: 'blue' }}>HOME</a>
 					</p>
 				</div>
 			) : (
@@ -180,7 +180,7 @@ const RequestMangement = () => {
 									<div className={classes.paddings1}>
 										<CardHeader
 											className=""
-											avatar={<Avatar aria-label="recipe" className={classes.avLarge}> G</Avatar>}
+											avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={seniorState.avatar}></Avatar>}
 											title={
 												<div className={classes.ftSmall}>
 													<a>{seniorState.fullName}</a>
@@ -227,7 +227,7 @@ const RequestMangement = () => {
 													return (
 														<TimelineItem key={index}>
 															<TimelineSeparator>
-																<Avatar aria-label="recipe" className={classes.avLarge}>T</Avatar>
+																<Avatar aria-label="recipe" className={classes.avLarge} src={comment.avatar ? comment.avatar : ""}></Avatar>
 																{index != commentCollection.length - 1 ? (
 																	<TimelineConnector />
 																) : (
