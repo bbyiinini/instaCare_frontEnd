@@ -263,7 +263,7 @@ const RequestGoogleMap = (props) => {
                         <DirectionsService
                             options={{
                                 destination: targetAddress,
-                                origin: currentAddress.longitude + "," + currentAddress.latitude,
+                                origin: currentAddress.latitude + "," + currentAddress.longitude,
                                 travelMode: travelMode,
                             }}
                             callback={directionsCallback}
