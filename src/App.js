@@ -114,27 +114,35 @@ const App = () => {
         });
 
         let address = [];
-        allOnGoingRequest.map(async (res, index) => {
-          await AddressService.getAddressByAddressId(res.seniorId, res.addressID).then(res=>{
-            const addressDetail = res.data.data;
-            let result = null;
-            if (addressDetail){
-              result = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + ", " + addressDetail.city + ", " +
-                  addressDetail.state + " " + addressDetail.zipCode :
-                  addressDetail.streetAddressL1 + ", " + addressDetail.streetAddressL2 + ", " + addressDetail.city + ", " +
-                  addressDetail.state + " " + addressDetail.zipCode;
-              address = [...address, {addr:result, id: index}]
-            }else{
-              address = [...address, {addr: "", id: index}]
-            }
-            if ((address.length === allOnGoingRequest.length)){
-              dispatch({
-                type:'ADD_ADDRESS_LIST',
-                payload: address
-              })
-            }
+        if (allOnGoingRequest.length !== 0) {
+          allOnGoingRequest.map(async (res, index) => {
+            await AddressService.getAddressByAddressId(res.seniorId, res.addressID).then(res=>{
+              const addressDetail = res.data.data;
+              let result = null;
+              if (addressDetail){
+                result = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + ", " + addressDetail.city + ", " +
+                    addressDetail.state + " " + addressDetail.zipCode :
+                    addressDetail.streetAddressL1 + ", " + addressDetail.streetAddressL2 + ", " + addressDetail.city + ", " +
+                    addressDetail.state + " " + addressDetail.zipCode;
+                address = [...address, {addr:result, id: index}]
+              }else{
+                address = [...address, {addr: "", id: index}]
+              }
+              if ((address.length === allOnGoingRequest.length)){
+                dispatch({
+                  type:'ADD_ADDRESS_LIST',
+                  payload: address
+                })
+              }
+            })
           })
-        })
+        }else{
+          dispatch({
+            type:'ADD_ADDRESS_LIST',
+            payload: address
+          })
+        }
+
 
       }else{
         console.log("you have logout")

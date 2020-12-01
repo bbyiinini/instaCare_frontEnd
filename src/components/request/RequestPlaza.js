@@ -35,19 +35,16 @@ const PostRequest = () => {
 
 
     if(!requestDetail || !requestDetail.allOnGoingRequest || !addrList){
-        return null
+        return <h1>Loading...</h1>
     }
 
     let {allOnGoingRequest} = requestDetail
-    if (ongoing.length === 0 && flag === true){
+    if (ongoing.length === 0 && flag === true && allOnGoingRequest.length !== 0){
         setOngoing(allOnGoingRequest);
     }
 
 
-    if (!addrList.addressList){
-        return null;
-    }
-
+    console.log(ongoing)
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
