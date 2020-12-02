@@ -28,7 +28,6 @@ import allTags from  '../../assets/all_tags.png'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 
-const WAIT_INTERVAL = 1000;
 const ENTER_KEY = 13;
 const PostRequest = () => {
 
@@ -81,6 +80,10 @@ const PostRequest = () => {
         let result=[];
         for (let i = 0; i < tagList.length; i++){
             result = [...result, ...allOnGoingRequest.filter(name=>name.tags.map(res=>res).includes(tagList[i]))]
+        }
+
+        if (tagList.length !== 0) {
+            document.getElementById("allTag").innerHTML = tagList.toString()
         }
 
         setFilterResult(result);
@@ -149,6 +152,7 @@ const PostRequest = () => {
         setOngoing(allOnGoingRequest)
         setTagList(['All tags'])
         setTagModal(false)
+        document.getElementById("allTag").innerHTML = "All tags"
     }
 
     const tagOnchange = (e) => {
@@ -221,7 +225,7 @@ const PostRequest = () => {
                     {/*    /!*<option value='Tool needed'>Tool needed</option>*!/*/}
                     {/*    /!*<option value='Easy to do'>Easy to do</option>*!/*/}
                     {/*</select>*/}
-                    <label>All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="allTag">All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
