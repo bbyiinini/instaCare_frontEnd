@@ -28,6 +28,8 @@ import allTags from  '../../assets/all_tags.png'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 
+const WAIT_INTERVAL = 1000;
+const ENTER_KEY = 13;
 const PostRequest = () => {
 
     const {user} = useSelector((state)=>({...state}))
@@ -42,6 +44,7 @@ const PostRequest = () => {
     const [filterResult, setFilterResult] = useState([]);
     const [tagModal, setTagModal] = useState(false);
     const [tagList, setTagList] = useState(['All tags']);
+    const [value, setValue] = useState("");
 
     const handleRequestMange = (key) =>{
         dispatch({
@@ -91,10 +94,20 @@ const PostRequest = () => {
         setTagModal(false)
     }
 
+    const handleChange = (e) => {
+        setValue(e.target.value)
+        if (e.target.value === ""){
+            setOngoing(allOnGoingRequest)
+        }
+    }
+    const keyPress = (e) => {
+        if (e.keyCode === ENTER_KEY){
+            handleSearch()
+        }
+    }
 
-    const handleSearch = (e) => {
-        let value = e.target.value.toLowerCase();
-        let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(value))
+    const handleSearch = () => {
+        let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(value.toLowerCase()))
         let result = search.map(res=>(JSON.parse(res)))
         console.log(result)
         if (result.length !== 0) {
@@ -199,7 +212,7 @@ const PostRequest = () => {
     return (
         <div style={customStyle}>
                 <div style={customSelect}>
-                    <label style={{color:'rgba(0, 0, 0, 0.3)'}}>show: </label>
+                    <label style={{color:'rgba(0, 0, 0, 0.3)', marginRight: '5px'}}>show: </label>
                     {/*<select style={{border:'none', outline:'none'}} id='foo' defaultValue="selected" onChange={handleFilter}>*/}
                     {/*<select style={{border:'none', outline:'none'}} id='foo' onClick={()=>{setTagModal(true)}}>*/}
                     {/*    <option value='All tags'>All tags</option>*/}
@@ -225,7 +238,7 @@ const PostRequest = () => {
                     <label  style={{color:'rgba(0, 0, 0, 0.3)', marginLeft:'-25px'}}>{<SearchOutlined />}</label>
                     <MuiThemeProvider>
                         <TextField style={searchInput} InputProps={{ disableUnderline: true }} placeholder="Enter keyword here"
-                         onChange={handleSearch}/>
+                         onChange={handleChange} onKeyDown={keyPress}/>
                     </MuiThemeProvider>
                 </div>
 
