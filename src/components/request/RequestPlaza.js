@@ -75,6 +75,7 @@ const PostRequest = () => {
         if (tagList.length === 0) {
             setOngoing(allOnGoingRequest)
             setTagModal(false)
+            document.getElementById("allTag").innerHTML = "All tags"
             return;
         }
         let result=[];
@@ -99,8 +100,11 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         setValue(e.target.value)
-        if (e.target.value === ""){
+        if (e.target.value === "" && prevState === ""){
             setOngoing(allOnGoingRequest)
+            document.getElementById("allTag").innerHTML = "All tags"
+        }else if (e.target.value === "") {
+            setOngoing(filterResult)
         }
     }
     const keyPress = (e) => {
