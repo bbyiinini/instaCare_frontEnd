@@ -84,7 +84,7 @@ const PostRequest = () => {
         }
 
         if (tagList.length !== 0) {
-            document.getElementById("allTag").innerHTML = tagList.toString()
+            document.getElementById("allTag").innerHTML = tagList.join(", ")
         }
 
         setFilterResult(result);
