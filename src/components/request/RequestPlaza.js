@@ -24,6 +24,7 @@ import technology from '../../assets/technology.png';
 import time_consuming from '../../assets/time-consuming.png';
 import with_tips from '../../assets/with tips.png';
 import chore from '../../assets/chore.png';
+import allTags from  '../../assets/all_tags.png'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 
@@ -405,7 +406,7 @@ const PostRequest = () => {
                    </div>
 
                    <div className="child">
-                       <img src={in_home_care} style={{cursor:'pointer'}} onClick={handleDefault} alt="in_home_care"/>
+                       <img src={allTags} style={{cursor:'pointer'}} onClick={handleDefault} alt="all_tags"/>
                        <label style={{cursor:'pointer'}} onClick={handleDefault} defaultValue="All tags">All Tags</label>
                    </div>
                    <Button type="primary" style={{background: '#00897B', width: 'auto', marginTop:'55px'}} shape="round"
@@ -451,16 +452,16 @@ const deleteModalStyle = {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+        backgroundColor: '#FFFFFF, 100%'
     },
     content: {
-        top: '15%',
-        left: '50%',
+        top: '21.5%',
+        left: '6.5%',
         right: 'auto',
         bottom: 'auto',
         width: '600px',
-        borderRadius: '30px',
-        transform: 'translate(-50%,10%)',
+        // borderRadius: '30px',
+        // transform: 'translate(-50%,10%)',
     },
 }
 
