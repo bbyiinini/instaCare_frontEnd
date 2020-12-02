@@ -473,7 +473,7 @@ const deleteModalStyle = {
         right: 'auto',
         bottom: 'auto',
         width: '600px',
-        // borderRadius: '30px',
+        borderRadius: '10px',
         // transform: 'translate(-50%,10%)',
     },
 }
