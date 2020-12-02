@@ -9,7 +9,6 @@ import {toast} from "react-toastify";
 import "../../style/PostRequest.css";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {modalStyle} from "../../style/PostRequestTable";
 import Select from 'react-select'
 import moment from 'moment';
 import ReactPhoneInput from "react-phone-input-2";
@@ -38,20 +37,20 @@ const PostRequest = () => {
 
 
     const options = [
-        {value: 'Easy to do', label: 'Easy to do'},
-        {value: 'Shopping', label: 'Shopping'},
-        {value: 'Cleaning', label: 'Cleaning'},
-        {value: 'Tool needed', label: 'Tool needed'},
         {value: 'Chore', label: 'Chore'},
+        {value: 'Grocery', label: 'Grocery'},
+        {value: 'Technology', label: 'Technology'},
+        {value: 'Cloth Donation', label: 'Cloth Donation'},
+        {value: 'Medicine', label: 'Medicine'},
+        {value: 'Easy to do', label: 'Easy to do'},
+        {value: 'Need a Ride', label: 'Need a Ride'},
+        {value: 'Time-consuming', label: 'Time-consuming'},
         {value: 'Remote', label: 'Remote'},
+        {value: 'With Tips', label: 'With Tips'},
+        {value: 'Babysitting', label: 'Babysitting'},
+        {value: 'Emergency', label: 'Emergency'},
         {value: 'Consulting', label: 'Consulting'},
         {value: 'In-home Care', label: 'In-home Care'},
-        {value: 'Emergency', label: 'Emergency'},
-        {value: 'Need a Ride', label: 'Need a Ride'},
-        {value: 'Cloth Donation', label: 'Cloth Donation'},
-        {value: 'Babysitting', label: 'Babysitting'},
-        {value: 'Time-consuming', label: 'Time-consuming'},
-        {value: 'Medicine', label: 'Medicine'},
     ]
 
 
@@ -733,6 +732,27 @@ const customStyle = {
     marginLeft: '5%',
     marginRight: '5%',
     marginTop: '5%'
+}
+
+const modalStyle = {
+    overlay:{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+    },
+    content: {
+        top: '15%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '30%',
+        borderRadius:'30px',
+        transform: 'translate(-40%, -10%)',
+    },
+
 }
 
 const addressModalStyle = {
