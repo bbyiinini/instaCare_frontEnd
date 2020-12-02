@@ -53,8 +53,7 @@ const useStyles = makeStyles({
 
 const Signup = (props) => {
     const classes = useStyles()
-    console.log(classes.root)
-
+    let history = useHistory()
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -79,6 +78,18 @@ const Signup = (props) => {
         }else{
             setVolunteer("")
             setSenior("2px solid #12897b")
+        }
+    }
+
+    const handleLoginWithGoogle = async () => {
+        try{
+            await db.auth().signInWithPopup(provider1).then(()=>{
+                toast.success("Login success!")
+            });
+
+            history.push("/");
+        } catch (error){
+            alert(error);
         }
     }
 
@@ -131,53 +142,7 @@ const Signup = (props) => {
                         <img src={welcome} style={{width:"600px"}}/>
                     </Grid>
                     <Grid item xs={6}>
-                        <div style={{lineHeight:"100%"}}>
-                            <div style={{display:"inline-block",lineHeight:"3.5",fontSize:"32px"}}>I am a:</div>
-                            <div
-                                style={{
-                                verticalAlign: "top",
-                                display: "inline-block",
-                                textAlign: "center",
-                                width: "120px"
-                            }}>
-                                <img
-                                style={{border:seniorBorder}}
-                                className={classes.imgstyle}
-                                onClick={() => typeChange(0)}
-                                src={senior}
-                                alt={"senior"}/>
-
-                                <span style={{
-                                    display:"block"
-                                }}>Senior</span>
-                            </div>
-                            <div
-                                style={{
-                                    verticalAlign: "top",
-                                    display: "inline-block",
-                                    textAlign: "center",
-                                    width: "120px"
-                                }}
-                            >
-                            <img
-                                value={1}
-                                onClick={() => typeChange(1)}
-                                style={{border:volunteerBorder}}
-                                className={classes.imgstyle} src={volunteer} alt={"volunteer"}/>
-                                <span style={{
-                                    display:"block"
-                                }}>Volunteer</span>
-                            </div>
-                        </div>
                         <div>
-                            <div className={classes.textfield}>
-                                <Input
-                                    disableUnderline
-                                    style={{width:"80%"}}
-                                    placeholder={"User Name"}
-                                    onChange = {nameChange}
-                                />
-                            </div>
                             <br/>
                             <div className={classes.textfield}>
                                 <Input
@@ -207,7 +172,7 @@ const Signup = (props) => {
                                 <br/>
                                 Or join us with
                                 <br/>
-                                <img src={googlePNG} style={{width:'30px'}}/>
+                                <img src={googlePNG} onClick={handleLoginWithGoogle} style={{width:'30px'}}/>
                                 <br/>
                                 Already Have an account? <Link style={{color:"#12897b"}} to={"/login"}><b>Sign In</b></Link>
 
