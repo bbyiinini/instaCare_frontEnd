@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
 import NavHeader from "./components/nav/NavHeader";
+import NavBar from "./components/nav/NavBar";
 import SignUpComplete from "./components/auth/SignUpComplete";
 import ForgotPassword from "./components/auth/ForgotPassword";
 import ProtectedRoute from "./routes/ProtectedRoute"
@@ -114,27 +115,35 @@ const App = () => {
         });
 
         let address = [];
-        allOnGoingRequest.map(async (res, index) => {
-          await AddressService.getAddressByAddressId(res.seniorId, res.addressID).then(res=>{
-            const addressDetail = res.data.data;
-            let result = null;
-            if (addressDetail){
-              result = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + ", " + addressDetail.city + ", " +
-                  addressDetail.state + " " + addressDetail.zipCode :
-                  addressDetail.streetAddressL1 + ", " + addressDetail.streetAddressL2 + ", " + addressDetail.city + ", " +
-                  addressDetail.state + " " + addressDetail.zipCode;
-              address = [...address, {addr:result, id: index}]
-            }else{
-              address = [...address, {addr: "", id: index}]
-            }
-            if ((address.length === allOnGoingRequest.length)){
-              dispatch({
-                type:'ADD_ADDRESS_LIST',
-                payload: address
-              })
-            }
+        if (allOnGoingRequest.length !== 0) {
+          allOnGoingRequest.map(async (res, index) => {
+            await AddressService.getAddressByAddressId(res.seniorId, res.addressID).then(res=>{
+              const addressDetail = res.data.data;
+              let result = null;
+              if (addressDetail){
+                result = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + ", " + addressDetail.city + ", " +
+                    addressDetail.state + " " + addressDetail.zipCode :
+                    addressDetail.streetAddressL1 + ", " + addressDetail.streetAddressL2 + ", " + addressDetail.city + ", " +
+                    addressDetail.state + " " + addressDetail.zipCode;
+                address = [...address, {addr:result, id: index}]
+              }else{
+                address = [...address, {addr: "", id: index}]
+              }
+              if ((address.length === allOnGoingRequest.length)){
+                dispatch({
+                  type:'ADD_ADDRESS_LIST',
+                  payload: address
+                })
+              }
+            })
           })
-        })
+        }else{
+          dispatch({
+            type:'ADD_ADDRESS_LIST',
+            payload: address
+          })
+        }
+
 
       }else{
         console.log("you have logout")
@@ -150,7 +159,8 @@ const App = () => {
 
       <div className="App">
         <Router>
-          <NavHeader/>
+          {/* <NavHeader/> */}
+          <NavBar/>
           <ToastContainer/>
           {/* <NavBar
             loggedIn={this.state.loggedIn}

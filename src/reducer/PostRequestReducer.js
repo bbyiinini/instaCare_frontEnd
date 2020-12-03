@@ -6,9 +6,8 @@ export const postRequestReducer = (state = null, action) =>{
       return {...state, pastRequest:action.payload};
     case "ALL_ONGOING_REQUEST":
       return {...state, allOnGoingRequest:action.payload};
-    // case "ADD_REQUEST":
-    //   return {...state,
-    //     ongoingRequest:[...state.ongoingRequest, action.payload]};
+    case "ADD_REQUEST":
+      return {...state, ongoingRequest: action.payload};
     case 'DELETE_ITEM':
       return {
         ...state,
