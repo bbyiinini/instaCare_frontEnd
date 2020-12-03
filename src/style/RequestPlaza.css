@@ -1,0 +1,18 @@
+.parent{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.parent .child{
+    flex: 1;
+    /*Start Run Code Snippet output CSS*/
+    padding: 5px;
+    text-align: center;
+    /*border: 1px solid black;*/
+    /*End Run Code Snippet output CSS*/
+}
+
+img {
+    height: 66px;
+}
+

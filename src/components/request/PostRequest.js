@@ -9,13 +9,15 @@ import {toast} from "react-toastify";
 import "../../style/PostRequest.css";
 import TextField from "@material-ui/core/TextField";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import {modalStyle} from "../../style/PostRequestTable";
 import Select from 'react-select'
 import moment from 'moment';
 import ReactPhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
 import {PlusOutlined} from '@ant-design/icons';
 import SelectUSState from 'react-select-us-states';
+import Backdrop from "@material-ui/core/Backdrop";
+import Fade from "@material-ui/core/Fade";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
@@ -30,29 +32,33 @@ const PostRequest = () => {
     const [deleteModal, setDeleteModal] = useState(false);
     let history = useHistory();
     const dispatch = useDispatch();
+    const classes = useStyle()
+
 
 
     const options = [
-        {value: 'Easy to do', label: 'Easy to do'},
-        {value: 'Shopping', label: 'Shopping'},
-        {value: 'Cleaning', label: 'Cleaning'},
-        {value: 'Tool needed', label: 'Tool needed'},
         {value: 'Chore', label: 'Chore'},
+        {value: 'Grocery', label: 'Grocery'},
+        {value: 'Technology', label: 'Technology'},
+        {value: 'Cloth Donation', label: 'Cloth Donation'},
+        {value: 'Medicine', label: 'Medicine'},
+        {value: 'Easy to do', label: 'Easy to do'},
+        {value: 'Need a Ride', label: 'Need a Ride'},
+        {value: 'Time-consuming', label: 'Time-consuming'},
         {value: 'Remote', label: 'Remote'},
+        {value: 'With Tips', label: 'With Tips'},
+        {value: 'Babysitting', label: 'Babysitting'},
+        {value: 'Emergency', label: 'Emergency'},
         {value: 'Consulting', label: 'Consulting'},
         {value: 'In-home Care', label: 'In-home Care'},
-        {value: 'Emergency', label: 'Emergency'},
-        {value: 'Need a Ride', label: 'Need a Ride'},
-        {value: 'Cloth Donation', label: 'Cloth Donation'},
-        {value: 'Babysitting', label: 'Babysitting'},
-        {value: 'Time-consuming', label: 'Time-consuming'},
-        {value: 'Medicine', label: 'Medicine'},
     ]
 
 
     const openPostWindow = () => {
         setModalIsOpen(true)
     }
+
+
 
     const [flag, setFlag] = useState(true);
     const [text, setText] = useState("");
@@ -64,6 +70,7 @@ const PostRequest = () => {
     const [past, setPast] = useState(false);
     const [addList, setAddList] = useState([]);
     const [addressModal, setAddressModal] = useState(false);
+    const [questionnaireModal, setQuestionnaireModal] = useState(false);
 
     // add address bean
     const [street1, setStreet1] = useState("");
@@ -128,6 +135,16 @@ const PostRequest = () => {
             payload: requestDetail.pastRequest[key],
         });
         history.push('/requestmangement');
+    }
+
+    const handleClose = () => {
+        setQuestionnaireModal(false);
+        setModalIsOpen(true)
+
+    };
+
+    const handleQuestionnaire = () => {
+        setQuestionnaireModal(true)
     }
 
 
@@ -506,7 +523,7 @@ const PostRequest = () => {
             {profile.userType === 0 &&
             <Button type="primary"
                     style={{background: '#00897B', width: '250px', height: '40px', fontSize: '18px', marginTop: '10px'}}
-                    shape="round" onClick={openPostWindow}>Post New Request</Button>
+                    shape="round" onClick={handleQuestionnaire}>Post New Request</Button>
             }
 
 
@@ -654,6 +671,59 @@ const PostRequest = () => {
                        onClick={() => setDeleteModal(false)}>Cancel</label>
             </Modal>
 
+            <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                className={classes.modal}
+                style = {questionnaireStyle}
+                appElement={document.getElementById('root')}
+                isOpen={questionnaireModal}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                }}
+
+            >
+                <Fade in={questionnaireModal}>
+                    <div className={classes.paper}>
+                        <h2 id="transition-modal-title" className="text-center">COVID-19 Self Health Check</h2>
+                        <h6>Are you currently experiencing any of the following symptoms that started within the last 14 days?</h6>
+                        <ul>
+                            <li>Fever or chills</li>
+                            <li>Cough</li>
+                            <li>Shortness of breath or difficulty breathing</li>
+                            <li>Fatigue</li>
+                            <li>Muscle or body aches</li>
+                            <li>Headache</li>
+                            <li>Loss of taste or smell</li>
+                            <li>Sore throat</li>
+                            <li>Congestion or runny nose</li>
+                            <li>Nausea or vomiting</li>
+                            <li>Diarrhea</li>
+                        </ul>
+                        <h6>Over the past 14 days, have you been informed by a public health agency or a healthcare system that you have been exposed to COVID-19?</h6>
+                        <br></br>
+                        <h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19 infection?</h6>
+                        <br></br>
+                        <h4>If your answer is YES for any of the questions above, we advice you to stay home and avoid physical contacts.</h4>
+                        {/* <TextField
+                  className={classes.textfield}
+                  label={`Enter new ${modalTitle}`}
+                  onChange={handleModalChange}
+                  defaultValue={modalContent}
+                  multiline
+                  rows={modalTitle === "Description" ? 6 : 1}
+              /> */}
+                        <div>
+                            {/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
+                            <Button onClick={handleClose} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>I acknowledge</Button>
+                        </div>
+                    </div>
+                </Fade>
+            </Modal>
+
         </div>
     );
 }
@@ -662,6 +732,27 @@ const customStyle = {
     marginLeft: '5%',
     marginRight: '5%',
     marginTop: '5%'
+}
+
+const modalStyle = {
+    overlay:{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+    },
+    content: {
+        top: '15%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '30%',
+        borderRadius:'30px',
+        transform: 'translate(-40%, -10%)',
+    },
+
 }
 
 const addressModalStyle = {
@@ -702,6 +793,50 @@ const deleteModalStyle = {
         borderRadius: '30px',
         transform: 'translate(-40%, 40%)',
     },
+}
+const useStyle = makeStyles(theme=>({
+    root:{
+        backgroundColor:"#e3e8e7",
+        height:"100vh"
+    },
+    info:{
+        backgroundColor:"white",
+        borderRadius:"30px",
+        width:"80%",
+        margin:'auto',
+        textAlign:'left',
+        padding:'25px',
+        marginTop:"5vh",
+    },
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: 'translate(0%, 20%)',
+
+    },
+    paper: {
+        backgroundColor: theme.palette.background.paper,
+        borderRadius:"30px",
+        boxShadow: theme.shadows[2],
+        padding: theme.spacing(2, 4, 3),
+        width:"50%",
+    },
+    textfield: {
+        width:"100%",
+    }
+
+}));
+
+const questionnaireStyle = {
+    overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+    }
 }
 
 export default PostRequest;
