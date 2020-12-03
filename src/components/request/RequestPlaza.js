@@ -106,7 +106,6 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         setValue(e.target.value)
-        console.log(prevState)
         if (e.target.value === "" && tag === true){
             setOngoing(allOnGoingRequest)
             document.getElementById("allTag").innerHTML = "All tags"
@@ -123,7 +122,6 @@ const PostRequest = () => {
     const handleSearch = () => {
         let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(value.toLowerCase()))
         let result = search.map(res=>(JSON.parse(res)))
-        console.log(result)
         if (result.length !== 0) {
             setTemp(search)
             setPrevState(value)
@@ -133,7 +131,6 @@ const PostRequest = () => {
             setOngoing(allOnGoingRequest)
         }else if (result.length === 0){
             if (!tagList.includes("All tags")  && value===prevState){
-                // console.log(prevState)
                 temp.filter(keyword=>keyword.toLowerCase().includes(value))
                 let tempResult = temp.map(res=>(JSON.parse(res)))
                 setOngoing(tempResult)
