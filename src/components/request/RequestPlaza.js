@@ -26,6 +26,9 @@ import with_tips from '../../assets/with tips.png';
 import chore from '../../assets/chore.png';
 import allTags from  '../../assets/all_tags.png'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Radio from "@material-ui/core/Radio";
+import FormControl from "@material-ui/core/FormControl";
 
 
 const ENTER_KEY = 13;
@@ -44,6 +47,7 @@ const PostRequest = () => {
     const [tagModal, setTagModal] = useState(false);
     const [tagList, setTagList] = useState(['All tags']);
     const [value, setValue] = useState("");
+    const [distanceModal, setDistanceTagModal] = useState(false);
 
     const handleRequestMange = (key) =>{
         dispatch({
@@ -233,14 +237,16 @@ const PostRequest = () => {
 
                 </div>
                 <div style={customSelect}>
-                    <label  style={{color:'rgba(0, 0, 0, 0.3)'}}>Distance:</label>
-                    <select style={{border:'none', outline:'none'}} id='foo'>
-                        <option value='1'>Within 100 miles</option>
-                        <option value='2'>Within 5 miles</option>
-                        <option value='3'>Within 10 miles</option>
-                        <option value='4'>Within 20 miles</option>
-                        <option value='4'>Within 30 miles</option>
-                    </select>
+                    <label  style={{color:'rgba(0, 0, 0, 0.3)',marginRight: '5px'}}>Distance:</label>
+                    {/*<select style={{border:'none', outline:'none'}} id='foo'>*/}
+                    {/*    <option value='1'>Within 100 miles</option>*/}
+                    {/*    <option value='2'>Within 5 miles</option>*/}
+                    {/*    <option value='3'>Within 10 miles</option>*/}
+                    {/*    <option value='4'>Within 20 miles</option>*/}
+                    {/*    <option value='4'>Within 30 miles</option>*/}
+                    {/*</select>*/}
+                    <label id="distance">Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+
                 </div>
                 <div style={customSelect}>
                     <label  style={{color:'rgba(0, 0, 0, 0.3)', marginLeft:'-25px'}}>{<SearchOutlined />}</label>
@@ -255,7 +261,7 @@ const PostRequest = () => {
                 {ongoing.length === 0 || allOnGoingRequest.length === 0?<h2>Currently no data record</h2>:null}
             </div>
 
-            <Modal style={deleteModalStyle} isOpen={tagModal}  onRequestClose={handleDefault} appElement={document.getElementById('root')}>
+            <Modal style={tagModalStyle} isOpen={tagModal}  onRequestClose={handleDefault} appElement={document.getElementById('root')}>
                <div className="parent">
                    <div className="child">
                        <img src={chore} alt="chore"/>
@@ -435,6 +441,22 @@ const PostRequest = () => {
                </div>
 
             </Modal>
+            <Modal style={distanceModalStyle} isOpen={distanceModal} appElement={document.getElementById('root')}>
+                <div className="text-center">
+                    <FormControl>
+                        <RadioGroup aria-label="distance" name="distance1" value={value} onChange={handleChange}>
+                            <FormControlLabel value="5" control={<Radio color="primary"/>}   label={<span style={{ fontSize: '20px' }}>Within 5 miles</span>}/>
+                            <FormControlLabel value="10" control={<Radio color="primary"/>}  label={<span style={{ fontSize: '20px' }}>Within 10 miles</span>}/>
+                            <FormControlLabel value="30" control={<Radio color="primary"/>}  label={<span style={{ fontSize: '20px' }}>Within 30 miles</span>}/>
+                            <FormControlLabel value="50" control={<Radio color="primary"/>}  label={<span style={{ fontSize: '20px' }}>Within 50 miles</span>}/>
+                        </RadioGroup>
+                    </FormControl>
+
+                    <Button type="primary" style={{background: '#00897B', width: '180px', marginTop:'5px'}} shape="round"
+                            className="child" onClick={e=>setDistanceTagModal(false)}>Apply</Button>
+                </div>
+
+            </Modal>
         </div>
     );
 }
@@ -466,7 +488,7 @@ const searchInput = {
     width:'75%',
 }
 
-const deleteModalStyle = {
+const tagModalStyle = {
     overlay: {
         position: 'fixed',
         top: 0,
@@ -481,6 +503,27 @@ const deleteModalStyle = {
         right: 'auto',
         bottom: 'auto',
         width: '600px',
+        borderRadius: '10px',
+        // transform: 'translate(-50%,10%)',
+    },
+}
+
+const distanceModalStyle = {
+    overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#FFFFFF, 100%'
+    },
+    content: {
+        top: '21.5%',
+        left: '16.5%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '280px',
+        height: '300px',
         borderRadius: '10px',
         // transform: 'translate(-50%,10%)',
     },
