@@ -1,14 +1,11 @@
-import logo from "../../logo.svg";
 import React, { useState, useEffect }  from "react";
 import { useHistory } from "react-router-dom";
-import {useDispatch, useSelector,useStore} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Input from '@material-ui/core/Input';
-import Reset from "../../assets/Reset.png";
 import {makeStyles} from "@material-ui/core/styles";
-import {Link} from "react-router-dom";
+import entry from "../../assets/entry.svg"
 import {firestore} from "../../base";
 
 
@@ -54,10 +51,8 @@ export default function Welcome(){
       if(!data){
         //  user hasn't finished setup
         setStatus(1)
-        console.log("still false")
       }else if(data.id==null){
         setStatus(1)
-        console.log("still false")
       }else{
         setStatus(2)
       }
@@ -95,7 +90,8 @@ export default function Welcome(){
                   className={classes.textfield} >Login</Button>
             </Grid>
             <Grid item xs={6}>
-              right
+              <img style={{marginTop:"20vh",width:"80%"}}
+                   src={entry}/>
             </Grid>
           </Grid>
         </MuiThemeProvider>
