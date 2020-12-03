@@ -42,6 +42,7 @@ const PostRequest = () => {
     const [ongoing, setOngoing] = useState([]);
     const [temp, setTemp] = useState([]);
     const [flag, setFlag] = useState(true);
+    const [tag, setTag] = useState(true);
     const [prevState, setPrevState] = useState("");
     const [filterResult, setFilterResult] = useState([]);
     const [tagModal, setTagModal] = useState(false);
@@ -82,6 +83,7 @@ const PostRequest = () => {
             document.getElementById("allTag").innerHTML = "All tags"
             return;
         }
+        setTag(false)
         let result=[];
         for (let i = 0; i < tagList.length; i++){
             result = [...result, ...allOnGoingRequest.filter(name=>name.tags.map(res=>res).includes(tagList[i]))]
@@ -104,7 +106,8 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         setValue(e.target.value)
-        if (e.target.value === "" && prevState === ""){
+        console.log(prevState)
+        if (e.target.value === "" && tag === true){
             setOngoing(allOnGoingRequest)
             document.getElementById("allTag").innerHTML = "All tags"
         }else if (e.target.value === "") {
@@ -160,6 +163,7 @@ const PostRequest = () => {
         setOngoing(allOnGoingRequest)
         setTagList(['All tags'])
         setTagModal(false)
+        setTag(true)
         document.getElementById("allTag").innerHTML = "All tags"
     }
 
@@ -441,7 +445,7 @@ const PostRequest = () => {
                </div>
 
             </Modal>
-            <Modal style={distanceModalStyle} isOpen={distanceModal} appElement={document.getElementById('root')}>
+            <Modal style={distanceModalStyle} isOpen={distanceModal} onRequestClose={e=>setDistanceTagModal(false)}  appElement={document.getElementById('root')}>
                 <div className="text-center">
                     <FormControl>
                         <RadioGroup aria-label="distance" name="distance1" value={value} onChange={handleChange}>
