@@ -7,6 +7,11 @@ import { useHistory, Link} from "react-router-dom";
 import UserService from "../../service/UserService";
 import { Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import SelectUSState from "react-select-us-states";
+import Axios from "axios";
+import RequestService from "../../service/RequestService";
+
+const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
 const useStyle = makeStyles(theme=>({
   root:{
@@ -41,6 +46,7 @@ const useStyle = makeStyles(theme=>({
 
 export default function (){
   const classes = useStyle()
+  const {user} = useSelector((state) => ({...state}))
   const dispatch = useDispatch();
   const profile = useSelector(state=>state.userProfile)
 
@@ -49,7 +55,15 @@ export default function (){
   const [modalContent,setcontent] = useState("not changed")
   const [addressIndex,setindex] = useState(0)
   const [loading,setloading] = useState(false)
-  const [imgurl,setimgurl] = useState("")
+
+  const [addressModal, setAddressModal] = useState(false);
+  const [street1, setStreet1] = useState("");
+  const [street2, setStreet2] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+
+  const [addList, setAddList] = useState([]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -153,6 +167,59 @@ export default function (){
     return isJpgOrPng && isLt2M;
   }
 
+
+  let newAdd = ""
+  const handleAdd = async () => {
+    let geolocation =""
+    let postUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') +
+    city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`
+
+    Axios.post(postUrl)
+        .then(async response => {
+          let fulladdr = `${street1}, ${street2}, ${city}, ${state},${zipCode}`
+          dispatch({
+            type:"New Address",
+            payload:fulladdr
+          })
+          geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
+
+          const addressBean = {
+            streetAddressL1: street1,
+            streetAddressL2: street2,
+            city: city,
+            state: state,
+            zipCode: zipCode,
+            userId: user.uid,
+            geolocation: geolocation
+          }
+
+          if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
+            // console.log(text, title, address, phoneNumber)
+            let id = "";
+            console.log(addressBean,user.uid)
+            await RequestService.insertAddress(user.uid, addressBean).then(res => {
+              toast.success("insert address to backend success")
+              id = res.data.data;
+            }).catch(res => {
+              toast.error("insert failed")
+            });
+            newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+            setAddList([...addList, {add: newAdd, id: id}])
+            setStreet1("")
+            setStreet2("")
+            setCity("")
+            setState("")
+            setZipCode("")
+            setAddressModal(false);
+          } else {
+            toast.error("please fill all the information")
+          }
+        })
+        .catch(error => {
+          console.log(error.message)
+        });
+  }
+
   const handleAvatarChange = info => {
     if (info.file.status === 'uploading') {
       setloading(true)
@@ -183,7 +250,6 @@ export default function (){
   );
 
   let {addressList, avatar,email,fullName,phone,userType,description} = profile
-  console.log(profile)
   return(
       <div className={classes.root}>
     <Grid container spacing={2}>
@@ -283,7 +349,7 @@ export default function (){
             </Grid>
             )
           })}
-          <span style={{color:"#064d40"}} onClick={handleAddAddress}><b>Add address</b></span>
+          <span style={{color:"#064d40"}} onClick={()=>{setAddressModal(true)}}><b>Add address</b></span>
         </div>
       </Grid>
 
@@ -318,5 +384,82 @@ export default function (){
             </div>
           </Fade>
         </Modal>
+
+        <Modal
+            aria-labelledby="transition-modal-title1"
+            aria-describedby="transition-modal-description1"
+            className={classes.modal}
+            open={addressModal}
+            onClose={()=>{setAddressModal(false)}}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+        >
+          <div className={classes.paper}>
+          <div>
+            <div className="form-group">
+              <label htmlFor="inputAddress">Address</label>
+              <input type="text" className="form-control" id="inputAddress"
+                     placeholder="Enter your street"
+                     onChange={e => (setStreet1(e.target.value))}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="inputAddress2">Address 2</label>
+              <input type="text" className="form-control" id="inputAddress2"
+                     placeholder="Apartment, unit, or floor"
+                     onChange={e => (setStreet2(e.target.value))}
+              />
+            </div>
+            <div className="form-row">
+              <div className="form-group col-md-6">
+                <label htmlFor="inputCity">City</label>
+                <input type="text" className="form-control" id="inputCity"
+                       onChange={e => setCity(e.target.value)}
+                />
+              </div>
+              <div className="form-group col-md-4">
+                <label htmlFor="inputState">State</label>
+                <SelectUSState id="inputState" className="form-control"
+                               onChange={e => setState(e)}/>
+              </div>
+              <div className="form-group col-md-2">
+                <label htmlFor="inputZip">Zip</label>
+                <input type="text" className="form-control" id="inputZip"
+                       onChange={e => setZipCode(e.target.value)}/>
+              </div>
+            </div>
+            <Button type="primary"
+                    style={{background: '#00897B', width: '80px'}}
+                    shape="round"
+                    onClick={handleAdd}
+                    className="float-right">add</Button>
+            <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
+                   onClick={() => setAddressModal(false)}>Cancel</label>
+          </div>
+          </div>
+        </Modal>
   </div>)
+}
+
+const addressModalStyle = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(116, 130, 128, 0.6)'
+  },
+  content: {
+    top: '15%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    width: '30%',
+    borderRadius: '30px',
+    transform: 'translate(-40%, 5%)',
+  },
 }
