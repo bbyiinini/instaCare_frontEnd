@@ -29,7 +29,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControl from "@material-ui/core/FormControl";
-
+import { useMediaQuery } from 'react-responsive'
 
 const ENTER_KEY = 13;
 const PostRequest = () => {
@@ -49,6 +49,10 @@ const PostRequest = () => {
     const [tagList, setTagList] = useState(['All tags']);
     const [value, setValue] = useState("");
     const [distanceModal, setDistanceTagModal] = useState(false);
+    const isTabletOrMobileDevice = useMediaQuery({
+        query: '(max-device-width: 1224px)'
+    })
+
 
     const handleRequestMange = (key) =>{
         dispatch({
@@ -106,7 +110,6 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         setValue(e.target.value)
-        console.log(prevState)
         if (e.target.value === "" && tag === true){
             setOngoing(allOnGoingRequest)
             document.getElementById("allTag").innerHTML = "All tags"
@@ -123,7 +126,6 @@ const PostRequest = () => {
     const handleSearch = () => {
         let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(value.toLowerCase()))
         let result = search.map(res=>(JSON.parse(res)))
-        console.log(result)
         if (result.length !== 0) {
             setTemp(search)
             setPrevState(value)
@@ -445,7 +447,7 @@ const PostRequest = () => {
                </div>
 
             </Modal>
-            <Modal style={distanceModalStyle} isOpen={distanceModal} onRequestClose={e=>setDistanceTagModal(false)}  appElement={document.getElementById('root')}>
+            <Modal classNmae="distanceModal" style={isTabletOrMobileDevice?distanceModalStyleOnMobile:distanceModalStyle} isOpen={distanceModal} onRequestClose={e=>setDistanceTagModal(false)}  appElement={document.getElementById('root')}>
                 <div className="text-center">
                     <FormControl>
                         <RadioGroup aria-label="distance" name="distance1" value={value} onChange={handleChange}>
@@ -531,6 +533,27 @@ const distanceModalStyle = {
         borderRadius: '10px',
         // transform: 'translate(-50%,10%)',
     },
-}
 
+}
+const distanceModalStyleOnMobile = {
+    overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgb(0,0,0,0.3)'
+    },
+    content: {
+        top: '30%',
+        left: '40%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '280px',
+        height: '300px',
+        borderRadius: '10px',
+        // transform: 'translate(-40%,80%)',
+    },
+
+}
 export default PostRequest;
