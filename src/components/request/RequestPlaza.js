@@ -524,7 +524,7 @@ const tagModalStyle = {
         right: 'auto',
         bottom: 'auto',
         width: '600px',
-        height:'600px',
+        height:'580px',
         borderRadius:'10px',
         // transform: 'translate(-40%, -10%)',
     },
