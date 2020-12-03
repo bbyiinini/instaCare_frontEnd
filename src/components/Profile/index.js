@@ -10,7 +10,7 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import SelectUSState from "react-select-us-states";
 import Axios from "axios";
 import RequestService from "../../service/RequestService";
-
+import star from "../../assets/yellow_star.png"
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
 const useStyle = makeStyles(theme=>({
@@ -249,7 +249,7 @@ export default function (){
       </div>
   );
 
-  let {addressList, avatar,email,fullName,phone,userType,description} = profile
+  let {addressList, avatar,email,fullName,phone,userType,description,rating} = profile
   return(
       <div className={classes.root}>
     <Grid container spacing={2}>
@@ -258,7 +258,7 @@ export default function (){
           <h3>{fullName}</h3>
           <h5>{!userType? "Senior" : "Volunteer"}</h5>
           <h5>{email}</h5>
-          <h5>Rating:</h5>
+          <h5>Rating:{rating ? rating : "5.0"} </h5>
         </div>
         <div style={{textAlign:'left',width:"80%",marginTop:"15vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
           <Link to={"/reset"}><h4>Reset Password</h4></Link>
@@ -299,11 +299,12 @@ export default function (){
                   style={{
                     width:"100px",
                     height:"100px",
+                    backgroundColor:"white",
                     borderRadius:"50%",
                     margin:"10px"
                   }}
               >
-                {avatar ? <img src={avatar} alt="avatar" style={{width:"100%"}} /> : uploadButton}
+                {avatar ? <img src={avatar} alt="avatar" style={{width:"100%",height:"100%"}} /> : uploadButton}
               </Upload>
               <span style={{color:"#064d40"}}><b>Change Avatar</b></span>
             </Grid>

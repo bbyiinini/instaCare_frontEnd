@@ -142,6 +142,11 @@ const RequestMangement = () => {
 	}
 
 	const handleRating = () => {
+		if(!user.numOfRating){
+			UserService.update(user.id, {rating:rating,numOfRating:1})
+		}else{
+			UserService.update(user.id, {rating:(user.numOfRating * user.rating + rating)/(user.numOfRating+1),numOfRating:user.numOfRating+1})
+		}
 		window.location.assign('/post')
 	}
 
