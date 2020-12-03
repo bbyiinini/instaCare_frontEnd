@@ -492,38 +492,59 @@ const searchInput = {
     width:'75%',
 }
 
+// const tagModalStyle = {
+//     overlay: {
+//         position: 'fixed',
+//         top: 0,
+//         left: 0,
+//         right: 0,
+//         bottom: 0,
+//         backgroundColor: '#FFFFFF, 100%'
+//     },
+//     content: {
+//         top: '21.5%',
+//         left: '6.5%',
+//         right: 'auto',
+//         bottom: 'auto',
+//         width: '600px',
+//         borderRadius: '10px',
+//         // transform: 'translate(-50%,10%)',
+//     },
+// }
+
 const tagModalStyle = {
-    overlay: {
+    overlay:{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: '#FFFFFF, 100%'
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
     },
     content: {
-        top: '21.5%',
-        left: '6.5%',
+        top: '20%',
+        left: '30%',
         right: 'auto',
         bottom: 'auto',
         width: '600px',
-        borderRadius: '10px',
-        // transform: 'translate(-50%,10%)',
+        height:'600px',
+        borderRadius:'10px',
+        // transform: 'translate(-40%, -10%)',
     },
 }
 
 const distanceModalStyle = {
-    overlay: {
+    overlay:{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: '#FFFFFF, 100%'
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
     },
     content: {
-        top: '21.5%',
-        left: '16.5%',
+        top: '30%',
+        left: '40%',
         right: 'auto',
         bottom: 'auto',
         width: '280px',
