@@ -1,5 +1,6 @@
 import React, { useState, useEffect }  from "react";
 import { useHistory } from "react-router-dom";
+import Cookies from 'universal-cookie';
 import {useDispatch, useSelector} from "react-redux";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
@@ -39,9 +40,10 @@ const useStyles = makeStyles({
 });
 
 export default function Welcome(){
+  let cookies = new Cookies()
   let history = useHistory()
   let classes = useStyles()
-  let user = useSelector(state=>state.user)
+  const {user} = useSelector((state) => ({...state}))
   const [finishStatus,setStatus] = useState(0)
 
   if(user && user.uid){
@@ -59,11 +61,14 @@ export default function Welcome(){
     })
   }
 
-  if(user){
+
+  if((cookies.get('login') == 'true')){
     if(finishStatus === 1){
       history.push("/finishSetUp")
     }else if(finishStatus === 2){
       history.push("/post")
+    }else{
+      return <div></div>
     }
   }
 

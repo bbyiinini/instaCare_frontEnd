@@ -1,5 +1,6 @@
 import React, {Component, useEffect, useState} from 'react';
 import logo from './logo.svg';
+import Cookies from 'universal-cookie';
 import { BrowserRouter as Router, Switch, Route ,useHistory, Redirect} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 import db,{firestore} from "./base";
@@ -34,8 +35,6 @@ const App = () => {
   const dispatch = useDispatch();
   const [finishStatus,setStatus] = useState("unkown")
   let user = useSelector(state=>state.user)
-  if(!user){user = {UnLogin:true}}
-  // console.log(user)
   if(user && user.uid){
     // check if user profile is completed
     firestore.collection("users").doc(user.uid).get().then((doc)=>{
@@ -50,12 +49,13 @@ const App = () => {
       }
     })
   }
-
+  const cookies = new Cookies();
   useEffect(async ()=>{
     const unsubscribe = db.auth().onAuthStateChanged(async (user) =>{
       if (user) {
         // persist user's loggin state
         const idTokenResult = await user.getIdTokenResult();
+        cookies.set('login', 'true', { path: '/' });
         dispatch({
           type:'LOGGED_IN_USER',
           payload: {
@@ -147,6 +147,7 @@ const App = () => {
 
       }else{
         console.log("you have logout")
+        cookies.set('login', 'false', { path: '/' });
       }
     })
     // cleanup memory
@@ -159,20 +160,13 @@ const App = () => {
 
       <div className="App">
         <Router>
-          {/* <NavHeader/> */}
           <NavBar/>
           <ToastContainer/>
-          {/* <NavBar
-            loggedIn={this.state.loggedIn}
-            toggleLogin={this.toggleLogin}
-          /> */}
           <div className="content">
             <Switch>
               <Route exact path="/">
                 <Welcome/>
-                {/*{(!user && !finishStatus)? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
                 {!finishStatus && <Redirect to="/finishSetUp"/>}
-                {/*{finishStatus === 'unknown' ? <div></div> : (user.UnLogin === true ? <Welcome/> : <Redirect to="/post"/>)}*/}
               </Route>
               <ProtectedRoute exact path="/login" component={() => <Login />} />
               <ProtectedRoute exact path="/signup" component={() => <Signup />} />

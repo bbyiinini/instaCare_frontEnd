@@ -10,7 +10,9 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import SelectUSState from "react-select-us-states";
 import Axios from "axios";
 import RequestService from "../../service/RequestService";
-import star from "../../assets/yellow_star.png"
+import ReactPhoneInput from "react-phone-input-2";
+import 'react-phone-input-2/lib/style.css';
+import './upload.css'
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
 const useStyle = makeStyles(theme=>({
@@ -40,6 +42,7 @@ const useStyle = makeStyles(theme=>({
     width:"50%",
   },
   textfield: {
+    border:"1px solid",
     width:"100%",
   }
 }));
@@ -47,15 +50,15 @@ const useStyle = makeStyles(theme=>({
 export default function (){
   const classes = useStyle()
   const {user} = useSelector((state) => ({...state}))
+  const {address} = useSelector((state) => ({...state}))
+  console.log(address)
   const dispatch = useDispatch();
   const profile = useSelector(state=>state.userProfile)
-  const address_list = useSelector((state) => state.address)
-
 
   const [open,setOpen] = useState(false)
   const [modalTitle,setTitle] = useState("")
   const [modalContent,setcontent] = useState("not changed")
-  const [addressIndex,setindex] = useState(0)
+  const [addressIndex,setindex] = useState(-1)
   const [loading,setloading] = useState(false)
 
   const [addressModal, setAddressModal] = useState(false);
@@ -66,8 +69,6 @@ export default function (){
   const [zipCode, setZipCode] = useState("");
 
   const [addList, setAddList] = useState([]);
-  const [flag, setFlag] = useState(true);
-
 
   const handleOpen = () => {
     setOpen(true);
@@ -93,6 +94,7 @@ export default function (){
       })
     }
     handleClose()
+    toast.info("Please click Update User Profile button to save your changes!")
   }
 
   const saveAll = () => {
@@ -135,6 +137,7 @@ export default function (){
 
   const handleAddressDelete = (index)=>{
     return ()=>{
+      toast.info("Please click Update User Profile button to save your changes!")
       dispatch({
         type:"AddressDelete",
         payload:index
@@ -171,23 +174,6 @@ export default function (){
     return isJpgOrPng && isLt2M;
   }
 
-  if (!address_list || !address_list.userAddrList || !address_list.userAddrList){
-    return <h1>Loading...</h1>
-  }
-  let list = address_list.userAddrList
-  if (list.length !== 0 && flag) {
-    let addressDetail = list.map(res => ({
-          add: res.streetAddressL2 === "" ? res.streetAddressL1 +
-              ", " + res.city + ", " + res.state + " " + res.zipCode :
-              res.streetAddressL1 + ", " + res.streetAddressL2 + ", " +
-              res.city + ", " + res.state + " " + res.zipCode,
-          id: res.addressId
-        }
-
-    ));
-    setAddList(addressDetail);
-    setFlag(false)
-  }
 
   let newAdd = ""
   const handleAdd = async () => {
@@ -197,11 +183,21 @@ export default function (){
 
     Axios.post(postUrl)
         .then(async response => {
-          let fulladdr = `${street1}, ${street2}, ${city}, ${state},${zipCode}`
-          dispatch({
-            type:"New Address",
-            payload:fulladdr
-          })
+          let fulladdr = `${street1} ${street2}, ${city}, ${state},${zipCode}`
+          if(addressIndex !== -1){
+            dispatch({
+              type:"Address",
+              payload:{
+                index:addressIndex,
+                content:fulladdr
+              }
+            })
+          }else{
+            dispatch({
+              type:"New Address",
+              payload:fulladdr
+            })
+          }
           geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
 
           const addressBean = {
@@ -215,28 +211,23 @@ export default function (){
           }
 
           if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
-            newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
-            let result = addList.filter(names=>names.add.includes(newAdd))
-            if (result.length !== 0) {
-              toast.error("This address is already in your account, please enter another one")
-            }else{
-              let id = "";
-              await RequestService.insertAddress(user.uid, addressBean).then(res => {
-                toast.success("insert address to backend success")
-                id = res.data.data;
-              }).catch(error => {
-                toast.error("insert failed")
-                console.log(error.message)
-              });
-              setAddList([...addList, {add: newAdd, id: id}])
-              setStreet1("")
-              setStreet2("")
-              setCity("")
-              setState("")
-              setZipCode("")
-              setAddressModal(false);
-            }
-
+            // console.log(text, title, address, phoneNumber)
+            let id = "";
+            console.log(addressBean,user.uid)
+            await RequestService.insertAddress(user.uid, addressBean).then(res => {
+              toast.success("insert address to backend success")
+              id = res.data.data;
+            }).catch(res => {
+              toast.error("insert failed")
+            });
+            newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+            setAddList([...addList, {add: newAdd, id: id}])
+            setStreet1("")
+            setStreet2("")
+            setCity("")
+            setState("")
+            setZipCode("")
+            setAddressModal(false);
           } else {
             toast.error("please fill all the information")
           }
@@ -244,6 +235,7 @@ export default function (){
         .catch(error => {
           console.log(error.message)
         });
+    setAddressModal(false)
   }
 
   const handleAvatarChange = info => {
@@ -279,16 +271,30 @@ export default function (){
   return(
       <div className={classes.root}>
     <Grid container spacing={2}>
-      <Grid item xs={4}>
+      <Grid item xs={4} style={{paddingTop:"100px"}}>
+          <Upload
+              name="avatar"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
+              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              beforeUpload={beforeUpload}
+              onChange={handleAvatarChange}
+              style={{
+                marginTop:"150px",
+                borderRadius:"50%",
+              }}
+          >
+            {avatar ? <img src={avatar} alt="avatar" style={{width:"200px",height:"200px"}} /> : uploadButton}
+          </Upload>
         <div className={classes.info}>
           <h3>{fullName}</h3>
           <h5>{!userType? "Senior" : "Volunteer"}</h5>
           <h5>{email}</h5>
           <h5>Rating:{rating ? rating : "5.0"} </h5>
         </div>
-        <div style={{textAlign:'left',width:"80%",marginTop:"15vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
+        <div style={{textAlign:'left',width:"80%",marginTop:"1vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
           <Link to={"/reset"}><h4>Reset Password</h4></Link>
-          <h4>Contact us at <a>help@instacare.com</a></h4>
         </div>
         <Button onClick={saveAll} style={{
           borderStyle: "solid",
@@ -305,37 +311,7 @@ export default function (){
         <div className={classes.info}>
            <h3>Account Info</h3>
           <Grid container spacing={2}>
-            <Grid item xs={3}>
-              {/*<img src={profile.avatar}*/}
-              {/*     style={{*/}
-              {/*       width:"100px",*/}
-              {/*       height:"100px",*/}
-              {/*       borderRadius:"50%",*/}
-              {/*       margin:"10px"*/}
-              {/*     }}*/}
-              {/*     alt={"avatar"}/>*/}
-              <Upload
-                  name="avatar"
-                  listType="picture-card"
-                  className="avatar-uploader"
-                  showUploadList={false}
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  beforeUpload={beforeUpload}
-                  onChange={handleAvatarChange}
-                  style={{
-                    width:"100px",
-                    height:"100px",
-                    backgroundColor:"white",
-                    borderRadius:"50%",
-                    margin:"10px"
-                  }}
-              >
-                {avatar ? <img src={avatar} alt="avatar" style={{width:"100%",height:"100%"}} /> : uploadButton}
-              </Upload>
-              <span style={{color:"#064d40"}}><b>Change Avatar</b></span>
-            </Grid>
-            <Grid item xs={9}>
-
+            <Grid item xs={12}>
               <Grid container spacing={2} style={{marginBottom:"50px"}}>
               <Grid item xs={4}>
                 Description
@@ -351,7 +327,7 @@ export default function (){
                 Phone
               </Grid>
               <Grid item xs={8}>
-                <p>{phone}</p>
+                <p>+{phone}</p>
                 <span style={{color:"#064d40"}} onClick={handlePhone}><b>Change</b></span>
               </Grid>
               </Grid>
@@ -361,14 +337,14 @@ export default function (){
         </div>
         <div className={classes.info}>
           <h3>Address Lists</h3>
-          {addressList && addressList.map((item, index)=>{
+          {(addressList)&& addressList.map((item, index)=>{
             return (
             <Grid container spacing={2}>
               <Grid item xs={8}>
                 {item}
               </Grid>
               <Grid item xs={2}>
-                <span style={{color:"#064d40"}} onClick={handleAddress(index)}><b>Change</b></span>
+                {/*<span style={{color:"#064d40"}} onClick={handleAddress(index)}><b>Change</b></span>*/}
               </Grid>
               <Grid item xs={2}>
                 <span style={{color:"#064d40"}} onClick={handleAddressDelete(index)}><b>Delete</b></span>
@@ -386,7 +362,7 @@ export default function (){
             aria-describedby="transition-modal-description"
             className={classes.modal}
             open={open}
-            // onClose={handleClose}
+            onClose={handleClose}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
@@ -395,18 +371,34 @@ export default function (){
         >
           <Fade in={open}>
             <div className={classes.paper}>
-              <h2 id="transition-modal-title">Edit {modalTitle}</h2>
-              <TextField
+              <h2 style={{margin:"15px"}}>Edit {modalTitle}</h2>
+              {modalTitle === "Phone" ? <div>
+                <ReactPhoneInput
+                  style={{width: '35%', margin:'auto'}}
+                  country={'us'}
+                  onlyCountries={['us']}
+                  isValid={(value, country) => {
+                    if (!value.match(/1/)) {
+                      return 'Invalid area code: ' + value + ', ' + country.name;
+                    } else {
+                      return true;
+                    }
+                  }}
+                  inputProps={{
+                    name: "phone",
+                    required: true,
+                  }}
+                  onChange={e => setcontent(e)}
+              /></div>:<TextField
                   className={classes.textfield}
-                  label={`Enter new ${modalTitle}`}
                   onChange={handleModalChange}
                   defaultValue={modalContent}
                   multiline
                   rows={modalTitle === "Description" ? 6 : 1}
-              />
+              />}
               <div>
-                <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button>
-                <Button onClick={handleClose} style={{float:"right"}}>Cancel</Button>
+                <Button onClick={submitChange} style={{borderRadius:"10px",marginTop:"10px",float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button>
+                <Button onClick={handleClose} style={{marginRight:"10px",marginTop:"10px",float:"right"}}>Cancel</Button>
               </div>
             </div>
           </Fade>
@@ -459,7 +451,7 @@ export default function (){
               </div>
             </div>
             <Button type="primary"
-                    style={{background: '#00897B', width: '80px'}}
+                    style={{background: '#00897B', width: '80px',color:'white'}}
                     shape="round"
                     onClick={handleAdd}
                     className="float-right">add</Button>

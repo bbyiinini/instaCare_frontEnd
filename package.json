@@ -34,7 +34,8 @@
     "react-tap-event-plugin": "^3.0.3",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "universal-cookie": "^4.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

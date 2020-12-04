@@ -9,7 +9,7 @@ import Input from '@material-ui/core/Input';
 import senior from '../../assets/senior.jpeg'
 import volunteer from '../../assets/volunteer.png'
 import googlePNG from '../../assets/google.png'
-import welcome from '../../assets/welcome.png'
+import welcome from '../../assets/welcome.jpg'
 
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 
@@ -147,7 +147,7 @@ const Signup = (props) => {
             <MuiThemeProvider theme={theme}>
                 <Grid container spacing={0} style={{marginTop:"100px"}}>
                     <Grid item xs={6}>
-                        <img src={welcome} style={{width:"600px"}}/>
+                        <img src={welcome} style={{width:"600px",marginLeft:"-10px",marginTop:"-100px"}}/>
                     </Grid>
                     <Grid item xs={6}>
                         <div>
