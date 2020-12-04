@@ -50,6 +50,7 @@ const RequestGoogleMap = (props) => {
     const [response, setResponse] = useState(null)
     const [travelMode, setTravelMode] = useState('DRIVING')
 
+    const [isSending, setIsSending] = useState(false);
     if (!targetAddress) {
         console.log('props.requestId:', props.requestId)
         firestore.collection('requestPlaza').doc(props.requestId)
@@ -113,6 +114,7 @@ const RequestGoogleMap = (props) => {
 
     function TrackingGeoLocation() {
         console.log('TrackingGeoLocation function')
+        setIsSending(true)
         intervalId = setInterval(updatePosition, 10000)
     }
 
@@ -123,6 +125,7 @@ const RequestGoogleMap = (props) => {
                     lat: pos.coords.latitude,
                     lng: pos.coords.longitude,
                 })
+
                 let geoPoint = new firebase.firestore.GeoPoint(pos.coords.latitude, pos.coords.longitude)
                 setCurrentAddress(geoPoint)
                 console.log(pos.coords)
@@ -249,9 +252,10 @@ const RequestGoogleMap = (props) => {
                                                 title="Start sending my location"
                                                 variant="light"
                                                 size="lg"
-                                                onClick={TrackingGeoLocation}
+                                                disabled={isSending}
+                                                onClick={!isSending ? TrackingGeoLocation: null}
                                             >
-                                                Send Location
+                                                {isSending ?'Sending Location': 'Send Location' }
                                             </Button>
                                         </div>
                                     </div>

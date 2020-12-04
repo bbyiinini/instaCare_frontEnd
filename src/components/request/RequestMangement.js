@@ -186,6 +186,15 @@ const RequestMangement = () => {
         },
     })
 
+    const formatPhoneNumber = (phoneNumberString)=>{
+        let cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+        let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+        if (match) {
+            let intlCode = (match[1] ? '+1 ' : '')
+            return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
+        }
+        return null
+    }
     return (
         <>
             {requestMange == null || user == null ? (
@@ -210,8 +219,8 @@ const RequestMangement = () => {
                                                 <a>{seniorState.fullName}</a>
                                                 <div>
                                                     <PhoneIcon style={{color: '#41892c'}}/>
-                                                    {requestMange.phoneNumber}
-                                                </div>
+                                                    {formatPhoneNumber(requestMange.phoneNumber.toString())}
+                                                        </div>
                                             </div>
                                         }
                                         subheader="Rating:"
