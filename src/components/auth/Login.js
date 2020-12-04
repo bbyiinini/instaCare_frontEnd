@@ -1,19 +1,15 @@
 import React, { useState }  from "react";
 import { useHistory, Link } from "react-router-dom";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import AppBar from 'material-ui/AppBar';
-import RaisedButton from 'material-ui/RaisedButton';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Input from '@material-ui/core/Input';
-import TextField from 'material-ui/TextField';
 import db, {provider1}from '../../base';
-import {GoogleOutlined, MailOutlined} from "@ant-design/icons";
 import {toast} from "react-toastify";
 
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 
-import welcome from '../../assets/welcome.png'
+import welcome from '../../assets/welcome.jpg'
 import googlepng from '../../assets/google.png'
 
 
@@ -95,7 +91,7 @@ const Login = (props) => {
             <MuiThemeProvider>
                 <Grid container spacing={2} style={{paddingTop:"100px"}}>
                     <Grid item xs={6}>
-                        <img src={welcome} style={{width:"600px"}}/>
+                        <img src={welcome} style={{width:"600px",marginTop:"-100px"}}/>
                     </Grid>
                     <Grid item xs={6}>
                         <div>
@@ -134,8 +130,10 @@ const Login = (props) => {
                                     disabled={!email || password.length < 6}
                                     onClick={handleLoginWithEmailAndPassword}
                             >Log In</Button>
+                            <br/>
+                            <br/>
+                            <h3>Not a member? <Link style={{color:"#12897b"}} to={'/signup'}>Sign Up</Link></h3>
                         </div>
-
                     </Grid>
                 </Grid>
 

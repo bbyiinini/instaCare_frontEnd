@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     marginBottom:"20px",
     width:"50%",
     margin:"20px",
-    backgroundColor:"#85dcd2",
+    backgroundColor:"#12897b",
     color:"white"
   },
   imgstyle:{
