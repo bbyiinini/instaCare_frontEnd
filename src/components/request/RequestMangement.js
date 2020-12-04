@@ -16,7 +16,6 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import CardContent from '@material-ui/core/CardContent'
 import Chip from '@material-ui/core/Chip'
-import Backdrop from '@material-ui/core/Backdrop'
 import Rating from '@material-ui/lab/Rating'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import TextField from '@material-ui/core/TextField'
@@ -27,7 +26,9 @@ import TimelineItem from '@material-ui/lab/TimelineItem'
 import TimelineSeparator from '@material-ui/lab/TimelineSeparator'
 import TimelineConnector from '@material-ui/lab/TimelineConnector'
 import TimelineContent from '@material-ui/lab/TimelineContent'
+import CardMedia from '@material-ui/core/CardMedia'
 import PhoneIcon from '@material-ui/icons/Phone'
+import imges from '../../assets/takeR.png'
 import moment from 'moment'
 
 const RequestMangement = () => {
@@ -296,9 +297,19 @@ const RequestMangement = () => {
 							</Col>
 						</ThemeProvider>
 						<Col className="nav-column" xs={12} sm={6}>{user.userType === 1 && requestMange.status === 1 ?
-							<><h1>Too Young too simple</h1>
+							<>
 								<ThemeProvider theme={theme}>
-									<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('covid')}>Take the request</Button>
+									<CardMedia
+										className={classes.media}
+										image={imges}
+										title="Paella dish"
+									/>
+									<CardContent>
+										<Typography variant="h4" color="textSecondary" component="p">
+											Waiting for a volunteer to take the request.
+										</Typography>
+									</CardContent>
+									<Button color="primary" variant="contained" className={classes.bHeight1} onClick={() => handleOpen('covid')}>I Want to Help</Button>
 								</ThemeProvider></> :
 							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
 								<Card className={classes.volunteer}>
@@ -442,6 +453,15 @@ const useStyles = makeStyles((theme) => ({
 			outline: 'none',
 		},
 	},
+	bHeight1: {
+		height: theme.spacing(9),
+		margin: theme.spacing(0.5),
+		fontSize: "24px",
+		width: '75%',
+		'&:focus': {
+			outline: 'none',
+		},
+	},
 	paddings1: {
 		paddingTop: '80px',
 	},
@@ -450,6 +470,13 @@ const useStyles = makeStyles((theme) => ({
 	},
 	paddings3: {
 		marginTop: '10rem'
+	},
+	media:{
+		marginTop:'2vh',
+		height: '400px',
+		width: '50%',
+		marginLeft: '50%',
+		transform: 'translateX(-50%)',
 	},
 	chip: {
 		margin: theme.spacing(0.5),
@@ -476,7 +503,7 @@ const useStyles = makeStyles((theme) => ({
 	volunteer: {
 		marginLeft: '50%',
 		position: 'absolute',
-		bottom: '8rem',
+		bottom: '3rem',
 		transform: 'translateX(-50%)',
 		borderRadius: '15px',
 		padding: '0px 20px',
