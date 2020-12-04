@@ -287,7 +287,8 @@ const PostRequest = () => {
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         // user: res.Senior === null ? "Pending" : res.Senior,
-        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
+        rating: <Rating name="read-only" value={rating} readOnly />
     }));
 
 
