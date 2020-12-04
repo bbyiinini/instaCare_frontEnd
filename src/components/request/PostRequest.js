@@ -971,7 +971,13 @@ const useStyle = makeStyles(theme=>({
     },
     textfield: {
         width:"100%",
-    }
+    },
+    centerItem: {
+        marginLeft: '50%',
+        marginTop: '40px',
+        marginBottom: '20px',
+        transform: 'translateX(-50%) scale(2)',
+    },
 }));
 
 const questionnaireStyle = {

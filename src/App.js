@@ -144,6 +144,20 @@ const App = () => {
           })
         }
 
+        if (pastRequestDetail){
+          if (profileData.userType === 0){
+            pastRequestDetail.map(res=>(userService.retrieve(res.volunteerId).then(res=>{
+              dispatch({
+                type:'RATING',
+                payload: {id:res.data.data.id, rating: res.data.data.rating}
+              })
+            })))
+          }
+          // dispatch({
+          //   type: 'RATING',
+          //   payload: a
+          // })
+        }
       }else{
         console.log("you have logout")
       }
