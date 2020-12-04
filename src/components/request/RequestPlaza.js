@@ -71,7 +71,7 @@ const PostRequest = () => {
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        address: addrList.addressList.filter(addr => addr.id===index)[0].addr,
+        address: addrList.addressList.filter(addr => addr.id===index).length===0?"":addrList.addressList.filter(addr => addr.id===index)[0].addr,
         requestContent: res.requestContent,
     }));
 
@@ -180,21 +180,21 @@ const PostRequest = () => {
             title: 'Request',
             dataIndex: 'requestContent',
             key: 'requestContent',
-            width: '40%'
+            width: '30%'
         },
 
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'10%',
+            width:'35%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color:'#004D40', width:'120px', textAlign:'center', fontSize:'16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -206,7 +206,7 @@ const PostRequest = () => {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
-            width: '40%'
+            width: '30%'
         },
 
         {
@@ -234,7 +234,7 @@ const PostRequest = () => {
                     {/*    /!*<option value='Tool needed'>Tool needed</option>*!/*/}
                     {/*    /!*<option value='Easy to do'>Easy to do</option>*!/*/}
                     {/*</select>*/}
-                    <label id="allTag">All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="allTag" style={{cursor:'pointer'}} onClick={handleTagOpen}>All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
@@ -246,7 +246,7 @@ const PostRequest = () => {
                     {/*    <option value='4'>Within 20 miles</option>*/}
                     {/*    <option value='4'>Within 30 miles</option>*/}
                     {/*</select>*/}
-                    <label id="distance">Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="distance" style={{cursor:'pointer'}} onClick={e=>setDistanceTagModal(true)}>Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
