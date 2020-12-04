@@ -248,9 +248,10 @@ const RequestGoogleMap = (props) => {
                                                 className="google-map-custom-control"
                                                 title="Start sending my location"
                                                 variant="light"
+                                                size="lg"
                                                 onClick={TrackingGeoLocation}
                                             >
-                                                Start sending my location
+                                                Send Location
                                             </Button>
                                         </div>
                                     </div>

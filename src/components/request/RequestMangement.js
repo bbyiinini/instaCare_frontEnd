@@ -383,15 +383,12 @@ const RequestMangement = () => {
                                     )
                                 } else {
                                     return (
-                                        <div className={classes.paper} style={{
-                                            overflowX: "hidden",
-                                            height: '30rem',
-                                        }}>
+                                        <div className={classes.paper}>
                                             <div style={{
                                                 width: "100%",
                                                 height: "100%",
-                                                overflowY: "scroll",
-                                                paddingRight: "1700px",
+                                                overflow: "scroll",
+                                                paddingRight: "17px",
                                                 boxSizing: "content-box",
 
                                             }}>
@@ -503,6 +500,15 @@ const useStyles = makeStyles((theme) => ({
         transform: 'translateX(-50%)',
         width: '200%',
     },
+    // paper: {
+    //     backgroundColor: theme.palette.background.paper,
+    //     borderRadius: "30px",
+    //     boxShadow: theme.shadows[2],
+    //     padding: theme.spacing(2, 4, 3),
+    //     width: "50%",
+    //     height: "70vh",
+    //
+    // },
 }))
 
 const modalStyle = {
@@ -515,13 +521,12 @@ const modalStyle = {
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
     },
     content: {
-        overflowY: "scroll",
-        height: '30%',
         top: '30%',
         left: '50%',
         right: 'auto',
         bottom: 'auto',
         width: '30%',
+        height: "70vh",
         borderRadius: '30px',
         transform: 'translate(-40%, -10%)',
     },

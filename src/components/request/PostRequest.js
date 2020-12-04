@@ -835,8 +835,7 @@ const useStyle = makeStyles(theme => ({
         boxShadow: theme.shadows[2],
         padding: theme.spacing(2, 4, 3),
         width: "50%",
-        overflowX: "hidden",
-        height: "50%",
+        height: "70vh",
 
 },
     textfield: {
