@@ -180,14 +180,14 @@ const PostRequest = () => {
             title: 'Request',
             dataIndex: 'requestContent',
             key: 'requestContent',
-            width: '40%'
+            width: '30%'
         },
 
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'10%',
+            width:'30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
@@ -206,7 +206,7 @@ const PostRequest = () => {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
-            width: '40%'
+            width: '30%'
         },
 
         {
@@ -234,7 +234,7 @@ const PostRequest = () => {
                     {/*    /!*<option value='Tool needed'>Tool needed</option>*!/*/}
                     {/*    /!*<option value='Easy to do'>Easy to do</option>*!/*/}
                     {/*</select>*/}
-                    <label id="allTag">All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="allTag" style={{cursor:'pointer'}} onClick={handleTagOpen}>All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
@@ -246,7 +246,7 @@ const PostRequest = () => {
                     {/*    <option value='4'>Within 20 miles</option>*/}
                     {/*    <option value='4'>Within 30 miles</option>*/}
                     {/*</select>*/}
-                    <label id="distance">Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="distance" style={{cursor:'pointer'}} onClick={e=>setDistanceTagModal(true)}>Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
