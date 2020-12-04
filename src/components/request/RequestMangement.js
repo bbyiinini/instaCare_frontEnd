@@ -167,7 +167,17 @@ const RequestMangement = () => {
 	const handleTake = () => {
 		thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
 		setWrapOpen(false)
-	}
+    }
+    
+    const formatPhoneNumber = (phoneNumberString)=>{
+        let cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+        let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+        if (match) {
+            let intlCode = (match[1] ? '+1 ' : '')
+            return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
+        }
+        return null
+    }
 
 	const theme = createMuiTheme({
 		palette: {
@@ -208,7 +218,7 @@ const RequestMangement = () => {
 													<a>{seniorState.fullName}</a>
 													<div>
 														<PhoneIcon style={{ color: '#41892c' }} />
-														{requestMange.phoneNumber}
+														{formatPhoneNumber(requestMange.phoneNumber)}
 													</div>
 												</div>
 											}
@@ -321,7 +331,7 @@ const RequestMangement = () => {
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={requestMange.volunteerId ? volunteerState.avatar : ""}></Avatar>}
 										title={<div className={classes.ftSmall}><a>{requestMange.volunteerId !== null ? volunteerState.fullName : "N/A"}</a>
-											<div><PhoneIcon style={{ color: "#41892c" }} />{requestMange.volunteerId !== null ? volunteerState.phone : "N/A"}</div></div>}
+											<div><PhoneIcon style={{ color: "#41892c" }} />{requestMange.volunteerId !== null ? formatPhoneNumber(volunteerState.phone) : "N/A"}</div></div>}
 										subheader='Rating:'{...requestMange.rating} />
 								</Card>
 							} </>
