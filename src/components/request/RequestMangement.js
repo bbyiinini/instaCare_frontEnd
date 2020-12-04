@@ -48,6 +48,7 @@ const RequestMangement = () => {
 	const [volunteerState, setVolunteerState] = useState(user);
 	const [seniorState, setSeniorState] = useState(user);
 	const [onGoing, setOnGoing] = useState(false);
+	const [refresh, setRefresh] = useState(false);
 
 	const history = useHistory()
 	const classes = useStyles()
@@ -75,6 +76,10 @@ const RequestMangement = () => {
 
 		}
 	}, [requestMange]);
+
+	if(!refresh){
+		setRefresh(true)
+	}
 
 	if (!requestMange) {
 		if (!user || !originReq || wrapId === 'rating') {
@@ -105,11 +110,6 @@ const RequestMangement = () => {
 	const handleOpen = (type) => {
 		setWrapId(type)
 		setWrapOpen(true)
-	}
-
-	const parseISOString = (s) => {
-		let b = s.split(/\D+/);
-		return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
 	}
 
 	const handleEnd = async () => {
