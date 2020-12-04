@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     marginBottom:"20px",
     width:"50%",
     margin:"20px",
-    backgroundColor:"#12897b",
+    backgroundColor:"#85dcd2",
     color:"white"
   },
   imgstyle:{
@@ -41,8 +41,14 @@ const useStyles = makeStyles({
 export default function Welcome(){
   let history = useHistory()
   let classes = useStyles()
-  let user = useSelector(state=>state.user)
+  const {user} = useSelector((state) => ({...state}))
   const [finishStatus,setStatus] = useState(0)
+
+  console.log(user)
+  // if(user == null){
+  //   console.log("null le")
+  //   return <div></div>
+  // }
 
   if(user && user.uid){
     // check if user profile is completed
@@ -64,6 +70,8 @@ export default function Welcome(){
       history.push("/finishSetUp")
     }else if(finishStatus === 2){
       history.push("/post")
+    }else{
+      return <div></div>
     }
   }
 

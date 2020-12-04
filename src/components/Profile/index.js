@@ -53,7 +53,7 @@ export default function (){
   const [open,setOpen] = useState(false)
   const [modalTitle,setTitle] = useState("")
   const [modalContent,setcontent] = useState("not changed")
-  const [addressIndex,setindex] = useState(0)
+  const [addressIndex,setindex] = useState(-1)
   const [loading,setloading] = useState(false)
 
   const [addressModal, setAddressModal] = useState(false);
@@ -176,11 +176,21 @@ export default function (){
 
     Axios.post(postUrl)
         .then(async response => {
-          let fulladdr = `${street1}, ${street2}, ${city}, ${state},${zipCode}`
-          dispatch({
-            type:"New Address",
-            payload:fulladdr
-          })
+          let fulladdr = `${street1} ${street2}, ${city}, ${state},${zipCode}`
+          if(addressIndex !== -1){
+            dispatch({
+              type:"Address",
+              payload:{
+                index:addressIndex,
+                content:fulladdr
+              }
+            })
+          }else{
+            dispatch({
+              type:"New Address",
+              payload:fulladdr
+            })
+          }
           geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
 
           const addressBean = {
@@ -218,6 +228,7 @@ export default function (){
         .catch(error => {
           console.log(error.message)
         });
+    setAddressModal(false)
   }
 
   const handleAvatarChange = info => {
