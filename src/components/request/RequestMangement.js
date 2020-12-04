@@ -32,12 +32,13 @@ import TimelineDot from '@material-ui/lab/TimelineDot'
 
 const RequestMangement = () => {
 
-	const user = useSelector(state => (state.userProfile));
+	const userOrin = useSelector(state => (state.userProfile));
 	const reqM = useSelector(state => state.requestMange);
 
 
-	const [originReq, setOriginReq] = useState(reqM === null ? null : reqM.ongoingRequestId);
+	const [originReq, setOriginReq] = useState(reqM === null ? JSON.parse(window.localStorage.getItem('originReq')): reqM.ongoingRequestId);
 	const [wrapId, setWrapId] = useState("");
+	const [user, setUser] = useState(userOrin !== null? userOrin : JSON.parse(window.localStorage.getItem('user')));
 	const [wrapOpen, setWrapOpen] = useState(false);
 	const [requestMange, setRequestMange] = useState(null);
 	const [textField, setTextField] = useState("");
@@ -50,7 +51,7 @@ const RequestMangement = () => {
 	const history = useHistory()
 	const classes = useStyles()
 	const requestRef = firestore.collection('requestPlaza')
-	const thisRequest = originReq == null ? null : requestRef.doc(originReq.id)
+	const thisRequest = originReq === null ? null : requestRef.doc(originReq.id)
 
 	useEffect(async () => {
 		if (requestMange && user) {
@@ -68,7 +69,6 @@ const RequestMangement = () => {
 			}
 			if (requestMange.seniorId && requestMange.seniorId !== seniorState.id) {
 				const senior = (await UserService.retrieve(requestMange.seniorId)).data.data;
-				console.log(senior)
 				setSeniorState(senior);
 			}
 
@@ -81,13 +81,17 @@ const RequestMangement = () => {
 		} else {
 			thisRequest.onSnapshot(async function (doc) {
 				console.log("Current data: ", doc.data());
+
+				window.localStorage.setItem('user', JSON.stringify(user))
+
 				if (doc.data()) {
+					window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
 					setRequestMange(doc.data())
 					if (doc.data().comments) {
 						setCommentCollection(doc.data().comments)
 					}
 				} else {
-					setRequestMange(originReq)
+					// setRequestMange(originReq)
 				}
 			})
 		}
@@ -110,14 +114,15 @@ const RequestMangement = () => {
 		} else if (wrapId === 'cancel') {
 			if (user.userType === 1) {
 				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null }).then(setOnGoing(false));
+				window.localStorage.removeItem('user')
+				window.localStorage.removeItem('originReq')
 				window.location.assign("/post");
 			} else {
-				//todo
+				await RequestService.deleteRequest(requestMange.id)
+				window.localStorage.removeItem('user')
+				window.localStorage.removeItem('originReq')
 				window.location.assign('/post')
 			}
-			return
-		} else {
-			return
 		}
 	}
 
@@ -131,8 +136,8 @@ const RequestMangement = () => {
 			temp.push({
 				content: textField,
 				userId: user.id,
-        user: user.fullName,
-        avatar: user.avatar,
+				user: user.fullName,
+				avatar: user.avatar,
 			})
 			console.log(temp)
 			setCommentCollection(temp)
@@ -209,8 +214,8 @@ const RequestMangement = () => {
 										</Grid>
 									</div>
 									<div className={classes.paddings1}>
-										{requestMange.status === 3 ? (
-											<>Taken</>
+										{requestMange.status === 3 || (user.userType===1 && requestMange.status ===1) ? (
+											<></>
 										) : (
 												<ThemeProvider theme={theme}>
 													<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('end')}>

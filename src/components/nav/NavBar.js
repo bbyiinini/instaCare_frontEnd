@@ -147,7 +147,7 @@ const NavBar = () => {
             </Avatar>
         </IconButton>
 
-        <img onClick={handleDescription} className="float-right" style={{width:"3%", margin:"1%"}} src={warning}></img>
+        
 
 
           {/* {user && <Item key="userProfile" icon={<UserOutlined />} className="float-right">
