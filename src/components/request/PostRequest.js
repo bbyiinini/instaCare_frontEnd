@@ -282,23 +282,30 @@ const PostRequest = () => {
                 }
 
                 if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
-                    // console.log(text, title, address, phoneNumber)
-                    let id = "";
-                    await RequestService.insertAddress(user.uid, addressBean).then(res => {
-                        toast.success("insert address to backend success")
-                        id = res.data.data;
-                    }).catch(res => {
-                        toast.error("insert failed")
-                    });
                     newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
-                    setAddList([...addList, {add: newAdd, id: id}])
-                    setStreet1("")
-                    setStreet2("")
-                    setCity("")
-                    setState("")
-                    setZipCode("")
-                    setAddressModal(false);
+                    let result = addList.filter(names=>names.add.includes(newAdd))
+                    if (result.length !== 0) {
+                        toast.error("This address is already in your account, please enter another one")
+                    }else{
+                        let id = "";
+                        await RequestService.insertAddress(user.uid, addressBean).then(res => {
+                            toast.success("insert address to backend success")
+                            id = res.data.data;
+                        }).catch(res => {
+                            toast.error("insert failed")
+                        });
+                        setAddList([...addList, {add: newAdd, id: id}])
+                        setStreet1("")
+                        setStreet2("")
+                        setCity("")
+                        setState("")
+                        setZipCode("")
+                        setAddressModal(false);
+                    }
+
                 } else {
+                    let result = addressList.userAddrList.filter(names=>names.streetAddressL1.includes(street1))
+                    console.log(result)
                     toast.error("please fill all the information")
                 }
             })
@@ -333,13 +340,13 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '25%',
+            width: '35%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -385,13 +392,13 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '25%',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -442,14 +449,14 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '20%',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -518,7 +525,7 @@ const PostRequest = () => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -618,7 +625,8 @@ const PostRequest = () => {
                             <div>
                                 <div className="tags-input">
                                     <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags}
-                                            placeholder={<div>Select tags</div>}/>
+                                            placeholder={<div>Select tags</div>} closeMenuOnSelect={false}
+                                    />
                                 </div>
                             </div>
                         </div>
