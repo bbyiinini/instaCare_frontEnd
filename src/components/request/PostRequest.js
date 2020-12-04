@@ -267,7 +267,10 @@ const PostRequest = () => {
     // console.log(requestDetail.pastRequest.filter(names=>(names.ratingId===null)))
     const handleRating = () => {
         RatingService.addRating(requestId, userId, {userRating: rating})
-            .then(r => {console.log(r)})
+            .then(r => {
+                console.log(r)
+                setRatingModal(false)
+            })
             .catch(error=>error.message)
     }
 
@@ -967,13 +970,7 @@ const useStyle = makeStyles(theme=>({
     },
     textfield: {
         width:"100%",
-    },
-    centerItem: {
-        marginLeft: '50%',
-        marginTop: '40px',
-        marginBottom: '20px',
-        transform: 'translateX(-50%) scale(2)',
-    },
+    }
 }));
 
 const questionnaireStyle = {
