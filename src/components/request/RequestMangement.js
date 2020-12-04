@@ -28,7 +28,7 @@ import TimelineSeparator from '@material-ui/lab/TimelineSeparator'
 import TimelineConnector from '@material-ui/lab/TimelineConnector'
 import TimelineContent from '@material-ui/lab/TimelineContent'
 import PhoneIcon from '@material-ui/icons/Phone'
-import TimelineDot from '@material-ui/lab/TimelineDot'
+import moment from 'moment'
 
 const RequestMangement = () => {
 
@@ -106,6 +106,11 @@ const RequestMangement = () => {
 		setWrapOpen(true)
 	}
 
+	const parseISOString = (s) => {
+        let b = s.split(/\D+/);
+        return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+    }
+
 	const handleEnd = async () => {
 		if (wrapId === 'end') {
 			setWrapId('rating')
@@ -138,6 +143,7 @@ const RequestMangement = () => {
 				userId: user.id,
 				user: user.fullName,
 				avatar: user.avatar,
+				time: moment().format('HH:mm')
 			})
 			console.log(temp)
 			setCommentCollection(temp)
@@ -152,6 +158,8 @@ const RequestMangement = () => {
 		}else{
 			UserService.update(user.id, {rating:(user.numOfRating * user.rating + rating)/(user.numOfRating+1),numOfRating:user.numOfRating+1})
 		}
+		window.localStorage.removeItem('user')
+		window.localStorage.removeItem('originReq')
 		window.location.assign('/post')
 	}
 
@@ -245,7 +253,7 @@ const RequestMangement = () => {
 																	)}
 															</TimelineSeparator>
 															<TimelineContent>
-																<CardHeader action={''} title={comment.user || 'Null'} subheader="time" />
+																<CardHeader action={''} title={comment.user || 'Null'} subheader={comment.time} />
 																<CardContent>
 																	<Typography variant="body2" color="textSecondary" component="p">
 																		{comment.content}
