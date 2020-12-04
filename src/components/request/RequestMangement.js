@@ -143,14 +143,18 @@ const RequestMangement = () => {
 
 	const handleRating = () => {
 		console.log(user)
-		if(!user.numOfRating){
-			UserService.update(user.id, {rating:rating,numOfRating:1})
-		}else{
-			UserService.update(user.id, {rating:(user.numOfRating * user.rating + rating)/(user.numOfRating+1),numOfRating:user.numOfRating+1})
+		if (!user.numOfRating) {
+			UserService.update(user.id, {rating: rating, numOfRating: 1})
+		} else {
+			UserService.update(user.id, {
+				rating: (user.numOfRating * user.rating + rating) / (user.numOfRating + 1),
+				numOfRating: user.numOfRating + 1
+			})
 		}
-		// window.location.assign('/post')
+		window.localStorage.removeItem('user')
+		window.localStorage.removeItem('originReq')
+		window.location.assign('/post')
 	}
-
 	const handleTake = () => {
     thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
     setWrapOpen(false)
