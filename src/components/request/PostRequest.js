@@ -95,14 +95,14 @@ const PostRequest = () => {
             requestContent: text,
             title: title,
             addressID: addressId,
-            address: address,
+            // address: address,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
             tags: tags,
             seniorId: user.uid,
         }
 
-        if (text !== "" && title !== "" && addressId !== "default" && phoneNumber !== "" && tags.length > 0) {
+        if (text !== "" && title !== "" && address !== "" && phoneNumber !== "" && tags.length > 0) {
             await RequestService.request(user.uid, requestBean).then(res => {
                 toast.success("save request to backend success")
             }).catch(res => {
@@ -373,7 +373,7 @@ const PostRequest = () => {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
-            width: '30%'
+            width: '25%'
         },
         // {
         //     title: 'Senior',
