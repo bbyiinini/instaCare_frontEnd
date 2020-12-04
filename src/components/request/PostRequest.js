@@ -35,7 +35,6 @@ const PostRequest = () => {
     const classes = useStyle()
 
 
-
     const options = [
         {value: 'Chore', label: 'Chore'},
         {value: 'Grocery', label: 'Grocery'},
@@ -57,7 +56,6 @@ const PostRequest = () => {
     const openPostWindow = () => {
         setModalIsOpen(true)
     }
-
 
 
     const [flag, setFlag] = useState(true);
@@ -180,21 +178,21 @@ const PostRequest = () => {
 
     const handleDelete = (key) => {
         setDeleteModal(true)
-        setDeleteTarget({content:requestDetail.pastRequest[key], key:key})
+        setDeleteTarget({content: requestDetail.pastRequest[key], key: key})
 
     }
 
     const handleConfirm = async () => {
-       await RequestService.deleteRequest(deleteTarget.content.id).then(res=>{
+        await RequestService.deleteRequest(deleteTarget.content.id).then(res => {
             console.log(res)
-           dispatch({
-               type:'DELETE_ITEM',
-               payload: deleteTarget.key
-           })
-           setDeleteModal(false)
-       }).catch(error=>{
-           console.log(error.message)
-       })
+            dispatch({
+                type: 'DELETE_ITEM',
+                payload: deleteTarget.key
+            })
+            setDeleteModal(false)
+        }).catch(error => {
+            console.log(error.message)
+        })
 
     }
 
@@ -264,12 +262,12 @@ const PostRequest = () => {
     let newAdd = "";
 
     const handleAdd = async () => {
-        let geolocation =""
-        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') + 
-            city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
+        let geolocation = ""
+        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') +
+        city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
             .then(async response => {
-            console.log(response.data);
-            geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
+                console.log(response.data);
+                geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
 
                 const addressBean = {
                     streetAddressL1: street1,
@@ -568,7 +566,7 @@ const PostRequest = () => {
                                 width: '100px',
                                 fontSize: '16px',
                                 textAlign: 'center'
-                            }} shape="round" onClick={()=>handleDelete(record.key)}>Delete</Button>
+                            }} shape="round" onClick={() => handleDelete(record.key)}>Delete</Button>
                         </div>
                     </div>
                 </Space>
@@ -750,7 +748,8 @@ const PostRequest = () => {
 
             <Modal style={deleteModalStyle} isOpen={deleteModal} appElement={document.getElementById('root')}>
                 <h2>Delete Request</h2>
-                <p>Are you sure to cancel this appointment? you will not be able to undo this action once it is completed</p>
+                <p>Are you sure to cancel this appointment? you will not be able to undo this action once it is
+                    completed</p>
                 <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
                         className="float-right" onClick={handleConfirm}>Confirm</Button>
                 <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
@@ -761,7 +760,7 @@ const PostRequest = () => {
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
                 className={classes.modal}
-                style = {questionnaireStyle}
+                style={questionnaireStyle}
                 appElement={document.getElementById('root')}
                 isOpen={questionnaireModal}
                 onClose={handleClose}
@@ -774,27 +773,39 @@ const PostRequest = () => {
             >
                 <Fade in={questionnaireModal}>
                     <div className={classes.paper}>
-                        <h2 id="transition-modal-title" className="text-center">COVID-19 Self Health Check</h2>
-                        <h6>Are you currently experiencing any of the following symptoms that started within the last 14 days?</h6>
-                        <ul>
-                            <li>Fever or chills</li>
-                            <li>Cough</li>
-                            <li>Shortness of breath or difficulty breathing</li>
-                            <li>Fatigue</li>
-                            <li>Muscle or body aches</li>
-                            <li>Headache</li>
-                            <li>Loss of taste or smell</li>
-                            <li>Sore throat</li>
-                            <li>Congestion or runny nose</li>
-                            <li>Nausea or vomiting</li>
-                            <li>Diarrhea</li>
-                        </ul>
-                        <h6>Over the past 14 days, have you been informed by a public health agency or a healthcare system that you have been exposed to COVID-19?</h6>
-                        <br></br>
-                        <h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19 infection?</h6>
-                        <br></br>
-                        <h4>If your answer is YES for any of the questions above, we advice you to stay home and avoid physical contacts.</h4>
-                        {/* <TextField
+                        <div style={{
+                            width: "100%",
+                            height: "100%",
+                            overflowY: "scroll",
+                            paddingRight: "17px",
+                            boxSizing: "content-box",
+
+                        }}>
+                            <h2 id="transition-modal-title" className="text-center">COVID-19 Self Health Check</h2>
+                            <h6>Are you currently experiencing any of the following symptoms that started within the
+                                last 14 days?</h6>
+                            <ul>
+                                <li>Fever or chills</li>
+                                <li>Cough</li>
+                                <li>Shortness of breath or difficulty breathing</li>
+                                <li>Fatigue</li>
+                                <li>Muscle or body aches</li>
+                                <li>Headache</li>
+                                <li>Loss of taste or smell</li>
+                                <li>Sore throat</li>
+                                <li>Congestion or runny nose</li>
+                                <li>Nausea or vomiting</li>
+                                <li>Diarrhea</li>
+                            </ul>
+                            <h6>Over the past 14 days, have you been informed by a public health agency or a healthcare
+                                system that you have been exposed to COVID-19?</h6>
+                            <br></br>
+                            <h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19
+                                infection?</h6>
+                            <br></br>
+                            <h4>If your answer is YES for any of the questions above, we advice you to stay home and
+                                avoid physical contacts.</h4>
+                            {/* <TextField
                   className={classes.textfield}
                   label={`Enter new ${modalTitle}`}
                   onChange={handleModalChange}
@@ -802,9 +813,12 @@ const PostRequest = () => {
                   multiline
                   rows={modalTitle === "Description" ? 6 : 1}
               /> */}
-                        <div>
-                            {/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
-                            <Button onClick={handleClose} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>I acknowledge</Button>
+                            <div>
+                                {/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
+                                <Button onClick={handleClose}
+                                        style={{float: "right", color: "white", backgroundColor: "#00897B"}}>I
+                                    acknowledge</Button>
+                            </div>
                         </div>
                     </div>
                 </Fade>
@@ -821,7 +835,7 @@ const customStyle = {
 }
 
 const modalStyle = {
-    overlay:{
+    overlay: {
         position: 'fixed',
         top: 0,
         left: 0,
@@ -835,7 +849,7 @@ const modalStyle = {
         right: 'auto',
         bottom: 'auto',
         width: '30%',
-        borderRadius:'30px',
+        borderRadius: '30px',
         transform: 'translate(-40%, -10%)',
     },
 
@@ -880,19 +894,19 @@ const deleteModalStyle = {
         transform: 'translate(-40%, 40%)',
     },
 }
-const useStyle = makeStyles(theme=>({
-    root:{
-        backgroundColor:"#e3e8e7",
-        height:"100vh"
+const useStyle = makeStyles(theme => ({
+    root: {
+        backgroundColor: "#e3e8e7",
+        height: "100vh"
     },
-    info:{
-        backgroundColor:"white",
-        borderRadius:"30px",
-        width:"80%",
-        margin:'auto',
-        textAlign:'left',
-        padding:'25px',
-        marginTop:"5vh",
+    info: {
+        backgroundColor: "white",
+        borderRadius: "30px",
+        width: "80%",
+        margin: 'auto',
+        textAlign: 'left',
+        padding: '25px',
+        marginTop: "5vh",
     },
     modal: {
         display: 'flex',
@@ -903,13 +917,15 @@ const useStyle = makeStyles(theme=>({
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
-        borderRadius:"30px",
+        borderRadius: "30px",
         boxShadow: theme.shadows[2],
         padding: theme.spacing(2, 4, 3),
-        width:"50%",
-    },
+        width: "50%",
+        height: "70vh",
+
+},
     textfield: {
-        width:"100%",
+        width: "100%",
     }
 
 }));
@@ -922,7 +938,7 @@ const questionnaireStyle = {
         right: 0,
         bottom: 0,
         backgroundColor: 'rgba(116, 130, 128, 0.6)'
-    }
+    },
 }
 
 export default PostRequest;
