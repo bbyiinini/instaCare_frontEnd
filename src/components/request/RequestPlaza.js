@@ -71,7 +71,7 @@ const PostRequest = () => {
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        address: addrList.addressList.filter(addr => addr.id===index)[0].addr,
+        address: addrList.addressList.filter(addr => addr.id===index).length===0?"":addrList.addressList.filter(addr => addr.id===index)[0].addr,
         requestContent: res.requestContent,
     }));
 

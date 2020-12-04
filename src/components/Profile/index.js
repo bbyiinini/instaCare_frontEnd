@@ -224,8 +224,9 @@ export default function (){
               await RequestService.insertAddress(user.uid, addressBean).then(res => {
                 toast.success("insert address to backend success")
                 id = res.data.data;
-              }).catch(res => {
+              }).catch(error => {
                 toast.error("insert failed")
+                console.log(error.message)
               });
               setAddList([...addList, {add: newAdd, id: id}])
               setStreet1("")
@@ -237,8 +238,6 @@ export default function (){
             }
 
           } else {
-            let result = addressList.userAddrList.filter(names=>names.streetAddressL1.includes(street1))
-            console.log(result)
             toast.error("please fill all the information")
           }
         })

@@ -2,7 +2,7 @@ import React, { useState, useEffect }  from "react";
 import db, {provider1}from '../../base';
 import {toast} from "react-toastify";
 import { useHistory } from "react-router-dom";
-import forgot from '../../assets/forgot.png'
+import firebase from "firebase/app";
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
@@ -10,6 +10,9 @@ import Grid from '@material-ui/core/Grid';
 import Input from '@material-ui/core/Input';
 import Reset from "../../assets/Reset.png";
 import {makeStyles} from "@material-ui/core/styles";
+
+
+
 
 const useStyles = makeStyles({
   root: {
@@ -40,14 +43,81 @@ const useStyles = makeStyles({
 
 
 const ResetPassword = () => {
+
+
   const history = useHistory()
-  const [email, setEmail] = useState("")
+  const [currpassword, setCurrPassword] = useState("")
+  const [password, setPassword] = useState("");
+  const [comfpassword, setcomfPassword] = useState("");
   const classes = useStyles()
-  const handleSubmit = async e => {
-    // TODO: fb api connect
-    toast.info("You have succesfully reset your password!")
-    history.push("/")
+
+
+  const currpassChange = (e) => {
+    setCurrPassword(e.target.value);
+  };
+
+  const passChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const comfpassChange = (e) => {
+    setcomfPassword(e.target.value);
+  };
+
+
+
+  const handleReset = async e => {
+
+    let user = db.auth().currentUser;
+
+
+    let emailCred = firebase.auth.EmailAuthProvider.credential(
+            user.email,
+            currpassword)
+
+    if (currpassword === ""){
+      toast.error("Please enter the old password")
+      return;
+    }
+
+    if (password === ""){
+      toast.error("Please enter the new password password")
+      return;
+    }
+
+
+
+    if (comfpassword === ""){
+      toast.error("Please enter the confirms password")
+      return;
+    }
+
+    if (comfpassword.length < 6) {
+      toast.error("password must be more than 6 character long")
+      return;
+    }
+
+    if(comfpassword !== password ){
+      toast.error("The password and confirmation password do not match")
+      return
+    }
+
+    if (password === currpassword) {
+      toast.error("Please enter different password")
+    }else{
+      await user.reauthenticateWithCredential(emailCred).then(()=>{
+        toast.info("You have succesfully reset your password!")
+        history.push("/post")
+        return db.auth().currentUser.updatePassword(comfpassword);
+      })
+          .catch(error =>{
+            toast.error("The old password is incorrect")
+            console.log(error)
+          })
+    }
+
   }
+
 
   return (
       <div>
@@ -57,29 +127,30 @@ const ResetPassword = () => {
               <img src={Reset} style={{width:"600px"}}/>
             </Grid>
             <Grid item xs={6} style={{marginTop:"200px"}}>
-              <input type="email"
+              <input type="password"
+                     disableUnderline
                      className={classes.textfield}
-                     value={email}
-                     onChange={e=>setEmail(e.target.value)}
+                     onChange={currpassChange}
                      placeholder="Enter your old password"
               />
               <br/>
-              <input type="email"
+              <input type="password"
+                     disableUnderline
                      className={classes.textfield}
-                     value={email}
-                     onChange={e=>setEmail(e.target.value)}
+                     onChange={passChange}
                      placeholder="Enter your new password"
               />
               <br/>
-              <input type="email"
-                     className={classes.textfield}
-                     value={email}
-                     onChange={e=>setEmail(e.target.value)}
-                     placeholder="Confirm your new password"
+              <input
+                  className={classes.textfield}
+                  disableUnderline
+                  onChange = {comfpassChange}
+                  type="password"
+                  placeholder="Confirm your new password"
               />
               <div>
-                <Button style={{width:"30%", margin:"20px", backgroundColor:"#12897b", color:"white"}} className={classes.textfield} onClick={handleSubmit} >Reset</Button>
-                <Button style={{width:"30%", margin:"20px"}} className={classes.textfield}>Cancel </Button>
+                <Button style={{width:"30%", margin:"20px", backgroundColor:"#12897b", color:"white"}} className={classes.textfield} onClick={handleReset} >Reset</Button>
+                <Button style={{width:"30%", margin:"20px"}} className={classes.textfield } onClick={()=>{history.goBack()}} >Cancel </Button>
               </div>
 
             </Grid>
@@ -92,4 +163,3 @@ const ResetPassword = () => {
 
 const style = {width: "300px", margin:"0 auto"}
 export default ResetPassword;
-

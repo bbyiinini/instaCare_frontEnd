@@ -285,14 +285,15 @@ const PostRequest = () => {
                     newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
                     let result = addList.filter(names=>names.add.includes(newAdd))
                     if (result.length !== 0) {
-                        toast.error("This address is already in your account, please enter another one")
+                        toast.error("This address has already in your account, please enter another one")
                     }else{
                         let id = "";
                         await RequestService.insertAddress(user.uid, addressBean).then(res => {
                             toast.success("insert address to backend success")
                             id = res.data.data;
-                        }).catch(res => {
+                        }).catch(error => {
                             toast.error("insert failed")
+                            console.log(error.message)
                         });
                         setAddList([...addList, {add: newAdd, id: id}])
                         setStreet1("")
@@ -304,8 +305,6 @@ const PostRequest = () => {
                     }
 
                 } else {
-                    let result = addressList.userAddrList.filter(names=>names.streetAddressL1.includes(street1))
-                    console.log(result)
                     toast.error("please fill all the information")
                 }
             })
@@ -579,7 +578,7 @@ const PostRequest = () => {
 
 
     return (
-        <div style={customStyle}>
+        <div style={customStyle} className="main">
             <h1 style={{
                 marginTop: '-50px',
                 marginBottom: '70px',
@@ -609,7 +608,7 @@ const PostRequest = () => {
             {profile.userType === 0 &&
             <Button type="primary"
                     style={{background: '#00897B', width: '250px', height: '40px', fontSize: '18px', marginTop: '10px'}}
-                    shape="round" onClick={handleQuestionnaire}>Post New Request</Button>
+                    shape="round"  onClick={handleQuestionnaire}>Post New Request</Button>
             }
 
 
