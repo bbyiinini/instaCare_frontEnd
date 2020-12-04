@@ -39,17 +39,23 @@ const useStyles = makeStyles({
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("")
+    const [loading, setLoading] = useState(false)
     const classes = useStyles()
     const handleSubmit = async e => {
         e.preventDefault();
 
         const actionSetting = {
-            url: 'http://localhost:3000/signup/complete',
+            url: 'http://localhost:3000/login',
             handleCodeInApp: true,
         }
         // console.log(email)
-        await db.auth().sendPasswordResetEmail(email, actionSetting)
-        toast.success(`Email is sent to ${email}, please confirm your email and continue to complete PasswordReset`);
+        await db.auth().sendPasswordResetEmail(email, actionSetting).then(res=>{
+            setEmail('')
+            toast.success(`Email is sent to ${email}, please confirm your email and continue to complete PasswordReset`);
+        }).catch(error=>{
+            toast.error(error.message)
+            console.log(error.message)
+        })
     }
 
     return (
