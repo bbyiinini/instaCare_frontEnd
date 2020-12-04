@@ -142,7 +142,6 @@ const RequestMangement = () => {
 	}
 
 	const handleRating = () => {
-		console.log(user)
 		if (!user.numOfRating) {
 			UserService.update(user.id, {rating: rating, numOfRating: 1})
 		} else {
