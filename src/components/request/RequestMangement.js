@@ -472,7 +472,7 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 	paddings1: {
-		paddingTop: '80px',
+		paddingTop: '3rem',
 	},
 	paddings2: {
 		marginTop: '3rem'
