@@ -153,6 +153,7 @@ const PostRequest = () => {
             setPast('Past Requests')
             localStorage.setItem('state', 'past');
         } else {
+            localStorage.removeItem('state')
             setPast('Ongoing Requests')
         }
 
@@ -332,7 +333,7 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '12%',
+            width: '25%',
             render: tags => (
                 <>
                     {tags.map(tag => {
@@ -372,7 +373,7 @@ const PostRequest = () => {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
-            width: '20%'
+            width: '30%'
         },
         // {
         //     title: 'Senior',
@@ -384,7 +385,7 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '12%',
+            width: '25%',
             render: tags => (
                 <>
                     {tags.map(tag => {
@@ -402,7 +403,7 @@ const PostRequest = () => {
             title: 'Request Time',
             dataIndex: 'requestTime',
             key: 'requestTime',
-            width: '20%'
+            width: '30%'
         },
 
         {
@@ -422,7 +423,7 @@ const PostRequest = () => {
     ];
 
 
-    const pastColumns = [
+    const pastColumns = profile.userType === 0 ? [
 
         {
             title: 'Request title',
@@ -431,7 +432,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType === 0 ? 'Volunteer' : 'Senior',
+            title:  'Volunteer',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -441,7 +442,76 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '10%',
+            width: '20%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+
+                        return (
+                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '18%'
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            key: 'rating',
+            width: '18%'
+        },
+
+        {
+            key: 'action',
+            render: (text, record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <div className="-vertical">
+                        <div className="m-2">
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round"><a style={{textDecoration: 'none'}}
+                                                onClick={() => handlePastRequestMange(record.key)}>Detail</a></Button>
+                        </div>
+                        <div className="m-2">
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round" onClick={()=>handleDelete(record.key)}>Delete</Button>
+                        </div>
+                    </div>
+                </Space>
+            ),
+        },
+    ]:[
+
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '18%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
