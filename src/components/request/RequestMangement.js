@@ -16,7 +16,6 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import CardContent from '@material-ui/core/CardContent'
 import Chip from '@material-ui/core/Chip'
-import Backdrop from '@material-ui/core/Backdrop'
 import Rating from '@material-ui/lab/Rating'
 import { Grid, Row, Col } from 'react-flexbox-grid'
 import TextField from '@material-ui/core/TextField'
@@ -27,17 +26,20 @@ import TimelineItem from '@material-ui/lab/TimelineItem'
 import TimelineSeparator from '@material-ui/lab/TimelineSeparator'
 import TimelineConnector from '@material-ui/lab/TimelineConnector'
 import TimelineContent from '@material-ui/lab/TimelineContent'
+import CardMedia from '@material-ui/core/CardMedia'
 import PhoneIcon from '@material-ui/icons/Phone'
-import TimelineDot from '@material-ui/lab/TimelineDot'
+import imges from '../../assets/takeR.png'
+import moment from 'moment'
 
 const RequestMangement = () => {
 
-	const user = useSelector(state => (state.userProfile));
+	const userOrin = useSelector(state => (state.userProfile));
 	const reqM = useSelector(state => state.requestMange);
 
 
-	const [originReq, setOriginReq] = useState(reqM === null ? null : reqM.ongoingRequestId);
+	const [originReq, setOriginReq] = useState(reqM === null ? JSON.parse(window.localStorage.getItem('originReq')) : reqM.ongoingRequestId);
 	const [wrapId, setWrapId] = useState("");
+	const [user, setUser] = useState(userOrin !== null ? userOrin : JSON.parse(window.localStorage.getItem('user')));
 	const [wrapOpen, setWrapOpen] = useState(false);
 	const [requestMange, setRequestMange] = useState(null);
 	const [textField, setTextField] = useState("");
@@ -46,11 +48,12 @@ const RequestMangement = () => {
 	const [volunteerState, setVolunteerState] = useState(user);
 	const [seniorState, setSeniorState] = useState(user);
 	const [onGoing, setOnGoing] = useState(false);
+	const [refresh, setRefresh] = useState(false);
 
 	const history = useHistory()
 	const classes = useStyles()
 	const requestRef = firestore.collection('requestPlaza')
-	const thisRequest = originReq == null ? null : requestRef.doc(originReq.id)
+	const thisRequest = originReq === null ? null : requestRef.doc(originReq.id)
 
 	useEffect(async () => {
 		if (requestMange && user) {
@@ -68,12 +71,15 @@ const RequestMangement = () => {
 			}
 			if (requestMange.seniorId && requestMange.seniorId !== seniorState.id) {
 				const senior = (await UserService.retrieve(requestMange.seniorId)).data.data;
-				console.log(senior)
 				setSeniorState(senior);
 			}
 
 		}
 	}, [requestMange]);
+
+	if(!refresh){
+		setRefresh(true)
+	}
 
 	if (!requestMange) {
 		if (!user || !originReq || wrapId === 'rating') {
@@ -81,13 +87,17 @@ const RequestMangement = () => {
 		} else {
 			thisRequest.onSnapshot(async function (doc) {
 				console.log("Current data: ", doc.data());
+
+				window.localStorage.setItem('user', JSON.stringify(user))
+
 				if (doc.data()) {
+					window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
 					setRequestMange(doc.data())
 					if (doc.data().comments) {
 						setCommentCollection(doc.data().comments)
 					}
 				} else {
-					setRequestMange(originReq)
+					// setRequestMange(originReq)
 				}
 			})
 		}
@@ -110,14 +120,15 @@ const RequestMangement = () => {
 		} else if (wrapId === 'cancel') {
 			if (user.userType === 1) {
 				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null }).then(setOnGoing(false));
+				window.localStorage.removeItem('user')
+				window.localStorage.removeItem('originReq')
 				window.location.assign("/post");
 			} else {
-				//todo
+				await RequestService.deleteRequest(requestMange.id)
+				window.localStorage.removeItem('user')
+				window.localStorage.removeItem('originReq')
 				window.location.assign('/post')
 			}
-			return
-		} else {
-			return
 		}
 	}
 
@@ -125,14 +136,16 @@ const RequestMangement = () => {
 		setTextField(e.target.value)
 	}
 
-	const handleComment = () => {
+	const handleComment = (e) => {
+		e.preventDefault();
 		if (textField !== '') {
 			let temp = commentCollection
 			temp.push({
 				content: textField,
 				userId: user.id,
-        user: user.fullName,
-        avatar: user.avatar,
+				user: user.fullName,
+				avatar: user.avatar,
+				time: moment().format('HH:mm')
 			})
 			console.log(temp)
 			setCommentCollection(temp)
@@ -142,18 +155,29 @@ const RequestMangement = () => {
 	}
 
 	const handleRating = () => {
-		if(!user.numOfRating){
-			UserService.update(user.id, {rating:rating,numOfRating:1})
-		}else{
-			UserService.update(user.id, {rating:(user.numOfRating * user.rating + rating)/(user.numOfRating+1),numOfRating:user.numOfRating+1})
+		if (!user.numOfRating) {
+			UserService.update(user.id, { rating: rating, numOfRating: 1 })
+		} else {
+			UserService.update(user.id, { rating: (user.numOfRating * user.rating + rating) / (user.numOfRating + 1), numOfRating: user.numOfRating + 1 })
 		}
+		window.localStorage.removeItem('user')
+		window.localStorage.removeItem('originReq')
 		window.location.assign('/post')
 	}
-
 	const handleTake = () => {
-    thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
-    setWrapOpen(false)
-	}
+		thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
+		setWrapOpen(false)
+    }
+    
+    const formatPhoneNumber = (phoneNumberString)=>{
+        let cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+        let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+        if (match) {
+            let intlCode = (match[1] ? '+1 ' : '')
+            return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
+        }
+        return null
+    }
 
 	const theme = createMuiTheme({
 		palette: {
@@ -165,6 +189,9 @@ const RequestMangement = () => {
 				main: '#00897B',
 				contrastText: '#ffffff',
 			},
+		},
+		typography: {
+			fontFamily: 'Rasa',
 		},
 	})
 
@@ -185,40 +212,37 @@ const RequestMangement = () => {
 									<div className={classes.paddings1}>
 										<CardHeader
 											className=""
-											avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={seniorState.avatar}></Avatar>}
+											avatar={<Avatar aria-label="recipe" className={classes.avHuge} src={seniorState.avatar}></Avatar>}
 											title={
 												<div className={classes.ftSmall}>
 													<a>{seniorState.fullName}</a>
 													<div>
 														<PhoneIcon style={{ color: '#41892c' }} />
-														{requestMange.phoneNumber}
+														{formatPhoneNumber(requestMange.phoneNumber)}
 													</div>
 												</div>
 											}
-											subheader="Rating:"
-											{...requestMange.rating}
+											subheader="Rating:" {...requestMange.rating}
 										/>
 									</div>
 									<div className={classes.paddings1}>
-										<h1>{requestMange.title}</h1>
-										<p>{requestMange.requestContent}</p>
-										<Grid spacing={3}>
+										<h1 >{requestMange.title}</h1>
+										<p className={classes.paddings2}>{requestMange.requestContent}</p>
+										<Grid spacing={3} className={classes.paddings2}>
 											{requestMange.tags === null ? '' : requestMange.tags.map((tag, index) => {
 												return (<Chip key={index} className={classes.chip} label={tag} />)
 											})}
 										</Grid>
 									</div>
-									<div className={classes.paddings1}>
-										{requestMange.status === 3 ? (
-											<>Taken</>
+									<div className={classes.paddings3}>
+										{requestMange.status === 3 || (user.userType === 1 && requestMange.status === 1) ? (
+											<></>
 										) : (
 												<ThemeProvider theme={theme}>
 													<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('end')}>
-														End My Appointment
-                                            </Button>
+														End My Appointment</Button>
 													<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('cancel')}>
-														Cancel My Appointment
-                                            </Button>
+														Cancel My Appointment</Button>
 												</ThemeProvider>
 											)}
 									</div>
@@ -240,9 +264,12 @@ const RequestMangement = () => {
 																	)}
 															</TimelineSeparator>
 															<TimelineContent>
-																<CardHeader action={''} title={comment.user || 'Null'} subheader="time" />
+																<CardHeader title={
+																	<div className={classes.ftSmall}>{comment.user || 'Null'}</div>} subheader={
+																		<div className={classes.ftSmall2}>{comment.time}</div>
+																	} />
 																<CardContent>
-																	<Typography variant="body2" color="textSecondary" component="p">
+																	<Typography variant="h5" color="textSecondary" component="p">
 																		{comment.content}
 																	</Typography>
 																</CardContent>
@@ -251,35 +278,47 @@ const RequestMangement = () => {
 													)
 												})}
 											</Timeline>
-
-											<TextField
+											<form onSubmit={handleComment}>
+												<TextField
+												InputProps={{
+													classes: {
+													  input: classes.ftSmall2,
+													},
+												  }}
 												color="secondary"
-												id="filled-full-width"
-												label="Label"
-												style={{ margin: 0 }}
-												placeholder="Commentss"
+												id="outlined-full-width"
+												style={{ margin: "5px"}}
+												placeholder="Type your message here..."
 												fullWidth
 												margin="normal"
-												InputLabelProps={{ shrink: true, }}
-												variant="filled"
+												variant="outlined"
 												value={textField}
-												onChange={handleTextFieldChange}
-											/>
-											<Button
-												variant="contained"
-												color="secondary"
-												style={{ marginBottom: '20px' }}
-												onClick={handleComment}>
-												Post</Button>
+												onChange={handleTextFieldChange}/>
+												<Button
+													className={classes.post}
+													variant="contained"
+													color="secondary"
+													onClick={handleComment}>Post</Button>
+											</form>
 										</div>
 									</div>
 								</div>
 							</Col>
 						</ThemeProvider>
 						<Col className="nav-column" xs={12} sm={6}>{user.userType === 1 && requestMange.status === 1 ?
-							<><h1>Too Young too simple</h1>
+							<>
 								<ThemeProvider theme={theme}>
-									<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('covid')}>Take the request</Button>
+									<CardMedia
+										className={classes.media}
+										image={imges}
+										title="Paella dish"
+									/>
+									<CardContent>
+										<Typography variant="h4" color="textSecondary" component="p">
+											Waiting for a volunteer to take the request.
+										</Typography>
+									</CardContent>
+									<Button color="primary" variant="contained" className={classes.bHeight1} onClick={() => handleOpen('covid')}>I Want to Help</Button>
 								</ThemeProvider></> :
 							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
 								<Card className={classes.volunteer}>
@@ -292,7 +331,7 @@ const RequestMangement = () => {
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={requestMange.volunteerId ? volunteerState.avatar : ""}></Avatar>}
 										title={<div className={classes.ftSmall}><a>{requestMange.volunteerId !== null ? volunteerState.fullName : "N/A"}</a>
-											<div><PhoneIcon style={{ color: "#41892c" }} />{requestMange.volunteerId !== null ? volunteerState.phone : "N/A"}</div></div>}
+											<div><PhoneIcon style={{ color: "#41892c" }} />{requestMange.volunteerId !== null ? formatPhoneNumber(volunteerState.phone) : "N/A"}</div></div>}
 										subheader='Rating:'{...requestMange.rating} />
 								</Card>
 							} </>
@@ -306,7 +345,7 @@ const RequestMangement = () => {
 							>
 								{(() => {
 									if (wrapId === 'end' || wrapId === 'cancel') {
-										return(
+										return (
 											<>
 												<h2 className="text-left">
 													{wrapId.substring(0, 1).toUpperCase()}
@@ -397,30 +436,62 @@ const RequestMangement = () => {
 }
 
 const useStyles = makeStyles((theme) => ({
-	avSmall: {
-		width: theme.spacing(4),
-		height: theme.spacing(4),
+	avHuge: {
+		width: theme.spacing(12),
+		height: theme.spacing(12),
 	},
 	avLarge: {
 		width: theme.spacing(9),
 		height: theme.spacing(9),
 	},
 	ftSmall: {
-		fontSize: '18px',
+		fontSize: '30px',
+	},
+	ftSmall2: {
+		fontSize: '24px',
 	},
 	bLarge: {
 		width: theme.spacing(40),
 	},
 	bHeight: {
-		height: theme.spacing(6),
+		height: theme.spacing(9),
 		margin: theme.spacing(0.5),
+		fontSize: "24px",
 		width: '90%',
+		'&:focus': {
+			outline: 'none',
+		},
+	},
+	bHeight1: {
+		height: theme.spacing(9),
+		margin: theme.spacing(0.5),
+		fontSize: "24px",
+		width: '75%',
+		'&:focus': {
+			outline: 'none',
+		},
 	},
 	paddings1: {
-		paddingTop: '80px',
+		paddingTop: '3rem',
+	},
+	paddings2: {
+		marginTop: '3rem'
+	},
+	paddings3: {
+		marginTop: '10rem'
+	},
+	media:{
+		marginTop:'2vh',
+		height: '400px',
+		width: '50%',
+		marginLeft: '50%',
+		transform: 'translateX(-50%)',
 	},
 	chip: {
 		margin: theme.spacing(0.5),
+		width: theme.spacing(16),
+		height: theme.spacing(6),
+		fontSize: "24px"
 	},
 	backdrop: {
 		zIndex: theme.zIndex.drawer + 1,
@@ -441,15 +512,28 @@ const useStyles = makeStyles((theme) => ({
 	volunteer: {
 		marginLeft: '50%',
 		position: 'absolute',
-		bottom: '50px',
+		bottom: '3rem',
 		transform: 'translateX(-50%)',
 		borderRadius: '15px',
 		padding: '0px 20px',
+		width: "45%",
 	},
 	commentsList: {
 		transform: 'translateX(-50%)',
 		width: '200%',
 	},
+	post: {
+		width: '10rem',
+		marginBottom: '20px',
+		fontSize: '24px',
+		borderRadius: '25px',
+		boxShadow: 'none',
+		outline: 'none',
+		'&:focus': {
+			outline: 'none',
+		},
+	},
+	
 }))
 
 const modalStyle = {

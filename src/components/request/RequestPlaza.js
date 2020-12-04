@@ -71,7 +71,7 @@ const PostRequest = () => {
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
-        address: addrList.addressList.filter(addr => addr.id===index)[0].addr,
+        address: addrList.addressList.filter(addr => addr.id===index).length===0?"":addrList.addressList.filter(addr => addr.id===index)[0].addr,
         requestContent: res.requestContent,
     }));
 
@@ -106,7 +106,6 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         setValue(e.target.value)
-        console.log(prevState)
         if (e.target.value === "" && tag === true){
             setOngoing(allOnGoingRequest)
             document.getElementById("allTag").innerHTML = "All tags"
@@ -123,7 +122,6 @@ const PostRequest = () => {
     const handleSearch = () => {
         let search = ongoing.map(res=>(JSON.stringify(res))).filter(keyword=>keyword.toLowerCase().includes(value.toLowerCase()))
         let result = search.map(res=>(JSON.parse(res)))
-        console.log(result)
         if (result.length !== 0) {
             setTemp(search)
             setPrevState(value)
@@ -133,7 +131,6 @@ const PostRequest = () => {
             setOngoing(allOnGoingRequest)
         }else if (result.length === 0){
             if (!tagList.includes("All tags")  && value===prevState){
-                // console.log(prevState)
                 temp.filter(keyword=>keyword.toLowerCase().includes(value))
                 let tempResult = temp.map(res=>(JSON.parse(res)))
                 setOngoing(tempResult)
@@ -183,21 +180,21 @@ const PostRequest = () => {
             title: 'Request',
             dataIndex: 'requestContent',
             key: 'requestContent',
-            width: '40%'
+            width: '30%'
         },
 
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width:'10%',
+            width:'35%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color:'#004D40', fontSize:'16px'}} color={color} key={tag}>
+                            <Tag style={{color:'#004D40', width:'120px', textAlign:'center', fontSize:'16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -209,7 +206,7 @@ const PostRequest = () => {
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
-            width: '40%'
+            width: '30%'
         },
 
         {
@@ -237,7 +234,7 @@ const PostRequest = () => {
                     {/*    /!*<option value='Tool needed'>Tool needed</option>*!/*/}
                     {/*    /!*<option value='Easy to do'>Easy to do</option>*!/*/}
                     {/*</select>*/}
-                    <label id="allTag">All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="allTag" style={{cursor:'pointer'}} onClick={handleTagOpen}>All tags</label> <DownOutlined onClick={handleTagOpen} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
@@ -249,7 +246,7 @@ const PostRequest = () => {
                     {/*    <option value='4'>Within 20 miles</option>*/}
                     {/*    <option value='4'>Within 30 miles</option>*/}
                     {/*</select>*/}
-                    <label id="distance">Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="distance" style={{cursor:'pointer'}} onClick={e=>setDistanceTagModal(true)}>Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
@@ -492,38 +489,59 @@ const searchInput = {
     width:'75%',
 }
 
+// const tagModalStyle = {
+//     overlay: {
+//         position: 'fixed',
+//         top: 0,
+//         left: 0,
+//         right: 0,
+//         bottom: 0,
+//         backgroundColor: '#FFFFFF, 100%'
+//     },
+//     content: {
+//         top: '21.5%',
+//         left: '6.5%',
+//         right: 'auto',
+//         bottom: 'auto',
+//         width: '600px',
+//         borderRadius: '10px',
+//         // transform: 'translate(-50%,10%)',
+//     },
+// }
+
 const tagModalStyle = {
-    overlay: {
+    overlay:{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: '#FFFFFF, 100%'
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
     },
     content: {
-        top: '21.5%',
-        left: '6.5%',
+        top: '20%',
+        left: '30%',
         right: 'auto',
         bottom: 'auto',
         width: '600px',
-        borderRadius: '10px',
-        // transform: 'translate(-50%,10%)',
+        height:'580px',
+        borderRadius:'10px',
+        // transform: 'translate(-40%, -10%)',
     },
 }
 
 const distanceModalStyle = {
-    overlay: {
+    overlay:{
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: '#FFFFFF, 100%'
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
     },
     content: {
-        top: '21.5%',
-        left: '16.5%',
+        top: '30%',
+        left: '40%',
         right: 'auto',
         bottom: 'auto',
         width: '280px',

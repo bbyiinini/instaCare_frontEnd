@@ -2,7 +2,7 @@ import React, { useState, useEffect }  from "react";
 import db, {provider1}from '../../base';
 import {toast} from "react-toastify";
 import forgot from '../../assets/forgot.png'
-
+import {useHistory} from "react-router-dom";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -39,17 +39,27 @@ const useStyles = makeStyles({
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("")
+    const history = useHistory()
     const classes = useStyles()
     const handleSubmit = async e => {
         e.preventDefault();
 
         const actionSetting = {
-            url: 'http://localhost:3000/signup/complete',
+            url: 'http://localhost:3000/login',
             handleCodeInApp: true,
         }
         // console.log(email)
-        await db.auth().sendPasswordResetEmail(email, actionSetting)
-        toast.success(`Email is sent to ${email}, please confirm your email and continue to complete PasswordReset`);
+        await db.auth().sendPasswordResetEmail(email, actionSetting).then(res=>{
+            setEmail('')
+            toast.success(`Email is sent to ${email}, please confirm your email and continue to complete PasswordReset`);
+        }).catch(error=>{
+            toast.error(error.message)
+            console.log(error.message)
+        })
+    }
+
+    const handleCancel = () => {
+        history.push("/")
     }
 
     return (
@@ -70,7 +80,7 @@ const ForgotPassword = () => {
                         <br/>
                         <div>
                             <Button style={{width:"30%", margin:"20px", backgroundColor:"#12897b", color:"white"}} className={classes.textfield} onClick={handleSubmit} >Send Me an Email</Button>
-                            <Button style={{width:"30%", margin:"20px"}} className={classes.textfield}>Cancel </Button>
+                            <Button style={{width:"30%", margin:"20px"}} className={classes.textfield} onClick={handleCancel}>Cancel </Button>
                         </div>
 
                     </Grid>

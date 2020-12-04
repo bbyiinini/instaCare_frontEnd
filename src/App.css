@@ -2,6 +2,12 @@
   text-align: center;
   font-family: 'Rasa', serif;
   font-size: 24px;
+  height: 100vh;
+}
+
+.content {
+  height: 100%;
+  padding-top: 8vh;
 }
 
 .App-logo {
@@ -42,7 +48,7 @@
 
 .row {
   display: flex;
-  height: 100vh;
+  height: 100%;
   overflow: auto;
 }
 
@@ -50,14 +56,18 @@
   text-align:left;
   margin-left: 50%;
   transform: translateX(-50%);
+  width: 75%;
+  font-family: 'Rasa';
+  font-size: 24px;
 }
 
 .nav-column {
   position: fixed;
+  height:100%;
 }
 
 .content-column {
-  height:100vh;
+  height:100%;
   overflow: scroll;
 }
 
@@ -73,7 +83,7 @@
   color: rgb(0, 0, 0);
   font-family: "Roboto", Arial, sans-serif;
   -webkit-user-select: none;
-  font-size: 11px !important;
+  font-size: 16px !important;
   background-color: rgb(255, 255, 255);
   padding: 1px 6px;
   border-bottom-left-radius: 2px;
@@ -86,7 +96,6 @@
   min-width: 28px;
   font-weight: 500;
 }
-
 /*.google-map-custom-control:hover {*/
 /*  font-weight: 900 !important;*/
 /*}*/

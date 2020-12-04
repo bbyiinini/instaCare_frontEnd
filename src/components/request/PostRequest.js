@@ -35,7 +35,6 @@ const PostRequest = () => {
     const classes = useStyle()
 
 
-
     const options = [
         {value: 'Chore', label: 'Chore'},
         {value: 'Grocery', label: 'Grocery'},
@@ -59,7 +58,6 @@ const PostRequest = () => {
     }
 
 
-
     const [flag, setFlag] = useState(true);
     const [text, setText] = useState("");
     const [checked, setChecked] = useState(false);
@@ -67,7 +65,7 @@ const PostRequest = () => {
     const [addressId, setAddressId] = useState("");
     const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [past, setPast] = useState(false);
+    const [past, setPast] = useState('Ongoing Requests');
     const [addList, setAddList] = useState([]);
     const [addressModal, setAddressModal] = useState(false);
     const [questionnaireModal, setQuestionnaireModal] = useState(false);
@@ -95,14 +93,14 @@ const PostRequest = () => {
             requestContent: text,
             title: title,
             addressID: addressId,
-            address: address,
+            // address: address,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
             tags: tags,
             seniorId: user.uid,
         }
 
-        if (text !== "" && title !== "" && addressId !== "default" && phoneNumber !== "" && tags.length > 0) {
+        if (text !== "" && title !== "" && address !== "" && phoneNumber !== "" && tags.length > 0) {
             await RequestService.request(user.uid, requestBean).then(res => {
                 toast.success("save request to backend success")
             }).catch(res => {
@@ -150,12 +148,21 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         if (e.target.value === "past") {
-            setPast(true)
+            setPast('Past Requests')
+            localStorage.setItem('state', 'past');
         } else {
-            setPast(false)
+            localStorage.removeItem('state')
+            setPast('Ongoing Requests')
         }
 
     }
+
+
+    if (localStorage.getItem('state') === 'past' && past === 'Ongoing Requests'){
+        setPast('Past Requests')
+        localStorage.removeItem('state')
+    }
+
 
     const addTags = (e) => {
         if (e != null) {
@@ -171,21 +178,21 @@ const PostRequest = () => {
 
     const handleDelete = (key) => {
         setDeleteModal(true)
-        setDeleteTarget({content:requestDetail.pastRequest[key], key:key})
+        setDeleteTarget({content: requestDetail.pastRequest[key], key: key})
 
     }
 
     const handleConfirm = async () => {
-       await RequestService.deleteRequest(deleteTarget.content.id).then(res=>{
+        await RequestService.deleteRequest(deleteTarget.content.id).then(res => {
             console.log(res)
-           dispatch({
-               type:'DELETE_ITEM',
-               payload: deleteTarget.key
-           })
-           setDeleteModal(false)
-       }).catch(error=>{
-           console.log(error.message)
-       })
+            dispatch({
+                type: 'DELETE_ITEM',
+                payload: deleteTarget.key
+            })
+            setDeleteModal(false)
+        }).catch(error => {
+            console.log(error.message)
+        })
 
     }
 
@@ -210,7 +217,7 @@ const PostRequest = () => {
     }
 
     function parseISOString(s) {
-        var b = s.split(/\D+/);
+        let b = s.split(/\D+/);
         return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
     }
 
@@ -227,7 +234,7 @@ const PostRequest = () => {
         status: res.status === 2 ? "Volunteer on the way" : "request sent",
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title,
-        user: res.Senior === null ? "Pending" : res.Senior,
+        // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
@@ -242,7 +249,7 @@ const PostRequest = () => {
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
-        user: res.Senior === null ? "Pending" : res.Senior,
+        // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
@@ -255,12 +262,12 @@ const PostRequest = () => {
     let newAdd = "";
 
     const handleAdd = async () => {
-        let geolocation =""
-        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') + 
-            city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
+        let geolocation = ""
+        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') +
+        city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
             .then(async response => {
-            console.log(response.data);
-            geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
+                console.log(response.data);
+                geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
 
                 const addressBean = {
                     streetAddressL1: street1,
@@ -273,22 +280,28 @@ const PostRequest = () => {
                 }
 
                 if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
-                    // console.log(text, title, address, phoneNumber)
-                    let id = "";
-                    await RequestService.insertAddress(user.uid, addressBean).then(res => {
-                        toast.success("insert address to backend success")
-                        id = res.data.data;
-                    }).catch(res => {
-                        toast.error("insert failed")
-                    });
-                    newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
-                    setAddList([...addList, {add: newAdd, id: id}])
-                    setStreet1("")
-                    setStreet2("")
-                    setCity("")
-                    setState("")
-                    setZipCode("")
-                    setAddressModal(false);
+                    newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+                    let result = addList.filter(names=>names.add.includes(newAdd))
+                    if (result.length !== 0) {
+                        toast.error("This address has already in your account, please enter another one")
+                    }else{
+                        let id = "";
+                        await RequestService.insertAddress(user.uid, addressBean).then(res => {
+                            toast.success("insert address to backend success")
+                            id = res.data.data;
+                        }).catch(error => {
+                            toast.error("insert failed")
+                            console.log(error.message)
+                        });
+                        setAddList([...addList, {add: newAdd, id: id}])
+                        setStreet1("")
+                        setStreet2("")
+                        setCity("")
+                        setState("")
+                        setZipCode("")
+                        setAddressModal(false);
+                    }
+
                 } else {
                     toast.error("please fill all the information")
                 }
@@ -324,13 +337,13 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '12%',
+            width: '35%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -364,25 +377,25 @@ const PostRequest = () => {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
-            width: '20%'
+            width: '25%'
         },
-        {
-            title: 'Senior',
-            dataIndex: 'user',
-            key: 'user',
-            width: '20%'
-        },
+        // {
+        //     title: 'Senior',
+        //     dataIndex: 'user',
+        //     key: 'user',
+        //     width: '20%'
+        // },
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '12%',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -394,7 +407,7 @@ const PostRequest = () => {
             title: 'Request Time',
             dataIndex: 'requestTime',
             key: 'requestTime',
-            width: '20%'
+            width: '30%'
         },
 
         {
@@ -414,7 +427,7 @@ const PostRequest = () => {
     ];
 
 
-    const pastColumns = [
+    const pastColumns = profile.userType === 0 ? [
 
         {
             title: 'Request title',
@@ -423,7 +436,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType === 0 ? 'Volunteer' : 'Senior',
+            title:  'Volunteer',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -433,14 +446,14 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '10%',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -490,11 +503,80 @@ const PostRequest = () => {
                 </Space>
             ),
         },
+    ]:[
+
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '18%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width: '30%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+
+                        return (
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '18%'
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            key: 'rating',
+            width: '18%'
+        },
+
+        {
+            key: 'action',
+            render: (text, record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <div className="-vertical">
+                        <div className="m-2">
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round"><a style={{textDecoration: 'none'}}
+                                                onClick={() => handlePastRequestMange(record.key)}>Detail</a></Button>
+                        </div>
+                        <div className="m-2">
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round" onClick={() => handleDelete(record.key)}>Delete</Button>
+                        </div>
+                    </div>
+                </Space>
+            ),
+        },
     ];
 
 
     return (
-        <div style={customStyle}>
+        <div style={customStyle} className="main">
             <h1 style={{
                 marginTop: '-50px',
                 marginBottom: '70px',
@@ -502,20 +584,21 @@ const PostRequest = () => {
             }}>Welcome{user == null ? "" : ", " + fullName}</h1>
 
             <div className="col-sm-1">
-                <select className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
+                <select id="optionState" className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
                         onChange={handleChange}>
-                    <option value="onGoing">Ongoing Requests</option>
+                    <option  value="none" selected disabled hidden>{past}</option>
+                        <option value="onGoing">Ongoing Requests</option>
                     <option value="past">Past Requests</option>
                 </select>
             </div>
 
 
-            {past === true ?
+            {past === 'Past Requests' ?
                 <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}}/> :
                 <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}/>}
 
             <div className="mt-3">
-                {past === true ?
+                {past === 'Past Requests' ?
                     (pastData.length === 0 ? <h2>Currently no data record</h2> : null) :
                     (onGoingData.length === 0 ? <h2>Currently no data record</h2> : null)}
             </div>
@@ -523,7 +606,7 @@ const PostRequest = () => {
             {profile.userType === 0 &&
             <Button type="primary"
                     style={{background: '#00897B', width: '250px', height: '40px', fontSize: '18px', marginTop: '10px'}}
-                    shape="round" onClick={handleQuestionnaire}>Post New Request</Button>
+                    shape="round"  onClick={handleQuestionnaire}>Post New Request</Button>
             }
 
 
@@ -539,7 +622,8 @@ const PostRequest = () => {
                             <div>
                                 <div className="tags-input">
                                     <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags}
-                                            placeholder={<div>Select tags</div>}/>
+                                            placeholder={<div>Select tags</div>} closeMenuOnSelect={false}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -664,7 +748,8 @@ const PostRequest = () => {
 
             <Modal style={deleteModalStyle} isOpen={deleteModal} appElement={document.getElementById('root')}>
                 <h2>Delete Request</h2>
-                <p>Are you sure to cancel this appointment? you will not be able to undo this action once it is completed</p>
+                <p>Are you sure to cancel this appointment? you will not be able to undo this action once it is
+                    completed</p>
                 <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
                         className="float-right" onClick={handleConfirm}>Confirm</Button>
                 <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
@@ -675,7 +760,7 @@ const PostRequest = () => {
                 aria-labelledby="transition-modal-title"
                 aria-describedby="transition-modal-description"
                 className={classes.modal}
-                style = {questionnaireStyle}
+                style={questionnaireStyle}
                 appElement={document.getElementById('root')}
                 isOpen={questionnaireModal}
                 onClose={handleClose}
@@ -688,27 +773,39 @@ const PostRequest = () => {
             >
                 <Fade in={questionnaireModal}>
                     <div className={classes.paper}>
-                        <h2 id="transition-modal-title" className="text-center">COVID-19 Self Health Check</h2>
-                        <h6>Are you currently experiencing any of the following symptoms that started within the last 14 days?</h6>
-                        <ul>
-                            <li>Fever or chills</li>
-                            <li>Cough</li>
-                            <li>Shortness of breath or difficulty breathing</li>
-                            <li>Fatigue</li>
-                            <li>Muscle or body aches</li>
-                            <li>Headache</li>
-                            <li>Loss of taste or smell</li>
-                            <li>Sore throat</li>
-                            <li>Congestion or runny nose</li>
-                            <li>Nausea or vomiting</li>
-                            <li>Diarrhea</li>
-                        </ul>
-                        <h6>Over the past 14 days, have you been informed by a public health agency or a healthcare system that you have been exposed to COVID-19?</h6>
-                        <br></br>
-                        <h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19 infection?</h6>
-                        <br></br>
-                        <h4>If your answer is YES for any of the questions above, we advice you to stay home and avoid physical contacts.</h4>
-                        {/* <TextField
+                        <div style={{
+                            width: "100%",
+                            height: "100%",
+                            overflowY: "scroll",
+                            paddingRight: "17px",
+                            boxSizing: "content-box",
+
+                        }}>
+                            <h2 id="transition-modal-title" className="text-center">COVID-19 Self Health Check</h2>
+                            <h6>Are you currently experiencing any of the following symptoms that started within the
+                                last 14 days?</h6>
+                            <ul>
+                                <li>Fever or chills</li>
+                                <li>Cough</li>
+                                <li>Shortness of breath or difficulty breathing</li>
+                                <li>Fatigue</li>
+                                <li>Muscle or body aches</li>
+                                <li>Headache</li>
+                                <li>Loss of taste or smell</li>
+                                <li>Sore throat</li>
+                                <li>Congestion or runny nose</li>
+                                <li>Nausea or vomiting</li>
+                                <li>Diarrhea</li>
+                            </ul>
+                            <h6>Over the past 14 days, have you been informed by a public health agency or a healthcare
+                                system that you have been exposed to COVID-19?</h6>
+                            <br></br>
+                            <h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19
+                                infection?</h6>
+                            <br></br>
+                            <h4>If your answer is YES for any of the questions above, we advice you to stay home and
+                                avoid physical contacts.</h4>
+                            {/* <TextField
                   className={classes.textfield}
                   label={`Enter new ${modalTitle}`}
                   onChange={handleModalChange}
@@ -716,9 +813,12 @@ const PostRequest = () => {
                   multiline
                   rows={modalTitle === "Description" ? 6 : 1}
               /> */}
-                        <div>
-                            {/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
-                            <Button onClick={handleClose} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>I acknowledge</Button>
+                            <div>
+                                {/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
+                                <Button onClick={handleClose}
+                                        style={{float: "right", color: "white", backgroundColor: "#00897B"}}>I
+                                    acknowledge</Button>
+                            </div>
                         </div>
                     </div>
                 </Fade>
@@ -735,7 +835,7 @@ const customStyle = {
 }
 
 const modalStyle = {
-    overlay:{
+    overlay: {
         position: 'fixed',
         top: 0,
         left: 0,
@@ -749,7 +849,7 @@ const modalStyle = {
         right: 'auto',
         bottom: 'auto',
         width: '30%',
-        borderRadius:'30px',
+        borderRadius: '30px',
         transform: 'translate(-40%, -10%)',
     },
 
@@ -794,36 +894,38 @@ const deleteModalStyle = {
         transform: 'translate(-40%, 40%)',
     },
 }
-const useStyle = makeStyles(theme=>({
-    root:{
-        backgroundColor:"#e3e8e7",
-        height:"100vh"
+const useStyle = makeStyles(theme => ({
+    root: {
+        backgroundColor: "#e3e8e7",
+        height: "100vh"
     },
-    info:{
-        backgroundColor:"white",
-        borderRadius:"30px",
-        width:"80%",
-        margin:'auto',
-        textAlign:'left',
-        padding:'25px',
-        marginTop:"5vh",
+    info: {
+        backgroundColor: "white",
+        borderRadius: "30px",
+        width: "80%",
+        margin: 'auto',
+        textAlign: 'left',
+        padding: '25px',
+        marginTop: "5vh",
     },
     modal: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transform: 'translate(0%, 20%)',
+        transform: 'translate(0%, 10%)',
 
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
-        borderRadius:"30px",
+        borderRadius: "30px",
         boxShadow: theme.shadows[2],
         padding: theme.spacing(2, 4, 3),
-        width:"50%",
-    },
+        width: "50%",
+        height: "70vh",
+
+},
     textfield: {
-        width:"100%",
+        width: "100%",
     }
 
 }));
@@ -836,7 +938,7 @@ const questionnaireStyle = {
         right: 0,
         bottom: 0,
         backgroundColor: 'rgba(116, 130, 128, 0.6)'
-    }
+    },
 }
 
 export default PostRequest;

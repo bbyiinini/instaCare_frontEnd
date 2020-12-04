@@ -125,13 +125,21 @@ const Signup = (props) => {
             url: 'http://localhost:3000/signup/complete',
             handleCodeInApp: true,
         }
-        // console.log(email)
-        await db.auth().sendSignInLinkToEmail(email, actionSetting)
-        toast.success(`Email is sent to ${email}, please confirm your email and continue to complete sign up`);
 
-        window.localStorage.setItem('email', email)
-        window.localStorage.setItem('password', password)
-        window.localStorage.setItem('userType', type)
+        let result = await db.auth().fetchSignInMethodsForEmail(email)
+
+        if (result.length === 0){
+            await db.auth().sendSignInLinkToEmail(email, actionSetting)
+            toast.success(`Email is sent to ${email}, please confirm your email and continue to complete sign up`);
+
+            window.localStorage.setItem('email', email)
+            window.localStorage.setItem('password', password)
+            window.localStorage.setItem('userType', type)
+        }else {
+            toast.error("Email has already registered, please use another email")
+        }
+
+
     };
 
     return (

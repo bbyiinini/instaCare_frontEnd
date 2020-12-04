@@ -49,6 +49,8 @@ export default function (){
   const {user} = useSelector((state) => ({...state}))
   const dispatch = useDispatch();
   const profile = useSelector(state=>state.userProfile)
+  const address_list = useSelector((state) => state.address)
+
 
   const [open,setOpen] = useState(false)
   const [modalTitle,setTitle] = useState("")
@@ -64,6 +66,8 @@ export default function (){
   const [zipCode, setZipCode] = useState("");
 
   const [addList, setAddList] = useState([]);
+  const [flag, setFlag] = useState(true);
+
 
   const handleOpen = () => {
     setOpen(true);
@@ -167,6 +171,23 @@ export default function (){
     return isJpgOrPng && isLt2M;
   }
 
+  if (!address_list || !address_list.userAddrList || !address_list.userAddrList){
+    return <h1>Loading...</h1>
+  }
+  let list = address_list.userAddrList
+  if (list.length !== 0 && flag) {
+    let addressDetail = list.map(res => ({
+          add: res.streetAddressL2 === "" ? res.streetAddressL1 +
+              ", " + res.city + ", " + res.state + " " + res.zipCode :
+              res.streetAddressL1 + ", " + res.streetAddressL2 + ", " +
+              res.city + ", " + res.state + " " + res.zipCode,
+          id: res.addressId
+        }
+
+    ));
+    setAddList(addressDetail);
+    setFlag(false)
+  }
 
   let newAdd = ""
   const handleAdd = async () => {
@@ -204,23 +225,28 @@ export default function (){
           }
 
           if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
-            // console.log(text, title, address, phoneNumber)
-            let id = "";
-            console.log(addressBean,user.uid)
-            await RequestService.insertAddress(user.uid, addressBean).then(res => {
-              toast.success("insert address to backend success")
-              id = res.data.data;
-            }).catch(res => {
-              toast.error("insert failed")
-            });
-            newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
-            setAddList([...addList, {add: newAdd, id: id}])
-            setStreet1("")
-            setStreet2("")
-            setCity("")
-            setState("")
-            setZipCode("")
-            setAddressModal(false);
+            newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+            let result = addList.filter(names=>names.add.includes(newAdd))
+            if (result.length !== 0) {
+              toast.error("This address is already in your account, please enter another one")
+            }else{
+              let id = "";
+              await RequestService.insertAddress(user.uid, addressBean).then(res => {
+                toast.success("insert address to backend success")
+                id = res.data.data;
+              }).catch(error => {
+                toast.error("insert failed")
+                console.log(error.message)
+              });
+              setAddList([...addList, {add: newAdd, id: id}])
+              setStreet1("")
+              setStreet2("")
+              setCity("")
+              setState("")
+              setZipCode("")
+              setAddressModal(false);
+            }
+
           } else {
             toast.error("please fill all the information")
           }
@@ -371,7 +397,7 @@ export default function (){
             aria-describedby="transition-modal-description"
             className={classes.modal}
             open={open}
-            onClose={handleClose}
+            // onClose={handleClose}
             closeAfterTransition
             BackdropComponent={Backdrop}
             BackdropProps={{
