@@ -4,6 +4,7 @@ import {userProfileReducer} from "./UserProfileReducer";
 import {postRequestReducer} from "./PostRequestReducer";
 import {postRequestMangeReducer} from "./PostManagerReducder";
 import {addressReducer} from "./AddressReducer";
+import {ratingReducer} from "./RatingReducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
     requestDetail: postRequestReducer,
     requestMange: postRequestMangeReducer,
     address: addressReducer,
+    rating: ratingReducer,
 });
 
 

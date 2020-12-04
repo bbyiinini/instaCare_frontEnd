@@ -18,6 +18,9 @@ import SelectUSState from 'react-select-us-states';
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import Rating from "@material-ui/lab/Rating";
+import UserService from "../../service/UserService";
+import RatingService from "../../service/RatingService";
 
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
@@ -82,6 +85,13 @@ const PostRequest = () => {
     // delete request bean
     const [deleteTarget, setDeleteTarget] = useState({})
 
+    // rating bean
+    const [ratingModal, setRatingModal] = useState(false)
+    const [rating, setRating] = useState(0);
+    const [requestId, setRequestId] = useState("");
+    const [userId, setUserId] = useState("");
+    const [ratingFlag, setRatingFlag] = useState(true);
+
     const handleCheckBox = () => {
         setChecked(!checked)
     }
@@ -119,6 +129,8 @@ const PostRequest = () => {
         }
 
     }
+
+
 
 
     const handleRequestMange = (key) => {
@@ -162,7 +174,6 @@ const PostRequest = () => {
 
     if (localStorage.getItem('state') === 'past' && past === 'Ongoing Requests'){
         setPast('Past Requests')
-        localStorage.removeItem('state')
     }
 
 
@@ -240,13 +251,34 @@ const PostRequest = () => {
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
+    // rating related
+    let checkNoneRatingRequest = requestDetail.pastRequest.filter(names=>(names.ratingId===null))
+    if (ratingFlag && checkNoneRatingRequest.length !==0){
+        setRequestId(checkNoneRatingRequest[0].id)
+        if (profile.userType===0){
+            setUserId(checkNoneRatingRequest[0].volunteerId)
+        }else {
+            setUserId(checkNoneRatingRequest[0].seniorId)
+        }
+
+        setRatingModal(true)
+        setRatingFlag(false)
+    }
+    // console.log(requestDetail.pastRequest.filter(names=>(names.ratingId===null)))
+    const handleRating = () => {
+        RatingService.addRating(requestId, userId, {userRating: rating})
+            .then(r => {console.log(r)})
+            .catch(error=>error.message)
+    }
+
 
     const pastData = profile.userType === 0 ? requestDetail.pastRequest.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
-        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
+        rating: <Rating name="read-only" value={rating} readOnly />
     })) : requestDetail.pastRequest.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
@@ -254,6 +286,8 @@ const PostRequest = () => {
         // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
+
+
 
     // react select of address list
     // const addressOptions = addressList.length !== 0? addressList.map(address=>({
@@ -607,7 +641,7 @@ const PostRequest = () => {
 
             {profile.userType === 0 &&
             <Button type="primary"
-                    style={{background: '#00897B', width: '250px', height: '40px', fontSize: '18px', marginTop: '10px'}}
+                    style={{background: '#00897B', width: '250px', height: '40px', fontSize: '18px', marginTop: '10px', marginBottom: '30px'}}
                     shape="round"  onClick={handleQuestionnaire}>Post New Request</Button>
             }
 
@@ -810,6 +844,29 @@ const PostRequest = () => {
                 </Fade>
             </Modal>
 
+            <Modal style={modalStyle} 	isOpen={ratingModal} appElement={document.getElementById('root')}>
+                <>
+                    <h2 className="text-center">Thank you for using InstaCare</h2>
+                    <Rating
+                        className={classes.centerItem}
+                        name="simple-controlled"
+                        value={rating}
+                        onChange={(event, newValue) => {
+                            setRating(newValue)
+                        }}
+                    />
+                    <div className="text-center">
+                        {/*<Button*/}
+                        {/*    className={classes.centerButton}*/}
+                        {/*    color="secondary"*/}
+                        {/*    variant="contained"*/}
+                        {/*    style={{ borderRadius: '15px', border: 'none' }}*/}
+                        {/*    onClick={handleRating}*/}
+                        {/*>Submit</Button>*/}
+                        <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round" onClick={handleRating}>Submit</Button>
+                    </div>
+                </>
+            </Modal>
         </div>
     );
 }
@@ -910,8 +967,13 @@ const useStyle = makeStyles(theme=>({
     },
     textfield: {
         width:"100%",
-    }
-
+    },
+    centerItem: {
+        marginLeft: '50%',
+        marginTop: '40px',
+        marginBottom: '20px',
+        transform: 'translateX(-50%) scale(2)',
+    },
 }));
 
 const questionnaireStyle = {
