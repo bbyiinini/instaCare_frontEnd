@@ -438,6 +438,9 @@ const useStyles = makeStyles((theme) => ({
 		margin: theme.spacing(0.5),
 		fontSize: "24px",
 		width: '90%',
+		'&:focus': {
+			outline: 'none',
+		},
 	},
 	paddings1: {
 		paddingTop: '80px',
@@ -488,7 +491,13 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: '20px',
 		fontSize: '24px',
 		borderRadius: '25px',
+		boxShadow: 'none',
+		outline: 'none',
+		'&:focus': {
+			outline: 'none',
+		},
 	},
+	
 }))
 
 const modalStyle = {
