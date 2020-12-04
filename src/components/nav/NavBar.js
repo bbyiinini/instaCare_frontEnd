@@ -142,9 +142,7 @@ const NavBar = () => {
         
 
         <IconButton href="/profile" className="float-right">
-            <Avatar aria-label="recipe" style={{margin:'1%', backgroundColor:'pink'}}>
-                
-            </Avatar>
+            <Avatar aria-label="recipe" className={classes.avHuge} src={profile.avatar}></Avatar>
         </IconButton>
 
         
