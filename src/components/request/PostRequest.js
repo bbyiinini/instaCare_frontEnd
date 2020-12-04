@@ -891,7 +891,7 @@ const useStyle = makeStyles(theme=>({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transform: 'translate(0%, 20%)',
+        transform: 'translate(0%, 10%)',
 
     },
     paper: {
