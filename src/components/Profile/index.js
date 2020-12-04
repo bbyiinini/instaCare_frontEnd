@@ -50,6 +50,8 @@ const useStyle = makeStyles(theme=>({
 export default function (){
   const classes = useStyle()
   const {user} = useSelector((state) => ({...state}))
+  const {address} = useSelector((state) => ({...state}))
+  console.log(address)
   const dispatch = useDispatch();
   const profile = useSelector(state=>state.userProfile)
 
@@ -92,6 +94,7 @@ export default function (){
       })
     }
     handleClose()
+    toast.info("Please click Update User Profile button to save your changes!")
   }
 
   const saveAll = () => {
@@ -134,6 +137,7 @@ export default function (){
 
   const handleAddressDelete = (index)=>{
     return ()=>{
+      toast.info("Please click Update User Profile button to save your changes!")
       dispatch({
         type:"AddressDelete",
         payload:index
@@ -291,7 +295,6 @@ export default function (){
         </div>
         <div style={{textAlign:'left',width:"80%",marginTop:"1vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
           <Link to={"/reset"}><h4>Reset Password</h4></Link>
-          <h4>Contact us at <a>help@instacare.com</a></h4>
         </div>
         <Button onClick={saveAll} style={{
           borderStyle: "solid",
@@ -324,7 +327,7 @@ export default function (){
                 Phone
               </Grid>
               <Grid item xs={8}>
-                <p>{phone}</p>
+                <p>+{phone}</p>
                 <span style={{color:"#064d40"}} onClick={handlePhone}><b>Change</b></span>
               </Grid>
               </Grid>
@@ -341,7 +344,7 @@ export default function (){
                 {item}
               </Grid>
               <Grid item xs={2}>
-                <span style={{color:"#064d40"}} onClick={handleAddress(index)}><b>Change</b></span>
+                {/*<span style={{color:"#064d40"}} onClick={handleAddress(index)}><b>Change</b></span>*/}
               </Grid>
               <Grid item xs={2}>
                 <span style={{color:"#064d40"}} onClick={handleAddressDelete(index)}><b>Delete</b></span>
@@ -368,10 +371,10 @@ export default function (){
         >
           <Fade in={open}>
             <div className={classes.paper}>
-              <h2 id="transition-modal-title">Edit {modalTitle}</h2>
+              <h2 style={{margin:"15px"}}>Edit {modalTitle}</h2>
               {modalTitle === "Phone" ? <div>
                 <ReactPhoneInput
-                  style={{width: '70%', marginLeft: '40px'}}
+                  style={{width: '35%', margin:'auto'}}
                   country={'us'}
                   onlyCountries={['us']}
                   isValid={(value, country) => {
@@ -385,18 +388,17 @@ export default function (){
                     name: "phone",
                     required: true,
                   }}
-                  onChange={handleModalChange}
+                  onChange={e => setcontent(e)}
               /></div>:<TextField
                   className={classes.textfield}
-                  // label={`Enter new ${modalTitle}`}
                   onChange={handleModalChange}
                   defaultValue={modalContent}
                   multiline
                   rows={modalTitle === "Description" ? 6 : 1}
               />}
               <div>
-                <Button onClick={submitChange} style={{marginTop:"10px",float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button>
-                <Button onClick={handleClose} style={{marginTop:"10px",float:"right"}}>Cancel</Button>
+                <Button onClick={submitChange} style={{borderRadius:"10px",marginTop:"10px",float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button>
+                <Button onClick={handleClose} style={{marginRight:"10px",marginTop:"10px",float:"right"}}>Cancel</Button>
               </div>
             </div>
           </Fade>
@@ -449,7 +451,7 @@ export default function (){
               </div>
             </div>
             <Button type="primary"
-                    style={{background: '#00897B', width: '80px'}}
+                    style={{background: '#00897B', width: '80px',color:'white'}}
                     shape="round"
                     onClick={handleAdd}
                     className="float-right">add</Button>

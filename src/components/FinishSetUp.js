@@ -126,12 +126,15 @@ export default function FinishSetUp(props){
                   textAlign: "center",
                   width: "120px"
                 }}>
-              <img
+              <div
                   style={{border:seniorBorder}}
                   className={classes.imgstyle}
+              >
+              <img
+                  style={{width:"90px",marginTop:"18px",borderRadius:"50px"}}
                   onClick={() => typeChange(0)}
                   src={senior}
-                  alt={"senior"}/>
+                  alt={"senior"}/></div>
 
               <span style={{
                 display:"block"
@@ -145,11 +148,16 @@ export default function FinishSetUp(props){
                   width: "120px"
                 }}
             >
+              <div
+                  style={{border:volunteerBorder}}
+                  className={classes.imgstyle} src={volunteer} alt={"volunteer"}
+              >
               <img
                   value={1}
                   onClick={() => typeChange(1)}
-                  style={{border:volunteerBorder}}
-                  className={classes.imgstyle} src={volunteer} alt={"volunteer"}/>
+                  src={"https://s3-alpha-sig.figma.com/img/3c33/8418/0492a571e5731b85f37ca208f9534a54?Expires=1607904000&Signature=DIVB9B4iGYGUib7daL7sz5lc4JUQjq4HRuff63suQ4uYdtobBKBNi~X0VT-kGAy4MAAh1jOGzBDWV7ZTQ4ooqade0QudqI-~~XtSUrnvzvzsUzfdglUOo0-RqSPqrJO2QPbQmAnSBiKeW2Nl~uFZ6QdjgHhQeAcRQyk4s5ToR1tNfbpbmVdh9u-4gKe88v8awa-fIy3NyJweS5f1Y0RNiqd3IyLuKu-UexD6rA5BvyJS5Q0ynd2bJsQAwNo7Osd-K2VR2mIvgpXMvGU9euGwE1YSXQBcAeBdckOStJ40ChSqr53fVvE9-gOGVXdf9F-QwbpnR5iZBN~CzpogXVapAA__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA"}
+                  style={{width:"90px",marginTop:"18px",borderRadius:"50px"}}/>
+              </div>
               <span style={{
                 display:"block"
               }}>Volunteer</span>
