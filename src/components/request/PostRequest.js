@@ -67,7 +67,7 @@ const PostRequest = () => {
     const [addressId, setAddressId] = useState("");
     const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [past, setPast] = useState(false);
+    const [past, setPast] = useState('Ongoing Requests');
     const [addList, setAddList] = useState([]);
     const [addressModal, setAddressModal] = useState(false);
     const [questionnaireModal, setQuestionnaireModal] = useState(false);
@@ -150,12 +150,20 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         if (e.target.value === "past") {
-            setPast(true)
+            setPast('Past Requests')
+            localStorage.setItem('state', 'past');
         } else {
-            setPast(false)
+            setPast('Ongoing Requests')
         }
 
     }
+
+
+    if (localStorage.getItem('state') === 'past' && past === 'Ongoing Requests'){
+        setPast('Past Requests')
+        localStorage.removeItem('state')
+    }
+
 
     const addTags = (e) => {
         if (e != null) {
@@ -210,7 +218,7 @@ const PostRequest = () => {
     }
 
     function parseISOString(s) {
-        var b = s.split(/\D+/);
+        let b = s.split(/\D+/);
         return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
     }
 
@@ -227,7 +235,7 @@ const PostRequest = () => {
         status: res.status === 2 ? "Volunteer on the way" : "request sent",
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title,
-        user: res.Senior === null ? "Pending" : res.Senior,
+        // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
@@ -242,7 +250,7 @@ const PostRequest = () => {
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
-        user: res.Senior === null ? "Pending" : res.Senior,
+        // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
@@ -281,7 +289,7 @@ const PostRequest = () => {
                     }).catch(res => {
                         toast.error("insert failed")
                     });
-                    newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+                    newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
                     setAddList([...addList, {add: newAdd, id: id}])
                     setStreet1("")
                     setStreet2("")
@@ -366,12 +374,12 @@ const PostRequest = () => {
             key: 'requestTitle',
             width: '20%'
         },
-        {
-            title: 'Senior',
-            dataIndex: 'user',
-            key: 'user',
-            width: '20%'
-        },
+        // {
+        //     title: 'Senior',
+        //     dataIndex: 'user',
+        //     key: 'user',
+        //     width: '20%'
+        // },
         {
             title: 'Tags',
             key: 'tags',
@@ -502,20 +510,21 @@ const PostRequest = () => {
             }}>Welcome{user == null ? "" : ", " + fullName}</h1>
 
             <div className="col-sm-1">
-                <select className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
+                <select id="optionState" className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
                         onChange={handleChange}>
-                    <option value="onGoing">Ongoing Requests</option>
+                    <option  value="none" selected disabled hidden>{past}</option>
+                        <option value="onGoing">Ongoing Requests</option>
                     <option value="past">Past Requests</option>
                 </select>
             </div>
 
 
-            {past === true ?
+            {past === 'Past Requests' ?
                 <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}}/> :
                 <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}/>}
 
             <div className="mt-3">
-                {past === true ?
+                {past === 'Past Requests' ?
                     (pastData.length === 0 ? <h2>Currently no data record</h2> : null) :
                     (onGoingData.length === 0 ? <h2>Currently no data record</h2> : null)}
             </div>
