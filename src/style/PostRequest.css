@@ -53,3 +53,10 @@
 .ant-select-selector {
     background-color: green;
 }
+
+.main Button:hover {
+
+     background-color: #01554e !important;
+     border-color:#01554e !important;
+
+}

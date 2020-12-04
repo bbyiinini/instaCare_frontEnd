@@ -65,7 +65,7 @@ const PostRequest = () => {
     const [addressId, setAddressId] = useState("");
     const [address, setAddress] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [past, setPast] = useState(false);
+    const [past, setPast] = useState('Ongoing Requests');
     const [addList, setAddList] = useState([]);
     const [addressModal, setAddressModal] = useState(false);
     const [questionnaireModal, setQuestionnaireModal] = useState(false);
@@ -93,14 +93,14 @@ const PostRequest = () => {
             requestContent: text,
             title: title,
             addressID: addressId,
-            address: address,
+            // address: address,
             phoneNumber: phoneNumber,
             neededPhysicalContact: checked,
             tags: tags,
             seniorId: user.uid,
         }
 
-        if (text !== "" && title !== "" && addressId !== "default" && phoneNumber !== "" && tags.length > 0) {
+        if (text !== "" && title !== "" && address !== "" && phoneNumber !== "" && tags.length > 0) {
             await RequestService.request(user.uid, requestBean).then(res => {
                 toast.success("save request to backend success")
             }).catch(res => {
@@ -148,12 +148,21 @@ const PostRequest = () => {
 
     const handleChange = (e) => {
         if (e.target.value === "past") {
-            setPast(true)
+            setPast('Past Requests')
+            localStorage.setItem('state', 'past');
         } else {
-            setPast(false)
+            localStorage.removeItem('state')
+            setPast('Ongoing Requests')
         }
 
     }
+
+
+    if (localStorage.getItem('state') === 'past' && past === 'Ongoing Requests'){
+        setPast('Past Requests')
+        localStorage.removeItem('state')
+    }
+
 
     const addTags = (e) => {
         if (e != null) {
@@ -208,7 +217,7 @@ const PostRequest = () => {
     }
 
     function parseISOString(s) {
-        var b = s.split(/\D+/);
+        let b = s.split(/\D+/);
         return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
     }
 
@@ -225,7 +234,7 @@ const PostRequest = () => {
         status: res.status === 2 ? "Volunteer on the way" : "request sent",
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title,
-        user: res.Senior === null ? "Pending" : res.Senior,
+        // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
@@ -240,7 +249,7 @@ const PostRequest = () => {
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
-        user: res.Senior === null ? "Pending" : res.Senior,
+        // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
     }));
 
@@ -271,22 +280,28 @@ const PostRequest = () => {
                 }
 
                 if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
-                    // console.log(text, title, address, phoneNumber)
-                    let id = "";
-                    await RequestService.insertAddress(user.uid, addressBean).then(res => {
-                        toast.success("insert address to backend success")
-                        id = res.data.data;
-                    }).catch(res => {
-                        toast.error("insert failed")
-                    });
-                    newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
-                    setAddList([...addList, {add: newAdd, id: id}])
-                    setStreet1("")
-                    setStreet2("")
-                    setCity("")
-                    setState("")
-                    setZipCode("")
-                    setAddressModal(false);
+                    newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+                    let result = addList.filter(names=>names.add.includes(newAdd))
+                    if (result.length !== 0) {
+                        toast.error("This address has already in your account, please enter another one")
+                    }else{
+                        let id = "";
+                        await RequestService.insertAddress(user.uid, addressBean).then(res => {
+                            toast.success("insert address to backend success")
+                            id = res.data.data;
+                        }).catch(error => {
+                            toast.error("insert failed")
+                            console.log(error.message)
+                        });
+                        setAddList([...addList, {add: newAdd, id: id}])
+                        setStreet1("")
+                        setStreet2("")
+                        setCity("")
+                        setState("")
+                        setZipCode("")
+                        setAddressModal(false);
+                    }
+
                 } else {
                     toast.error("please fill all the information")
                 }
@@ -322,13 +337,13 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '12%',
+            width: '35%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -362,25 +377,25 @@ const PostRequest = () => {
             title: 'Request title',
             dataIndex: 'requestTitle',
             key: 'requestTitle',
-            width: '20%'
+            width: '25%'
         },
-        {
-            title: 'Senior',
-            dataIndex: 'user',
-            key: 'user',
-            width: '20%'
-        },
+        // {
+        //     title: 'Senior',
+        //     dataIndex: 'user',
+        //     key: 'user',
+        //     width: '20%'
+        // },
         {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '12%',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -392,7 +407,7 @@ const PostRequest = () => {
             title: 'Request Time',
             dataIndex: 'requestTime',
             key: 'requestTime',
-            width: '20%'
+            width: '30%'
         },
 
         {
@@ -412,7 +427,7 @@ const PostRequest = () => {
     ];
 
 
-    const pastColumns = [
+    const pastColumns = profile.userType === 0 ? [
 
         {
             title: 'Request title',
@@ -421,7 +436,7 @@ const PostRequest = () => {
             width: '18%'
         },
         {
-            title: profile.userType === 0 ? 'Volunteer' : 'Senior',
+            title:  'Volunteer',
             dataIndex: 'user',
             key: 'user',
             width: '15%'
@@ -431,14 +446,83 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '10%',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
                         let color = '#B2DFDB';
 
                         return (
-                            <Tag style={{color: '#004D40', fontSize: '16px'}} color={color} key={tag}>
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
+                                {tag}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Request Time',
+            dataIndex: 'requestTime',
+            key: 'requestTime',
+            width: '18%'
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+            key: 'rating',
+            width: '18%'
+        },
+
+        {
+            key: 'action',
+            render: (text, record) => (
+
+                <Space size="middle">
+                    {/*<a>Invite {record.name}</a>*/}
+                    {/*<a>Delete</a>*/}
+                    <div className="-vertical">
+                        <div className="m-2">
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round"><a style={{textDecoration: 'none'}}
+                                                onClick={() => handlePastRequestMange(record.key)}>Detail</a></Button>
+                        </div>
+                        <div className="m-2">
+                            <Button type="primary" style={{
+                                background: '#00897B',
+                                width: '100px',
+                                fontSize: '16px',
+                                textAlign: 'center'
+                            }} shape="round" onClick={()=>handleDelete(record.key)}>Delete</Button>
+                        </div>
+                    </div>
+                </Space>
+            ),
+        },
+    ]:[
+
+        {
+            title: 'Request title',
+            dataIndex: 'requestTitle',
+            key: 'requestTitle',
+            width: '18%'
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            width: '30%',
+            render: tags => (
+                <>
+                    {tags.map(tag => {
+                        let color = '#B2DFDB';
+
+                        return (
+                            <Tag style={{color: '#004D40', width:'120px', textAlign:'center', fontSize: '16px'}} color={color} key={tag}>
                                 {tag}
                             </Tag>
                         );
@@ -492,7 +576,7 @@ const PostRequest = () => {
 
 
     return (
-        <div style={customStyle}>
+        <div style={customStyle} className="main">
             <h1 style={{
                 marginTop: '-50px',
                 marginBottom: '70px',
@@ -500,20 +584,21 @@ const PostRequest = () => {
             }}>Welcome{user == null ? "" : ", " + fullName}</h1>
 
             <div className="col-sm-1">
-                <select className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
+                <select id="optionState" className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
                         onChange={handleChange}>
-                    <option value="onGoing">Ongoing Requests</option>
+                    <option  value="none" selected disabled hidden>{past}</option>
+                        <option value="onGoing">Ongoing Requests</option>
                     <option value="past">Past Requests</option>
                 </select>
             </div>
 
 
-            {past === true ?
+            {past === 'Past Requests' ?
                 <Table columns={pastColumns} dataSource={pastData} pagination={{defaultPageSize: 5}}/> :
                 <Table columns={ongoingColumns} dataSource={onGoingData} pagination={{defaultPageSize: 5}}/>}
 
             <div className="mt-3">
-                {past === true ?
+                {past === 'Past Requests' ?
                     (pastData.length === 0 ? <h2>Currently no data record</h2> : null) :
                     (onGoingData.length === 0 ? <h2>Currently no data record</h2> : null)}
             </div>
@@ -521,7 +606,7 @@ const PostRequest = () => {
             {profile.userType === 0 &&
             <Button type="primary"
                     style={{background: '#00897B', width: '250px', height: '40px', fontSize: '18px', marginTop: '10px'}}
-                    shape="round" onClick={handleQuestionnaire}>Post New Request</Button>
+                    shape="round"  onClick={handleQuestionnaire}>Post New Request</Button>
             }
 
 
@@ -537,7 +622,8 @@ const PostRequest = () => {
                             <div>
                                 <div className="tags-input">
                                     <Select isMulti={true} maxMenuHeight={200} options={options} onChange={addTags}
-                                            placeholder={<div>Select tags</div>}/>
+                                            placeholder={<div>Select tags</div>} closeMenuOnSelect={false}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -826,7 +912,7 @@ const useStyle = makeStyles(theme => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        transform: 'translate(0%, 20%)',
+        transform: 'translate(0%, 10%)',
 
     },
     paper: {

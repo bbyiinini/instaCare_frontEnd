@@ -103,11 +103,8 @@ const NavBar = () => {
 
     let {addressList, avatar,email,fullName,phone,userType,description} = profile
 
-    const handleDescription = () => {
-        setTitle("COVID-19 Self Health Check")
-        setcontent(description)
-        handleOpen()
-    
+    const redirected = (path) => {
+        history.push(path)
     }
     const handleModalChange = (e) => {
         setcontent(e.target.value)
@@ -130,89 +127,24 @@ const NavBar = () => {
     }
 
     return (
-        <div>
-        <Menu onClick={handleClick} selectedKeys={[currState]} mode="horizontal">
-        <a href="/"><img id="icLogo"  style={{width:'20%'}} src={icLogo}/></a>
+        <div style={{top:"0px", position: 'absolute', right:'0px', left:'0px', height:'6vh'}}>
+            <Menu mode="horizontal" selectedKeys={null} >
+                <a href="/"><img id="icLogo"  style={{width:'20%'}} src={icLogo}/></a>
 
+                <Menu.Item key="logout" className="float-right" disabled>
+                    <Button label="log out" style={{backgroundColor:"#12897b", color:"white", margin:'1%', textTransform:'none'}} onClick={logout}>Logout</Button>
+                </Menu.Item>
 
-        <Button label="log out" className="float-right" style={{backgroundColor:"#12897b", color:"white", margin:'1%', textTransform:'none'}} onClick={logout}>Logout</Button>
+                <Menu.Item key="request" className="float-right" disabled>
+                    {profile.userType === 1 && <Button label="request plaza" onClick={() => redirected('/request')} style={{backgroundColor:"#12897b", color:"white", margin:'1%',  textTransform:'none'}}>Request Plaza</Button>}
+                </Menu.Item>
 
-
-        {profile.userType === 1 && <Button label="request plaza" className="float-right" href="/request" style={{backgroundColor:"#12897b", color:"white", margin:'1%',  textTransform:'none'}}>Request Plaza</Button>}
-        
-
-        <IconButton href="/profile" className="float-right">
-            <Avatar aria-label="recipe" style={{margin:'1%', backgroundColor:'pink'}}>
-                
-            </Avatar>
-        </IconButton>
-
-        
-
-
-          {/* {user && <Item key="userProfile" icon={<UserOutlined />} className="float-right">
-            <Link to="/profile">Profile</Link>
-          </Item>} */}
-
-
-            {/* <SubMenu key="SubMenu" icon={<SettingOutlined />} title={(user&&user.displayName)==null?"User":user.displayName}>
-                <Menu.ItemGroup title="Profile">
-                    <Item key="item1">option 1</Item>
-                </Menu.ItemGroup>
-            </SubMenu> */}
-
-
-        </Menu>
-
-        <Modal
-            aria-labelledby="transition-modal-title"
-            aria-describedby="transition-modal-description"
-            className={classes.modal}
-            open={open}
-            onClose={handleClose}
-            closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 500,
-            }}
-        >
-          <Fade in={open}>
-            <div className={classes.paper}>
-              <h2 id="transition-modal-title">{modalTitle}</h2>
-              <h6>Are you currently experiencing any of the following symptoms that started within the last 14 days?</h6>
-              <ul>
-                  <li>Fever or chills</li>
-                  <li>Cough</li>
-                  <li>Shortness of breath or difficulty breathing</li>
-                  <li>Fatigue</li>
-                  <li>Muscle or body aches</li>
-                  <li>Headache</li>
-                  <li>Loss of taste or smell</li>
-                  <li>Sore throat</li>
-                  <li>Congestion or runny nose</li>
-                  <li>Nausea or vomiting</li>
-                  <li>Diarrhea</li>
-              </ul>
-              <h6>Over the past 14 days, have you been informed by a public health agency or a healthcare system that you have been exposed to COVID-19?</h6>
-              <br></br>
-              <h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19 infection?</h6>
-              <br></br>
-              <h4>If your answer is YES for any of the questions above, we advice you to stay home and avoid physical contacts.</h4>
-              {/* <TextField
-                  className={classes.textfield}
-                  label={`Enter new ${modalTitle}`}
-                  onChange={handleModalChange}
-                  defaultValue={modalContent}
-                  multiline
-                  rows={modalTitle === "Description" ? 6 : 1}
-              /> */}
-              <div>
-                {/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
-                <Button onClick={handleClose} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>I acknowledge</Button>
-              </div>
-            </div>
-          </Fade>
-        </Modal>
+                <Menu.Item key="profile" className="float-right" disabled>
+                    <IconButton onClick={() => redirected('/profile')} className="float-right">
+                        <Avatar aria-label="recipe" className={classes.avHuge} src={profile.avatar}></Avatar>
+                    </IconButton>
+                </Menu.Item>
+            </Menu>
         </div>
     );
 }
