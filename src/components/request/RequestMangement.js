@@ -36,9 +36,9 @@ const RequestMangement = () => {
 	const reqM = useSelector(state => state.requestMange);
 
 
-	const [originReq, setOriginReq] = useState(reqM === null ? JSON.parse(window.localStorage.getItem('originReq')): reqM.ongoingRequestId);
+	const [originReq, setOriginReq] = useState(reqM === null ? JSON.parse(window.localStorage.getItem('originReq')) : reqM.ongoingRequestId);
 	const [wrapId, setWrapId] = useState("");
-	const [user, setUser] = useState(userOrin !== null? userOrin : JSON.parse(window.localStorage.getItem('user')));
+	const [user, setUser] = useState(userOrin !== null ? userOrin : JSON.parse(window.localStorage.getItem('user')));
 	const [wrapOpen, setWrapOpen] = useState(false);
 	const [requestMange, setRequestMange] = useState(null);
 	const [textField, setTextField] = useState("");
@@ -107,9 +107,9 @@ const RequestMangement = () => {
 	}
 
 	const parseISOString = (s) => {
-        let b = s.split(/\D+/);
-        return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
-    }
+		let b = s.split(/\D+/);
+		return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+	}
 
 	const handleEnd = async () => {
 		if (wrapId === 'end') {
@@ -135,7 +135,8 @@ const RequestMangement = () => {
 		setTextField(e.target.value)
 	}
 
-	const handleComment = () => {
+	const handleComment = (e) => {
+		e.preventDefault();
 		if (textField !== '') {
 			let temp = commentCollection
 			temp.push({
@@ -153,10 +154,10 @@ const RequestMangement = () => {
 	}
 
 	const handleRating = () => {
-		if(!user.numOfRating){
-			UserService.update(user.id, {rating:rating,numOfRating:1})
-		}else{
-			UserService.update(user.id, {rating:(user.numOfRating * user.rating + rating)/(user.numOfRating+1),numOfRating:user.numOfRating+1})
+		if (!user.numOfRating) {
+			UserService.update(user.id, { rating: rating, numOfRating: 1 })
+		} else {
+			UserService.update(user.id, { rating: (user.numOfRating * user.rating + rating) / (user.numOfRating + 1), numOfRating: user.numOfRating + 1 })
 		}
 		window.localStorage.removeItem('user')
 		window.localStorage.removeItem('originReq')
@@ -164,8 +165,8 @@ const RequestMangement = () => {
 	}
 
 	const handleTake = () => {
-    thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
-    setWrapOpen(false)
+		thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
+		setWrapOpen(false)
 	}
 
 	const theme = createMuiTheme({
@@ -178,6 +179,9 @@ const RequestMangement = () => {
 				main: '#00897B',
 				contrastText: '#ffffff',
 			},
+		},
+		typography: {
+			fontFamily: 'Rasa',
 		},
 	})
 
@@ -198,7 +202,7 @@ const RequestMangement = () => {
 									<div className={classes.paddings1}>
 										<CardHeader
 											className=""
-											avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={seniorState.avatar}></Avatar>}
+											avatar={<Avatar aria-label="recipe" className={classes.avHuge} src={seniorState.avatar}></Avatar>}
 											title={
 												<div className={classes.ftSmall}>
 													<a>{seniorState.fullName}</a>
@@ -208,30 +212,27 @@ const RequestMangement = () => {
 													</div>
 												</div>
 											}
-											subheader="Rating:"
-											{...requestMange.rating}
+											subheader="Rating:" {...requestMange.rating}
 										/>
 									</div>
 									<div className={classes.paddings1}>
-										<h1>{requestMange.title}</h1>
-										<p>{requestMange.requestContent}</p>
-										<Grid spacing={3}>
+										<h1 >{requestMange.title}</h1>
+										<p className={classes.paddings2}>{requestMange.requestContent}</p>
+										<Grid spacing={3} className={classes.paddings2}>
 											{requestMange.tags === null ? '' : requestMange.tags.map((tag, index) => {
 												return (<Chip key={index} className={classes.chip} label={tag} />)
 											})}
 										</Grid>
 									</div>
-									<div className={classes.paddings1}>
-										{requestMange.status === 3 || (user.userType===1 && requestMange.status ===1) ? (
+									<div className={classes.paddings3}>
+										{requestMange.status === 3 || (user.userType === 1 && requestMange.status === 1) ? (
 											<></>
 										) : (
 												<ThemeProvider theme={theme}>
 													<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('end')}>
-														End My Appointment
-                                            </Button>
+														End My Appointment</Button>
 													<Button color="primary" variant="contained" className={classes.bHeight} onClick={() => handleOpen('cancel')}>
-														Cancel My Appointment
-                                            </Button>
+														Cancel My Appointment</Button>
 												</ThemeProvider>
 											)}
 									</div>
@@ -253,9 +254,12 @@ const RequestMangement = () => {
 																	)}
 															</TimelineSeparator>
 															<TimelineContent>
-																<CardHeader action={''} title={comment.user || 'Null'} subheader={comment.time} />
+																<CardHeader title={
+																	<div className={classes.ftSmall}>{comment.user || 'Null'}</div>} subheader={
+																		<div className={classes.ftSmall2}>{comment.time}</div>
+																	} />
 																<CardContent>
-																	<Typography variant="body2" color="textSecondary" component="p">
+																	<Typography variant="h5" color="textSecondary" component="p">
 																		{comment.content}
 																	</Typography>
 																</CardContent>
@@ -264,26 +268,28 @@ const RequestMangement = () => {
 													)
 												})}
 											</Timeline>
-
-											<TextField
+											<form onSubmit={handleComment}>
+												<TextField
+												InputProps={{
+													classes: {
+													  input: classes.ftSmall2,
+													},
+												  }}
 												color="secondary"
-												id="filled-full-width"
-												label="Label"
-												style={{ margin: 0 }}
-												placeholder="Commentss"
+												id="outlined-full-width"
+												style={{ margin: "5px"}}
+												placeholder="Type your message here..."
 												fullWidth
 												margin="normal"
-												InputLabelProps={{ shrink: true, }}
-												variant="filled"
+												variant="outlined"
 												value={textField}
-												onChange={handleTextFieldChange}
-											/>
-											<Button
-												variant="contained"
-												color="secondary"
-												style={{ marginBottom: '20px' }}
-												onClick={handleComment}>
-												Post</Button>
+												onChange={handleTextFieldChange}/>
+												<Button
+													className={classes.post}
+													variant="contained"
+													color="secondary"
+													onClick={handleComment}>Post</Button>
+											</form>
 										</div>
 									</div>
 								</div>
@@ -319,7 +325,7 @@ const RequestMangement = () => {
 							>
 								{(() => {
 									if (wrapId === 'end' || wrapId === 'cancel') {
-										return(
+										return (
 											<>
 												<h2 className="text-left">
 													{wrapId.substring(0, 1).toUpperCase()}
@@ -410,30 +416,43 @@ const RequestMangement = () => {
 }
 
 const useStyles = makeStyles((theme) => ({
-	avSmall: {
-		width: theme.spacing(4),
-		height: theme.spacing(4),
+	avHuge: {
+		width: theme.spacing(12),
+		height: theme.spacing(12),
 	},
 	avLarge: {
 		width: theme.spacing(9),
 		height: theme.spacing(9),
 	},
 	ftSmall: {
-		fontSize: '18px',
+		fontSize: '30px',
+	},
+	ftSmall2: {
+		fontSize: '24px',
 	},
 	bLarge: {
 		width: theme.spacing(40),
 	},
 	bHeight: {
-		height: theme.spacing(6),
+		height: theme.spacing(9),
 		margin: theme.spacing(0.5),
+		fontSize: "24px",
 		width: '90%',
 	},
 	paddings1: {
 		paddingTop: '80px',
 	},
+	paddings2: {
+		marginTop: '3rem'
+	},
+	paddings3: {
+		marginTop: '10rem'
+	},
 	chip: {
 		margin: theme.spacing(0.5),
+		width: theme.spacing(16),
+		height: theme.spacing(6),
+		fontSize: "24px"
 	},
 	backdrop: {
 		zIndex: theme.zIndex.drawer + 1,
@@ -454,14 +473,21 @@ const useStyles = makeStyles((theme) => ({
 	volunteer: {
 		marginLeft: '50%',
 		position: 'absolute',
-		bottom: '50px',
+		bottom: '8rem',
 		transform: 'translateX(-50%)',
 		borderRadius: '15px',
 		padding: '0px 20px',
+		width: "45%",
 	},
 	commentsList: {
 		transform: 'translateX(-50%)',
 		width: '200%',
+	},
+	post: {
+		width: '10rem',
+		marginBottom: '20px',
+		fontSize: '24px',
+		borderRadius: '25px',
 	},
 }))
 
