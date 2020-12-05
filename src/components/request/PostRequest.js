@@ -267,7 +267,7 @@ const PostRequest = () => {
     }
     // console.log(requestDetail.pastRequest.filter(names=>(names.ratingId===null)))
     const handleRating = () => {
-        ratingList.map(res=>(res.numOfRating===null?UserService.update(res.id, {numOfRating: 0}):res.numOfRating))
+        ratingList.map(res=>(res.numOfRating===null?UserService.update(res.id, {rating: rating, numOfRating: 0}):res.numOfRating))
         RatingService.addRating(requestId, userId, {userRating: rating})
             .then(r => {
                 console.log(r)
