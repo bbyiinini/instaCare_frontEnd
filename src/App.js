@@ -155,7 +155,7 @@ const App = () => {
                 if (i === pastRequestDetail.length - 1){
                   dispatch({
                     type: 'RATING',
-                    payload: result
+                    payload: {result, rater: profileData.userType===0?'senior':'volunteer'}
                   })
                 }
              }).catch(error=>console.log(error.message))

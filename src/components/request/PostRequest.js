@@ -296,14 +296,14 @@ const PostRequest = () => {
         requestTitle: res.title === null ? "" : res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
-        rating: <Rating name="read-only" value={ratingList[index].rating} readOnly />
+        rating: <Rating name="read-only" value={ratingList.result[index].rating} readOnly />
     })) : requestDetail.pastRequest.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
-        rating: <Rating name="read-only" value={ratingList[index].rating} readOnly />
+        rating: <Rating name="read-only" value={ratingList.result[index].rating} readOnly />
     }));
 
 
