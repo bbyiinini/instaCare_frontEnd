@@ -91,10 +91,14 @@ const RequestMangement = () => {
 				window.localStorage.setItem('user', JSON.stringify(user))
 
 				if (doc.data()) {
-					window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
-					setRequestMange(doc.data())
-					if (doc.data().comments) {
-						setCommentCollection(doc.data().comments)
+					if (doc.data().type && doc.data().type % 5 === user.userType+1){
+						handleAutoEnd()
+					}else{
+						window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
+						setRequestMange(doc.data())
+						if (doc.data().comments) {
+							setCommentCollection(doc.data().comments)
+						}
 					}
 				} else {
 					// setRequestMange(originReq)
@@ -112,14 +116,21 @@ const RequestMangement = () => {
 		setWrapOpen(true)
 	}
 
+	const handleAutoEnd = async () => {
+		setWrapId('rating')
+		setOriginReq(requestMange)
+		setWrapOpen(true)
+		await thisRequest.update({ status: 3, type: 4 }).then(setOnGoing(false));
+	}
+
 	const handleEnd = async () => {
 		if (wrapId === 'end') {
 			setWrapId('rating')
 			setOriginReq(requestMange)
-			await thisRequest.update({ status: 3 }).then(setOnGoing(false));
+			await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
 		} else if (wrapId === 'cancel') {
 			if (user.userType === 1) {
-				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null }).then(setOnGoing(false));
+				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null, type: null}).then(setOnGoing(false));
 				window.localStorage.removeItem('user')
 				window.localStorage.removeItem('originReq')
 				window.location.assign("/post");
@@ -165,7 +176,7 @@ const RequestMangement = () => {
 		window.location.assign('/post')
 	}
 	const handleTake = () => {
-		thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName })
+		thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName, type: 3 })
 		setWrapOpen(false)
     }
     

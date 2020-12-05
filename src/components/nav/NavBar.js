@@ -94,7 +94,7 @@ const NavBar = () => {
             payload: null
         });
 
-        history.push("/");
+        window.location.assign('/')
     }
 
     if(!profile){
