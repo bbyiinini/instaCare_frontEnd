@@ -146,17 +146,33 @@ const App = () => {
 
         if (pastRequestDetail){
           if (profileData.userType === 0){
-            pastRequestDetail.map(res=>(userService.retrieve(res.volunteerId).then(res=>{
-              dispatch({
-                type:'RATING',
-                payload: {id:res.data.data.id, rating: res.data.data.rating}
-              })
-            })))
+            let temp = null;
+            let result = [];
+            for (let i = 0; i < pastRequestDetail.length; i++) {
+              userService.retrieve(pastRequestDetail[i].volunteerId).then(res=>{
+                temp = res.data.data
+                result = [...result, temp]
+                if (i === pastRequestDetail.length - 1){
+                  dispatch({
+                    type: 'RATING',
+                    payload: result
+                  })
+                }
+             }).catch(error=>console.log(error.message))
+
+            }
           }
-          // dispatch({
-          //   type: 'RATING',
-          //   payload: a
-          // })
+
+          // else{
+          //   pastRequestDetail.map(res=>(userService.retrieve(res.seniorId).then(res=>{
+          //     let result = res.data.date
+          //     dispatch({
+          //       type:'RATING',
+          //       payload: {id:res.data.date.id, rating: result.rating, numofRating: result.numofRating}
+          //     })
+          //   })))
+          // }
+
         }
       }else{
         console.log("you have logout")

@@ -86,6 +86,7 @@ const PostRequest = () => {
     const [deleteTarget, setDeleteTarget] = useState({})
 
     // rating bean
+    const ratingList = useSelector(state => state.rating)
     const [ratingModal, setRatingModal] = useState(false)
     const [rating, setRating] = useState(0);
     const [requestId, setRequestId] = useState("");
@@ -266,14 +267,20 @@ const PostRequest = () => {
     }
     // console.log(requestDetail.pastRequest.filter(names=>(names.ratingId===null)))
     const handleRating = () => {
+        ratingList.map(res=>(res.numOfRating===null?UserService.update(res.id, {numOfRating: 0}):res.numOfRating))
         RatingService.addRating(requestId, userId, {userRating: rating})
             .then(r => {
                 console.log(r)
                 setRatingModal(false)
             })
-            .catch(error=>error.message)
+            .catch(error=>{
+                console.log(error.message)
+            })
     }
 
+    if (!ratingList){
+        return <h1>Loading...</h1>
+    }
 
     const pastData = profile.userType === 0 ? requestDetail.pastRequest.map((res, index) => ({
         key: index,
@@ -281,7 +288,7 @@ const PostRequest = () => {
         requestTitle: res.title === null ? "" : res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
-        rating: <Rating name="read-only" value={rating} readOnly />
+        rating: <Rating name="read-only" value={ratingList[index].rating} readOnly />
     })) : requestDetail.pastRequest.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
