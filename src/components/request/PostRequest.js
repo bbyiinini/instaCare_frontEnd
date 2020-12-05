@@ -86,11 +86,8 @@ const PostRequest = () => {
     const [deleteTarget, setDeleteTarget] = useState({})
 
     // rating bean
-    const ratingList = useSelector(state => state.rating)
     const [ratingModal, setRatingModal] = useState(false)
     const [rating, setRating] = useState(0);
-    const [requestId, setRequestId] = useState("");
-    const [userId, setUserId] = useState("");
     const [ratingFlag, setRatingFlag] = useState(true);
 
     const handleCheckBox = () => {
@@ -253,23 +250,16 @@ const PostRequest = () => {
     }));
 
     // rating related
-    // let checkNoneRatingRequest = requestDetail.pastRequest.filter(names=>(names.ratingId===null))
-    if (!ratingList){
-        return <h1>Loading...</h1>
-    }
+    let checkNoneRatingRequest = requestDetail.pastRequest.filter(names=>(names.numOfRating===1))
 
-    if (ratingFlag && (ratingList.length < requestDetail.pastRequest.length) ){
-        setRequestId(requestDetail.pastRequest[0].id)
-        if (profile.userType===0){
-            setUserId(requestDetail.pastRequest[0].volunteerId)
-        }else {
-
-            setUserId(requestDetail.pastRequest[0].seniorId)
+    if (ratingFlag && checkNoneRatingRequest.length !== 0){
+        if (window.localStorage.getItem("ratingStatus")!=="rated"){
+            setRatingModal(true)
         }
-
-        setRatingModal(true)
         setRatingFlag(false)
 
+    }else{
+        window.localStorage.removeItem("ratingStatus")
     }
 
 
@@ -277,15 +267,11 @@ const PostRequest = () => {
 
     // console.log(requestDetail.pastRequest.filter(names=>(names.ratingId===null)))
     const handleRating = () => {
-        ratingList.map(res=>(res.numOfRating===null?UserService.update(res.id, {rating: rating, numOfRating: 0}):res.numOfRating))
-        RatingService.addRating(userId, {userRating: rating})
-            .then(r => {
-                console.log(r)
-                setRatingModal(false)
-            })
-            .catch(error=>{
-                console.log(error.message)
-            })
+        RatingService.insertRating(checkNoneRatingRequest[0].id, {userRating: rating})
+            .then(r=>console.log(r))
+            .catch(error=>error.message)
+        setRatingModal(false)
+        window.location.reload();
     }
 
 
@@ -296,14 +282,14 @@ const PostRequest = () => {
         requestTitle: res.title === null ? "" : res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
-        rating: <Rating name="read-only" value={ratingList.result[index].rating} readOnly />
+        rating: <Rating name="read-only" value={res.rating} precision={0.5} readOnly />
     })) : requestDetail.pastRequest.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         // user: res.Senior === null ? "Pending" : res.Senior,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
-        rating: <Rating name="read-only" value={ratingList.result[index].rating} readOnly />
+        rating: <Rating name="read-only" value={res.rating} precision={0.5} readOnly />
     }));
 
 

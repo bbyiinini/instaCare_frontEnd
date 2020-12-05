@@ -29,6 +29,7 @@ import TimelineConnector from '@material-ui/lab/TimelineConnector'
 import TimelineContent from '@material-ui/lab/TimelineContent'
 import PhoneIcon from '@material-ui/icons/Phone'
 import TimelineDot from '@material-ui/lab/TimelineDot'
+import RatingService from "../../service/RatingService";
 
 const RequestMangement = () => {
 
@@ -141,12 +142,15 @@ const RequestMangement = () => {
 		}
 	}
 
+
 	const handleRating = () => {
 		if (!user.numOfRating) {
 			UserService.update(user.id, {rating: rating, numOfRating: 1})
 		} else {
 			UserService.update(user.id, {rating: (user.numOfRating * user.rating + rating) / (user.numOfRating + 1), numOfRating: user.numOfRating + 1})
 		}
+		RatingService.insertRating(originReq.id, {userRating: rating}).then(r=>console.log(r)).catch(error=>error.message)
+		window.localStorage.setItem("ratingStatus", "rated")
 		window.localStorage.removeItem('user')
 		window.localStorage.removeItem('originReq')
 		window.location.assign('/post')
