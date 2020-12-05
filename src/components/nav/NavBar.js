@@ -104,7 +104,7 @@ const NavBar = () => {
     let {addressList, avatar,email,fullName,phone,userType,description} = profile
 
     const redirected = (path) => {
-        history.push(path)
+        window.location.assign(path)
     }
     const handleModalChange = (e) => {
         setcontent(e.target.value)
@@ -136,7 +136,7 @@ const NavBar = () => {
                 </Menu.Item>
 
                 <Menu.Item key="request" className="float-right" disabled>
-                    {profile.userType === 1 && <Button label="request plaza" href="/request" style={{backgroundColor:"#12897b", color:"white", margin:'1%',  textTransform:'none', marginTop:'2vh'}}>Request Plaza</Button>}
+                    {profile.userType === 1 && <Button label="request plaza" onClick={() => redirected('/request')} style={{backgroundColor:"#12897b", color:"white", margin:'1%',  textTransform:'none', marginTop:'2vh'}}>Request Plaza</Button>}
                 </Menu.Item>
 
                 <Menu.Item key="profile" className="float-right" disabled>
