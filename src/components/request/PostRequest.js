@@ -253,18 +253,28 @@ const PostRequest = () => {
     }));
 
     // rating related
-    let checkNoneRatingRequest = requestDetail.pastRequest.filter(names=>(names.ratingId===null))
-    if (ratingFlag && checkNoneRatingRequest.length !==0){
-        setRequestId(checkNoneRatingRequest[0].id)
+    // let checkNoneRatingRequest = requestDetail.pastRequest.filter(names=>(names.ratingId===null))
+    if (!ratingList){
+        return <h1>Loading...</h1>
+    }
+
+    if (ratingFlag && (ratingList.length < requestDetail.pastRequest.length) ){
+        setRequestId(requestDetail.pastRequest[0].id)
         if (profile.userType===0){
-            setUserId(checkNoneRatingRequest[0].volunteerId)
+            setUserId(requestDetail.pastRequest[0].volunteerId)
         }else {
-            setUserId(checkNoneRatingRequest[0].seniorId)
+
+            setUserId(requestDetail.pastRequest[0].seniorId)
         }
 
         setRatingModal(true)
         setRatingFlag(false)
+
     }
+
+
+
+
     // console.log(requestDetail.pastRequest.filter(names=>(names.ratingId===null)))
     const handleRating = () => {
         ratingList.map(res=>(res.numOfRating===null?UserService.update(res.id, {rating: rating, numOfRating: 0}):res.numOfRating))
@@ -278,9 +288,7 @@ const PostRequest = () => {
             })
     }
 
-    if (!ratingList){
-        return <h1>Loading...</h1>
-    }
+
 
     const pastData = profile.userType === 0 ? requestDetail.pastRequest.map((res, index) => ({
         key: index,

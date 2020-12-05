@@ -144,9 +144,10 @@ const App = () => {
           })
         }
 
-        if (pastRequestDetail){
+        if (pastRequestDetail.length !== 0){
             let temp = null;
             let result = [];
+
             for (let i = 0; i < pastRequestDetail.length; i++) {
               userService.retrieve(profileData.userType===0?pastRequestDetail[i].volunteerId:pastRequestDetail[i].seniorId).then(res=>{
                 temp = res.data.data
@@ -160,7 +161,12 @@ const App = () => {
              }).catch(error=>console.log(error.message))
 
             }
-          }
+          }else{
+          dispatch({
+            type: 'RATING',
+            payload: []
+          })
+        }
 
       }else{
         console.log("you have logout")
