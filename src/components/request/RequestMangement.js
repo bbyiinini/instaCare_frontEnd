@@ -500,7 +500,8 @@ const useStyles = makeStyles((theme) => ({
 	},
 	chip: {
 		margin: theme.spacing(0.5),
-		width: theme.spacing(16),
+		paddingLeft: theme.spacing(0.5),
+		paddingRight: theme.spacing(0.5),
 		height: theme.spacing(6),
 		fontSize: "24px"
 	},

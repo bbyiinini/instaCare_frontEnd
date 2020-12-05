@@ -132,11 +132,11 @@ const NavBar = () => {
                 <a href="/"><img id="icLogo"  style={{width:'20%'}} src={icLogo}/></a>
 
                 <Menu.Item key="logout" className="float-right" disabled>
-                    <Button label="log out" style={{backgroundColor:"#12897b", color:"white", margin:'1%', textTransform:'none'}} onClick={logout}>Logout</Button>
+                    <Button label="log out" style={{backgroundColor:"#12897b", color:"white", margin:'1%', textTransform:'none', marginTop:'2vh'}} onClick={logout}>Logout</Button>
                 </Menu.Item>
 
                 <Menu.Item key="request" className="float-right" disabled>
-                    {profile.userType === 1 && <Button label="request plaza" onClick={() => redirected('/request')} style={{backgroundColor:"#12897b", color:"white", margin:'1%',  textTransform:'none'}}>Request Plaza</Button>}
+                    {profile.userType === 1 && <Button label="request plaza" onClick={() => redirected('/request')} style={{backgroundColor:"#12897b", color:"white", margin:'1%',  textTransform:'none', marginTop:'2vh'}}>Request Plaza</Button>}
                 </Menu.Item>
 
                 <Menu.Item key="profile" className="float-right" disabled>
