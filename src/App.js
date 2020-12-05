@@ -145,11 +145,10 @@ const App = () => {
         }
 
         if (pastRequestDetail){
-          if (profileData.userType === 0){
             let temp = null;
             let result = [];
             for (let i = 0; i < pastRequestDetail.length; i++) {
-              userService.retrieve(pastRequestDetail[i].volunteerId).then(res=>{
+              userService.retrieve(profileData.userType===0?pastRequestDetail[i].volunteerId:pastRequestDetail[i].seniorId).then(res=>{
                 temp = res.data.data
                 result = [...result, temp]
                 if (i === pastRequestDetail.length - 1){
@@ -163,17 +162,6 @@ const App = () => {
             }
           }
 
-          // else{
-          //   pastRequestDetail.map(res=>(userService.retrieve(res.seniorId).then(res=>{
-          //     let result = res.data.date
-          //     dispatch({
-          //       type:'RATING',
-          //       payload: {id:res.data.date.id, rating: result.rating, numofRating: result.numofRating}
-          //     })
-          //   })))
-          // }
-
-        }
       }else{
         console.log("you have logout")
       }
