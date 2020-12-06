@@ -29,6 +29,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControl from "@material-ui/core/FormControl";
+import {firestore} from "../../base";
 
 
 const ENTER_KEY = 13;
@@ -48,7 +49,11 @@ const PostRequest = () => {
     const [tagModal, setTagModal] = useState(false);
     const [tagList, setTagList] = useState(['All tags']);
     const [value, setValue] = useState("");
+
     const [distanceModal, setDistanceTagModal] = useState(false);
+    const [distance, setDistance] = useState("unlimited");
+    const [distanceText, setDistanceText] = useState("All Distance");
+    const [distanceLoading, setDistanceLoading] = useState(false);
 
     const handleRequestMange = (key) =>{
         dispatch({
@@ -117,6 +122,76 @@ const PostRequest = () => {
         if (e.keyCode === ENTER_KEY){
             handleSearch()
         }
+    }
+
+    const handleDistanceChange = (e)=>{
+
+        setDistance(e.target.value)
+
+    }
+
+    const handleDistanceApply = (e)=>{
+        setDistanceLoading(true)
+        switch (distance){
+            case "5": setDistanceText("Within 5 miles")
+                break
+            case "10": setDistanceText("Within 10 miles")
+                break
+            case "30": setDistanceText("Within 30 miles")
+                break
+            case "50": setDistanceText("Within 50 miles")
+                break
+            case "unlimited": setDistanceText(" All Distance")
+                break
+        }
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                console.log(pos)
+                setDistanceLoading(false)
+                setDistanceTagModal(false)
+
+                console.log(allOnGoingRequest)
+                let allOnGoingRequestWithAddress = []
+                allOnGoingRequest.forEach((element)=>{
+                    console.log(element)
+
+                    firestore.doc(`/users/${element.seniorId}/address/${element.addressID}`).get()
+                        .then((doc) => {
+                            let geolocation = doc.data().geolocation
+                            console.log('geolocation: ', geolocation)
+
+                            let geolocationArr = geolocation.split(",")
+
+                            //TODO: calculated distance
+                            let distance = calculateDistance(pos.coords.latitude,pos.coords.longitude,Number(geolocationArr[0]),Number(geolocationArr[1]))
+                            console.log(distance)
+                        }).catch(()=>{
+                        console.error(`/users/${element.seniorId}/address/${element.addressID}`)
+                        console.error(element)
+                    })
+                })
+
+
+
+
+            },
+            (err) => {
+                console.log(err)
+            },
+            {
+                enableHighAccuracy: true,
+            })
+
+
+    }
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        let p = 0.017453292519943295;    // Math.PI / 180
+        let c = Math.cos;
+        let a = 0.5 - c((lat2 - lat1) * p)/2 +
+            c(lat1 * p) * c(lat2 * p) *
+            (1 - c((lon2 - lon1) * p))/2;
+
+        return (12742 * Math.asin(Math.sqrt(a)))/ 1.6; // 2 * R; R = 6371 km
     }
 
     const handleSearch = () => {
@@ -246,7 +321,8 @@ const PostRequest = () => {
                     {/*    <option value='4'>Within 20 miles</option>*/}
                     {/*    <option value='4'>Within 30 miles</option>*/}
                     {/*</select>*/}
-                    <label id="distance" style={{cursor:'pointer'}} onClick={e=>setDistanceTagModal(true)}>Within 100 miles</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="distance" style={{cursor:'pointer'}} onClick={e=>setDistanceTagModal(true)}>{distanceText
+                    }</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
@@ -445,16 +521,17 @@ const PostRequest = () => {
             <Modal style={distanceModalStyle} isOpen={distanceModal} onRequestClose={e=>setDistanceTagModal(false)}  appElement={document.getElementById('root')}>
                 <div className="text-center">
                     <FormControl>
-                        <RadioGroup aria-label="distance" name="distance1" value={value} onChange={handleChange}>
+                        <RadioGroup aria-label="distance" name="distance1" value={distance} onChange={handleDistanceChange}>
                             <FormControlLabel value="5" control={<Radio color="primary"/>}   label={<span style={{ fontSize: '20px' }}>Within 5 miles</span>}/>
                             <FormControlLabel value="10" control={<Radio color="primary"/>}  label={<span style={{ fontSize: '20px' }}>Within 10 miles</span>}/>
                             <FormControlLabel value="30" control={<Radio color="primary"/>}  label={<span style={{ fontSize: '20px' }}>Within 30 miles</span>}/>
                             <FormControlLabel value="50" control={<Radio color="primary"/>}  label={<span style={{ fontSize: '20px' }}>Within 50 miles</span>}/>
+                            <FormControlLabel value="unlimited" control={<Radio color="primary"/>}  label={<span style={{ fontSize: '20px' }}>All Distance</span>}/>
                         </RadioGroup>
                     </FormControl>
 
                     <Button type="primary" style={{background: '#00897B', width: '180px', marginTop:'5px'}} shape="round"
-                            className="child" onClick={e=>setDistanceTagModal(false)}>Apply</Button>
+                            className="child" onClick={handleDistanceApply} disabled={distanceLoading}>{distanceLoading?"Loading":"Apply"}</Button>
                 </div>
 
             </Modal>
