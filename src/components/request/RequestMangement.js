@@ -30,6 +30,7 @@ import CardMedia from '@material-ui/core/CardMedia'
 import PhoneIcon from '@material-ui/icons/Phone'
 import imges from '../../assets/takeR.png'
 import moment from 'moment'
+import RatingService from "../../service/RatingService";
 
 const RequestMangement = () => {
 
@@ -120,6 +121,7 @@ const RequestMangement = () => {
 		setWrapId('rating')
 		setOriginReq(requestMange)
 		setWrapOpen(true)
+		// RatingService.insertRating(originReq.id, {userRating: rating}).then(r=>console.log(r)).catch(error=>error.message)
 		await thisRequest.update({ status: 3, type: 4 }).then(setOnGoing(false));
 	}
 
@@ -171,6 +173,7 @@ const RequestMangement = () => {
 		} else {
 			UserService.update(user.id, { rating: (user.numOfRating * user.rating + rating) / (user.numOfRating + 1), numOfRating: user.numOfRating + 1 })
 		}
+		RatingService.insertRating(JSON.parse(window.localStorage.getItem('originReq')).id, {userRating: rating}).then(r=>console.log(r)).catch(error=>error.message)
 		window.localStorage.removeItem('user')
 		window.localStorage.removeItem('originReq')
 		window.location.assign('/post')

@@ -104,7 +104,7 @@ const NavBar = () => {
     let {addressList, avatar,email,fullName,phone,userType,description} = profile
 
     const redirected = (path) => {
-        history.push(path)
+        window.location.assign(path)
     }
     const handleModalChange = (e) => {
         setcontent(e.target.value)

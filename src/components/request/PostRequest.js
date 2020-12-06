@@ -18,6 +18,7 @@ import SelectUSState from 'react-select-us-states';
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import makeStyles from "@material-ui/core/styles/makeStyles";
+import Rating from "@material-ui/lab/Rating";
 
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
@@ -244,13 +245,15 @@ const PostRequest = () => {
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
-        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
+        rating: <Rating name="read-only" value={res.rating} precision={0.5} readOnly />
     })) : requestDetail.pastRequest.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         // user: res.Senior === null ? "Pending" : res.Senior,
-        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
+        requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
+        rating: <Rating name="read-only" value={res.rating} precision={0.5} readOnly />
     }));
 
     // react select of address list

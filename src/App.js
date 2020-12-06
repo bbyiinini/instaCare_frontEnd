@@ -121,10 +121,9 @@ const App = () => {
               const addressDetail = res.data.data;
               let result = null;
               if (addressDetail){
-                result = addressDetail.streetAddressL2 === "" ? addressDetail.streetAddressL1 + ", " + addressDetail.city + ", " +
+                result = addressDetail.streetAddressL2 === "" ? addressDetail.city + ", " +
                     addressDetail.state + " " + addressDetail.zipCode :
-                    addressDetail.streetAddressL1 + ", " + addressDetail.streetAddressL2 + ", " + addressDetail.city + ", " +
-                    addressDetail.state + " " + addressDetail.zipCode;
+                    addressDetail.city + ", " + addressDetail.state + " " + addressDetail.zipCode;
                 address = [...address, {addr:result, id: index}]
               }else{
                 address = [...address, {addr: "", id: index}]
