@@ -199,10 +199,6 @@ const PostRequest = () => {
 
     }
 
-    const handleDefaultDistance = () => {
-        setDistanceTagModal(true)
-        // setOngoing(allOnGoingRequest)
-    }
 
     const handleDistanceFilter = (distance) => {
         let filterResult = [];
@@ -230,7 +226,7 @@ const PostRequest = () => {
                 handleDistanceFilter(30)
                 break
             case 'Within 50 miles':
-                handleDistanceFilter(451)
+                handleDistanceFilter(50)
                 break
         }
     }
@@ -374,8 +370,8 @@ const PostRequest = () => {
                     {/*    <option value='4'>Within 20 miles</option>*/}
                     {/*    <option value='4'>Within 30 miles</option>*/}
                     {/*</select>*/}
-                    <label id="distance" style={{cursor:'pointer'}} onClick={handleDefaultDistance}>{distanceText
-                    }</label> <DownOutlined onClick={handleDefaultDistance} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="distance" style={{cursor:'pointer'}} onClick={e=>setDistanceTagModal(true)}>{distanceText
+                    }</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
