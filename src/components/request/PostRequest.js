@@ -585,8 +585,8 @@ const PostRequest = () => {
 
             <div className="col-sm-1">
                 <select id="optionState" className="ml-3" style={{border: 'none', color: '#004D40', outline: 'none'}}
-                        onChange={handleChange}>
-                    <option  value="none" selected disabled hidden>{past}</option>
+                        defaultValue="none" onChange={handleChange}>
+                    <option  value="none" disabled hidden>{past}</option>
                         <option value="onGoing">Ongoing Requests</option>
                     <option value="past">Past Requests</option>
                 </select>

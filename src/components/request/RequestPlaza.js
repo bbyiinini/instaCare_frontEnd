@@ -49,9 +49,11 @@ const PostRequest = () => {
     const [tagModal, setTagModal] = useState(false);
     const [tagList, setTagList] = useState(['All tags']);
     const [value, setValue] = useState("");
+    const [addrDistance, setAddrDistance] = useState([]);
 
     const [distanceModal, setDistanceTagModal] = useState(false);
     const [distance, setDistance] = useState("unlimited");
+    const [distanceFlag, setDistanceFlag] = useState(true);
     const [distanceText, setDistanceText] = useState("All Distance");
     const [distanceLoading, setDistanceLoading] = useState(false);
 
@@ -69,13 +71,15 @@ const PostRequest = () => {
     }
 
     let {allOnGoingRequest} = requestDetail
-    if (ongoing.length === 0 && flag === true && allOnGoingRequest.length !== 0){
+    if (flag === true && allOnGoingRequest.length !== 0 ){
         setOngoing(allOnGoingRequest);
+        setFlag(false)
     }
 
     const onGoingData = ongoing.map((res,index)=>({
         key: index,
         tags: res.tags===null?[]:res.tags,
+        // address: addrList.addressList.filter(addr => addr.id===index).length===0?"":addrList.addressList.filter(addr => addr.id===index)[0].addr,
         address: addrList.addressList.filter(addr => addr.id===index).length===0?"":addrList.addressList.filter(addr => addr.id===index)[0].addr,
         requestContent: res.requestContent,
     }));
@@ -144,6 +148,10 @@ const PostRequest = () => {
             case "unlimited": setDistanceText(" All Distance")
                 break
         }
+        if (distance === "unlimited"){
+            setOngoing(allOnGoingRequest)
+        }
+            let distanceArr = [];
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 console.log(pos)
@@ -152,7 +160,7 @@ const PostRequest = () => {
 
                 console.log(allOnGoingRequest)
                 let allOnGoingRequestWithAddress = []
-                allOnGoingRequest.forEach((element)=>{
+                allOnGoingRequest.forEach((element, index)=>{
                     console.log(element)
 
                     firestore.doc(`/users/${element.seniorId}/address/${element.addressID}`).get()
@@ -165,11 +173,17 @@ const PostRequest = () => {
                             //TODO: calculated distance
                             let distance = calculateDistance(pos.coords.latitude,pos.coords.longitude,Number(geolocationArr[0]),Number(geolocationArr[1]))
                             console.log(distance)
+                            distanceArr = [...distanceArr, distance]
+                            if (index === allOnGoingRequest.length-1){
+                                setAddrDistance(distanceArr)
+                                setDistanceFlag(true)
+                            }
                         }).catch(()=>{
                         console.error(`/users/${element.seniorId}/address/${element.addressID}`)
                         console.error(element)
                     })
                 })
+
 
 
 
@@ -184,6 +198,45 @@ const PostRequest = () => {
 
 
     }
+
+    const handleDefaultDistance = () => {
+        setDistanceTagModal(true)
+        // setOngoing(allOnGoingRequest)
+    }
+
+    const handleDistanceFilter = (distance) => {
+        let filterResult = [];
+        allOnGoingRequest.map((element, index)=>{
+            if (addrDistance[index]<=distance){
+                filterResult = [...filterResult, element]
+            }
+            if (index === addrDistance.length-1){
+                console.log(filterResult)
+                setOngoing(filterResult)
+            }
+        })
+        setDistanceFlag(false)
+    }
+
+    if (distanceText !== "All Distance" && distanceFlag){
+        switch (distanceText) {
+            case 'Within 5 miles':
+                    handleDistanceFilter(5)
+                break
+            case 'Within 10 miles':
+                    handleDistanceFilter(10)
+                break
+            case 'Within 30 miles':
+                handleDistanceFilter(30)
+                break
+            case 'Within 50 miles':
+                handleDistanceFilter(451)
+                break
+        }
+    }
+
+
+
     const calculateDistance = (lat1, lon1, lat2, lon2) => {
         let p = 0.017453292519943295;    // Math.PI / 180
         let c = Math.cos;
@@ -321,8 +374,8 @@ const PostRequest = () => {
                     {/*    <option value='4'>Within 20 miles</option>*/}
                     {/*    <option value='4'>Within 30 miles</option>*/}
                     {/*</select>*/}
-                    <label id="distance" style={{cursor:'pointer'}} onClick={e=>setDistanceTagModal(true)}>{distanceText
-                    }</label> <DownOutlined onClick={e=>setDistanceTagModal(true)} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
+                    <label id="distance" style={{cursor:'pointer'}} onClick={handleDefaultDistance}>{distanceText
+                    }</label> <DownOutlined onClick={handleDefaultDistance} style={{fontSize:'12px', color:'rgba(0, 0, 0, 0.5)', transform:'translate(-10%, -25%)'}}/>
 
                 </div>
                 <div style={customSelect}>
@@ -518,7 +571,7 @@ const PostRequest = () => {
                </div>
 
             </Modal>
-            <Modal style={distanceModalStyle} isOpen={distanceModal} onRequestClose={e=>setDistanceTagModal(false)}  appElement={document.getElementById('root')}>
+            <Modal style={distanceModalStyle} isOpen={distanceModal}  appElement={document.getElementById('root')}>
                 <div className="text-center">
                     <FormControl>
                         <RadioGroup aria-label="distance" name="distance1" value={distance} onChange={handleDistanceChange}>
@@ -622,7 +675,7 @@ const distanceModalStyle = {
         right: 'auto',
         bottom: 'auto',
         width: '280px',
-        height: '300px',
+        height: '350px',
         borderRadius: '10px',
         // transform: 'translate(-50%,10%)',
     },
