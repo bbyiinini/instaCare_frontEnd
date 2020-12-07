@@ -567,7 +567,7 @@ const PostRequest = () => {
                </div>
 
             </Modal>
-            <Modal style={distanceModalStyle} isOpen={distanceModal}  appElement={document.getElementById('root')}>
+            <Modal style={distanceModalStyle} isOpen={distanceModal} onRequestClose={e=>setDistanceTagModal(false)} appElement={document.getElementById('root')}>
                 <div className="text-center">
                     <FormControl>
                         <RadioGroup aria-label="distance" name="distance1" value={distance} onChange={handleDistanceChange}>
