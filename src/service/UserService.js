@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const USER_API_BASE_URL = "http://localhost:8080/users/api/save";
+const USER_API_BASE_URL = "/users/api/save";
 
 class UserService {
     // saveUser(user) {
@@ -8,7 +8,7 @@ class UserService {
     // }
 
     registed(uid, data){
-        return Axios.post("http://localhost:8080/users/"+uid,data).then(response => {
+        return Axios.post("/api/users/"+uid,data).then(response => {
             console.log(response.data)
         })
         .catch(error => {
@@ -17,7 +17,7 @@ class UserService {
     }
 
     update(uid, data){
-        return Axios.put("http://localhost:8080/users/"+uid,data).then(response => {
+        return Axios.put("/api/users/"+uid,data).then(response => {
             console.log(response.data)
         })
             .catch(error => {
@@ -26,7 +26,7 @@ class UserService {
     }
 //t6zFmkEG2GTO1EWafXBZxHBm0Dp2
     retrieve(uid){
-        return Axios.get("http://localhost:8080/users/" + uid)
+        return Axios.get("/api/users/" + uid)
     }
 
 }

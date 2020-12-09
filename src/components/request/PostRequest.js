@@ -19,6 +19,8 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Rating from "@material-ui/lab/Rating";
+import RatingService from "../../service/RatingService";
+import {firestore} from "../../base";
 
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
@@ -80,6 +82,17 @@ const PostRequest = () => {
 
     // delete request bean
     const [deleteTarget, setDeleteTarget] = useState({})
+    // rating
+    const [rating, setRating] = useState(0)
+    const [ratingFlag, setRatingFlag] = useState(true)
+    const [ratingModal, setRatingModal] = useState(false)
+    const [requestTitle, setRequestTitle] = useState("")
+    const [ongoing, setOngoing] = useState([])
+    const [pastArr, setPastArr] = useState([])
+    const [requestFlag, setRequestFlag] = useState(true)
+    const [needRating, setNeedRating] = useState(null)
+    const requestRef = firestore.collection('requestPlaza')
+
 
     const handleCheckBox = () => {
         setChecked(!checked)
@@ -198,7 +211,7 @@ const PostRequest = () => {
     }
 
     if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest || !addressList.userAddrList) {
-        return <h1>Loading...</h1>
+        return <h1 style={{marginTop:'15px'}}>Loading...</h1>
     }
 
     let {fullName} = profile
@@ -222,15 +235,21 @@ const PostRequest = () => {
         return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
     }
 
-    let {ongoingRequest} = requestDetail
-    const onGoingData = profile.userType === 0 ? ongoingRequest.map((res, index) => ({
+    let {ongoingRequest, pastRequest} = requestDetail
+    if (requestFlag){
+        setOngoing(ongoingRequest)
+        setPastArr(pastRequest)
+        setRequestFlag(false)
+    }
+
+    const onGoingData = profile.userType === 0 ? ongoing.map((res, index) => ({
         key: index,
         status: res.status === 2 ? "Volunteer on the way" : "request sent",
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY')
-    })) : ongoingRequest.map((res, index) => ({
+    })) : ongoing.map((res, index) => ({
         key: index,
         status: res.status === 2 ? "Volunteer on the way" : "request sent",
         tags: res.tags === null ? [] : res.tags,
@@ -240,14 +259,14 @@ const PostRequest = () => {
     }));
 
 
-    const pastData = profile.userType === 0 ? requestDetail.pastRequest.map((res, index) => ({
+    const pastData = profile.userType === 0 ? pastArr.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
         rating: <Rating name="read-only" value={res.rating} precision={0.5} readOnly />
-    })) : requestDetail.pastRequest.map((res, index) => ({
+    })) : pastArr.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
@@ -260,6 +279,43 @@ const PostRequest = () => {
     // const addressOptions = addressList.length !== 0? addressList.map(address=>({
     //      value: address, label:address
     //   })) : [{value:"default", label:"no address recorded in database"}];
+
+    let noneRated = requestDetail.pastRequest.filter(data=>data.numOfRating===1)
+
+    if (noneRated.length !== 0 && ratingFlag && !window.localStorage.getItem('rateStatus')){
+        setRatingModal(true)
+        setRatingFlag(false)
+        setRequestTitle(noneRated[0].title)
+
+    }
+
+    if (ongoing.length !== 0){
+        ongoing.map((res, index)=>{
+           requestRef.doc(res.id).onSnapshot(async function (doc){
+               if (doc.data().status === 3){
+                   let result = ongoing.splice(index, 1)
+                   if (result.length !== 0){
+                       console.log(result[0])
+                       setNeedRating(result[0])
+                       setOngoing(ongoing)
+                       setRequestTitle(res.title)
+                       setRatingModal(true)
+                   }
+               }
+           })
+        })
+    }
+
+    const handleRating = () => {
+        if (window.localStorage.getItem('rateStatus')){
+            window.localStorage.removeItem('rateStatus')
+        }
+        RatingService.insertRating(noneRated.length===0?needRating.id:noneRated[0].id, {userRating: rating}).then(r=>{
+            setRatingModal(false)
+        }).catch(error=>error.message)
+        window.location.reload()
+    }
+
 
     // ant select of add address
     let newAdd = "";
@@ -827,6 +883,24 @@ const PostRequest = () => {
                 </Fade>
             </Modal>
 
+            <Modal style={modalStyle} isOpen={ratingModal} appElement={document.getElementById('root')}>
+                <>
+                    <h2 className="text-center">Thank you for using InstaCare, your request <span style={{color:'#00897B'}}>{requestTitle}</span> just completed</h2>
+                    <Rating
+                        className={classes.centerItem}
+                        name="simple-controlled"
+                        value={rating}
+                        onChange={(event, newValue) => {
+                            setRating(newValue)
+                        }}
+                    />
+                    <div className="text-center">
+                        <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
+                                onClick={handleRating}>Submit</Button>
+                    </div>
+                </>
+            </Modal>
+
         </div>
     );
 }
@@ -929,7 +1003,13 @@ const useStyle = makeStyles(theme => ({
 },
     textfield: {
         width: "100%",
-    }
+    },
+    centerItem: {
+        marginLeft: '50%',
+        marginTop: '40px',
+        marginBottom: '20px',
+        transform: 'translateX(-50%) scale(2)',
+    },
 
 }));
 
