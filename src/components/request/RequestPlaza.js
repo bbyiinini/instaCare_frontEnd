@@ -166,7 +166,9 @@ const PostRequest = () => {
                     firestore.doc(`/users/${element.seniorId}/address/${element.addressID}`).get()
                         .then((doc) => {
                             if(!doc.exists){
-                                return 
+                                console.error(`/users/${element.seniorId}/address/${element.addressID}`)
+                                console.error(element)
+                                return
                             }
                             let geolocation = doc.data().geolocation
                             console.log('geolocation: ', geolocation)
