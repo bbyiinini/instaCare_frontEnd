@@ -368,7 +368,7 @@ export default function (){
         </div>
         <div className={classes.info}>
           <h3>Address List</h3>
-          {(addressList)&& addressList.map((item, index)=>{
+          {(addList.length !==0)&& addList.map((item)=>{
             return (
             <Grid container spacing={2}>
               <Grid item xs={8}>
