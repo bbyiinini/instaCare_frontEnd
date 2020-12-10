@@ -81,7 +81,7 @@ const ResetPassword = () => {
     }
 
     if (password === ""){
-      toast.error("Please enter the new password password")
+      toast.error("Please enter the new password")
       return;
     }
 
