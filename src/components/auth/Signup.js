@@ -122,7 +122,7 @@ const Signup = (props) => {
         //     }
         // }
         const actionSetting = {
-            url: 'http://localhost:3000/signup/complete',
+            url: 'signup/complete',
             handleCodeInApp: true,
         }
 

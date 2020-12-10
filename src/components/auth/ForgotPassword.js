@@ -45,7 +45,7 @@ const ForgotPassword = () => {
         e.preventDefault();
 
         const actionSetting = {
-            url: 'http://localhost:3000/login',
+            url: 'login',
             handleCodeInApp: true,
         }
         // console.log(email)
