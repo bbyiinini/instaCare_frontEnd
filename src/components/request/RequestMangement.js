@@ -388,7 +388,7 @@ const RequestMangement = () => {
 									} else if (wrapId === "rating") {
 										return (
 											<>
-												<h2 className="text-center">please rate the {user.userType===0? "senior":"volunteer"}</h2>
+												<h2 className="text-center">please rate the {user.userType===1? "senior":"volunteer"}</h2>
 												<Rating
 													className={classes.centerItem}
 													name="simple-controlled"
