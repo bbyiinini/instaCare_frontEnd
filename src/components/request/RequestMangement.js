@@ -49,7 +49,7 @@ const RequestMangement = () => {
 	const [commentCollection, setCommentCollection] = useState([]);
 	const [volunteerState, setVolunteerState] = useState(user);
 	const [seniorState, setSeniorState] = useState(user);
-	const [onGoing, setOnGoing] = useState(originReq.status===2 ? true : false);
+	const [onGoing, setOnGoing] = useState(originReq&&originReq.status===2 ? true : false);
 	const [refresh, setRefresh] = useState(false);
 
 	const history = useHistory()
