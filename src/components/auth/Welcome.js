@@ -82,12 +82,14 @@ export default function Welcome(){
               <h2>Helps Drives Changes</h2>
               <h5>Match Volunteers with Senior</h5>
               <Button
+                  variant={"contained"}
                   onClick={()=>{
                     history.push("/signup")
                     console.log(history)
                   }}
                   className={classes.textfield} >Sign up</Button>
               <Button
+                  variant={"contained"}
                   onClick={()=>{
                     history.push("/login")
                     console.log(history)
