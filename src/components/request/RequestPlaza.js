@@ -353,7 +353,7 @@ const PostRequest = () => {
 
 
     return (
-        <div style={customStyle}>
+        <div style={customStyle} className="main">
                 <div style={customSelect}>
                     <label style={{color:'rgba(0, 0, 0, 0.3)', marginRight: '5px'}}>show: </label>
                     {/*<select style={{border:'none', outline:'none'}} id='foo' defaultValue="selected" onChange={handleFilter}>*/}

@@ -16,3 +16,9 @@
     height: 66px;
 }
 
+.main Button:hover {
+
+    background-color: #01554e !important;
+    border-color:#01554e !important;
+
+}
