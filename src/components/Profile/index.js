@@ -1,5 +1,5 @@
 import React, { useState,useEffect }  from "react";
-import {Button, Grid, Input, Modal, Backdrop, Fade, TextField} from '@material-ui/core'
+import {Button, Grid, Input, Modal as MaterialModal, Backdrop, Fade, TextField} from '@material-ui/core'
 import { createMuiTheme,makeStyles, styled, withStyles} from '@material-ui/core/styles';
 import {useDispatch, useSelector,useStore} from "react-redux";
 import {toast} from "react-toastify";
@@ -13,6 +13,10 @@ import RequestService from "../../service/RequestService";
 import ReactPhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/style.css';
 import './upload.css'
+import Modal from "react-modal";
+
+
+import AddressService from "../../service/AddressService";
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
 const useStyle = makeStyles(theme=>({
@@ -69,6 +73,8 @@ export default function (){
   const [zipCode, setZipCode] = useState("");
 
   const [addList, setAddList] = useState([]);
+  const [addListFlag, setAddListFlag] = useState(true);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -135,14 +141,31 @@ export default function (){
     }
   }
 
-  const handleAddressDelete = (index)=>{
-    return ()=>{
-      toast.info("Please click Update User Profile button to save your changes!")
-      dispatch({
-        type:"AddressDelete",
-        payload:index
-      })
-    }
+  const handleAddressDelete = (e)=>{
+    // return ()=>{
+    //   toast.info("Please click Update User Profile button to save your changes!")
+    //   dispatch({
+    //     type:"AddressDelete",
+    //     payload:index
+    //   })
+    // }
+    window.localStorage.setItem('targetAddr', JSON.stringify(e))
+    setDeleteModal(true)
+  }
+
+  const handleConfirm = () => {
+    let address = window.localStorage.getItem('targetAddr')
+    address = JSON.parse(address)
+    AddressService.deleteAddress(user.uid, address.id).then(r=>{
+      toast.success("address deleted")
+      setAddList(addList.filter(addr=>addr.addr !== address.addr))
+      setDeleteModal(false)
+      window.localStorage.removeItem('targetAddr')
+    }).catch(error=> {
+      console.log(error)
+      window.localStorage.removeItem('targetAddr')
+      setDeleteModal(false)
+    })
   }
 
   const handleAddAddress = ()=>{
@@ -178,65 +201,55 @@ export default function (){
 
   let newAdd = ""
   const handleAdd = async () => {
-    let geolocation =""
-    let postUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') +
-    city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`
+    if (street1 !== "" && city !== "" && state !== "" && zipCode !== ""){
+      let geolocation = ""
+      Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') +
+      city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
+          .then(async response => {
+            console.log(response.data);
+            geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
 
-    Axios.post(postUrl)
-        .then(async response => {
-          let fulladdr = `${street1} ${street2}, ${city}, ${state},${zipCode}`
-          if(addressIndex !== -1){
-            dispatch({
-              type:"Address",
-              payload:{
-                index:addressIndex,
-                content:fulladdr
-              }
-            })
-          }else{
-            dispatch({
-              type:"New Address",
-              payload:fulladdr
-            })
-          }
-          geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
+            const addressBean = {
+              streetAddressL1: street1,
+              streetAddressL2: street2,
+              city: city,
+              state: state,
+              zipCode: zipCode,
+              userId: user.uid,
+              geolocation: geolocation
+            }
 
-          const addressBean = {
-            streetAddressL1: street1,
-            streetAddressL2: street2,
-            city: city,
-            state: state,
-            zipCode: zipCode,
-            userId: user.uid,
-            geolocation: geolocation
-          }
+            newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
+            let result = addList.filter(names=>names.addr.includes(newAdd))
+            if (result.length !== 0) {
+              toast.error("This address has already in your account, please enter another one")
+            }else{
+              let id = "";
+              await RequestService.insertAddress(user.uid, addressBean).then(res => {
+                toast.success("add address success")
+                id = res.data.data;
+              }).catch(error => {
+                toast.error("insert failed")
+                console.log(error.message)
+              });
+              setAddList([...addList, {addr:newAdd, id:id}])
+              setStreet1("")
+              setStreet2("")
+              setCity("")
+              setState("")
+              setZipCode("")
+              setAddressModal(false);
+            }
 
-          if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
-            // console.log(text, title, address, phoneNumber)
-            let id = "";
-            console.log(addressBean,user.uid)
-            await RequestService.insertAddress(user.uid, addressBean).then(res => {
-              toast.success("insert address to backend success")
-              id = res.data.data;
-            }).catch(res => {
-              toast.error("insert failed")
-            });
-            newAdd = (street2 === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
-            setAddList([...addList, {add: newAdd, id: id}])
-            setStreet1("")
-            setStreet2("")
-            setCity("")
-            setState("")
-            setZipCode("")
-            setAddressModal(false);
-          } else {
-            toast.error("please fill all the information")
-          }
-        })
-        .catch(error => {
-          console.log(error.message)
-        });
-    setAddressModal(false)
+          })
+          .catch(error => {
+            console.log(error.message)
+          });
+
+    } else {
+      toast.error("please fill all the information")
+    }
+
   }
 
   const handleAvatarChange = info => {
@@ -258,9 +271,24 @@ export default function (){
     }
   };
 
-  if(!profile){
-    return(<div></div>)
+  if (!profile || !address || !address.userAddrList || !address.addressList) {
+    return <h1 style={{marginTop:'20px'}}>Loading...</h1>
   }
+
+  //
+  let userAddr = address.userAddrList
+  let result = null;
+  let addr = [];
+  userAddr.map(res=>{
+    result = res.streetAddressL2 === "" ? res.streetAddressL1 + res.city + ", " +
+        res.state + " " + res.zipCode :
+        res.streetAddressL1 + ", " + res.streetAddressL2 + ", " + res.city + ", " + res.state + " " + res.zipCode;
+    addr = [...addr, {addr: result, id: res.addressId}]
+    if ((addr.length === userAddr.length)&&addListFlag){
+      setAddList(addr)
+      setAddListFlag(false)
+    }
+  })
 
   const uploadButton = (
       <div>
@@ -320,7 +348,7 @@ export default function (){
               </Grid>
               <Grid item xs={8}>
                 <p>{description}</p>
-                <span style={{color:"#064d40"}} onClick={handleDescription}><b>Change</b></span>
+                <span style={{color:"#064d40", cursor:'pointer'}} onClick={handleDescription}><b>Change</b></span>
               </Grid>
               </Grid>
 
@@ -330,7 +358,7 @@ export default function (){
               </Grid>
               <Grid item xs={8}>
                 <p>+{phone}</p>
-                <span style={{color:"#064d40"}} onClick={handlePhone}><b>Change</b></span>
+                <span style={{color:"#064d40", cursor:'pointer'}} onClick={handlePhone}><b>Change</b></span>
               </Grid>
               </Grid>
 
@@ -343,23 +371,23 @@ export default function (){
             return (
             <Grid container spacing={2}>
               <Grid item xs={8}>
-                {item}
+                {item.addr}
               </Grid>
               <Grid item xs={2}>
                 {/*<span style={{color:"#064d40"}} onClick={handleAddress(index)}><b>Change</b></span>*/}
               </Grid>
               <Grid item xs={2}>
-                <span style={{color:"#064d40"}} onClick={handleAddressDelete(index)}><b>Delete</b></span>
+                <span style={{color:"#064d40", cursor:'pointer'}} onClick={e=>handleAddressDelete(item)}><b>Delete</b></span>
               </Grid>
             </Grid>
             )
           })}
-          <span style={{color:"#064d40"}} onClick={()=>{setAddressModal(true)}}><b>Add address</b></span>
+          <span style={{color:"#064d40", cursor:'pointer'}} onClick={()=>{setAddressModal(true)}}><b>Add address</b></span>
         </div>
       </Grid>
 
     </Grid>
-        <Modal
+        <MaterialModal
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             className={classes.modal}
@@ -404,9 +432,9 @@ export default function (){
               </div>
             </div>
           </Fade>
-        </Modal>
+        </MaterialModal>
 
-        <Modal
+        <MaterialModal
             aria-labelledby="transition-modal-title1"
             aria-describedby="transition-modal-description1"
             className={classes.modal}
@@ -461,6 +489,17 @@ export default function (){
                    onClick={() => setAddressModal(false)}>Cancel</label>
           </div>
           </div>
+        </MaterialModal>
+
+        <Modal style={deleteModalStyle}
+               isOpen={deleteModal}
+               appElement={document.getElementById('root')} >
+          <h2>Delete Address</h2>
+          <p>Are you sure to delete this address?</p>
+          <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
+                  className="float-right" onClick={handleConfirm}>Confirm</Button>
+          <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
+                 onClick={() => setDeleteModal(false)}>Cancel</label>
         </Modal>
   </div>)
 }
@@ -482,5 +521,25 @@ const addressModalStyle = {
     width: '30%',
     borderRadius: '30px',
     transform: 'translate(-40%, 5%)',
+  },
+}
+
+const deleteModalStyle = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(116, 130, 128, 0.6)'
+  },
+  content: {
+    top: '15%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    width: '20%',
+    borderRadius: '30px',
+    transform: 'translate(-40%, 40%)',
   },
 }

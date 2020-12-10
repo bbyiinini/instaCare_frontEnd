@@ -10,6 +10,10 @@ class AddressService {
     getAddressByAddressId(uid, addId) {
         return Axios.get("/address/"+uid+"/"+addId)
     }
+
+    deleteAddress(uid, addId) {
+        return Axios.delete("/address/"+uid+"/"+addId)
+    }
 }
 
 export default new AddressService();
