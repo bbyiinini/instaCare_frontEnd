@@ -41,7 +41,6 @@ const options = {
     zoomControl: true,
 }
 
-const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
 const RequestGoogleMap = (props) => {
     let intervalId
