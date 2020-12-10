@@ -17,6 +17,7 @@ import main from '../assets/main.svg'
 import TextField from 'material-ui/TextField';
 import {makeStyles} from "@material-ui/core/styles";
 import {toast} from "react-toastify";
+import ReactPhoneInput from "react-phone-input-2";
 
 const useStyles = makeStyles({
   root: {
@@ -182,14 +183,30 @@ export default function FinishSetUp(props){
               />
             </div>
             <br/>
-            <div className={classes.textfield}>
-              <Input
-                  disableUnderline
-                  style={{width:"80%"}}
-                  placeholder={"Phone Number"}
-                  onChange = {phoneChange}
+            {/*  <Input*/}
+            {/*      disableUnderline*/}
+            {/*      style={{width:"80%"}}*/}
+            {/*      placeholder={"Phone Number"}*/}
+            {/*      onChange = {phoneChange}*/}
+            {/*  />*/}
+            {/*</div>*/}
+            <ReactPhoneInput
+                  style={{width:"30%",margin:'auto'}}
+                  country={'us'}
+                  onlyCountries={['us']}
+                  isValid={(value, country) => {
+                    if (!value.match(/1/)) {
+                      return 'Invalid area code: ' + value + ', ' + country.name;
+                    } else {
+                      return true;
+                    }
+                  }}
+                  inputProps={{
+                    name: "phone",
+                    required: true,
+                  }}
+                  onChange={e => {setphone(e)}}
               />
-            </div>
             <br/>
             {/*<div className={classes.textfield}>*/}
             {/*  <Input*/}

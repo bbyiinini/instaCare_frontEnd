@@ -167,9 +167,10 @@ export default function (){
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    console.log(file.size)
+    const isLt2M = file.size / 1024 / 1024 < 0.1;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('Image must smaller than 100KB!');
     }
     return isJpgOrPng && isLt2M;
   }
@@ -246,6 +247,7 @@ export default function (){
     if (info.file.status === 'done') {
       // Get this url from response in real world.
       getBase64(info.file.originFileObj, imageUrl => {
+        console.log(imageUrl.length)
         setloading(false)
         dispatch({
           type:"Avatar",
@@ -336,7 +338,7 @@ export default function (){
           </Grid>
         </div>
         <div className={classes.info}>
-          <h3>Address Lists</h3>
+          <h3>Address List</h3>
           {(addressList)&& addressList.map((item, index)=>{
             return (
             <Grid container spacing={2}>
