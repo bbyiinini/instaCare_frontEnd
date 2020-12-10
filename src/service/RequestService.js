@@ -4,7 +4,7 @@ import {toast} from "react-toastify";
 class RequestService {
 
     request(rid, requestBean){
-        return Axios.post("/api/request/"+rid, requestBean).then(res=>{
+        return Axios.post("/request/"+rid, requestBean).then(res=>{
             console.log(res);
         }).catch(error => {
             console.log(error.message)
@@ -12,7 +12,7 @@ class RequestService {
     };
 
     deleRequest(rid){
-        return Axios.post("/api/request/"+rid, rid).then(res=>{
+        return Axios.post("/request/"+rid, rid).then(res=>{
             console.log(res);
         }).catch(error => {
             console.log(error.message);
@@ -20,7 +20,7 @@ class RequestService {
     }
 
     deleteRequest(rid){
-        return Axios.delete("/api/request/"+rid)
+        return Axios.delete("/request/"+rid)
     }
 
     // getRequest(uid){
@@ -31,7 +31,7 @@ class RequestService {
     //     })
     // }
     insertAddress(uid, addressBean) {
-        return Axios.post("/api/address/"+uid, addressBean)
+        return Axios.post("/address/"+uid, addressBean)
     }
 }
 

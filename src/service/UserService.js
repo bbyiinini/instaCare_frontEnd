@@ -8,7 +8,7 @@ class UserService {
     // }
 
     registed(uid, data){
-        return Axios.post("/api/users/"+uid,data).then(response => {
+        return Axios.post("/users/"+uid,data).then(response => {
             console.log(response.data)
         })
         .catch(error => {
@@ -17,7 +17,7 @@ class UserService {
     }
 
     update(uid, data){
-        return Axios.put("/api/users/"+uid,data).then(response => {
+        return Axios.put("/users/"+uid,data).then(response => {
             console.log(response.data)
         })
             .catch(error => {
@@ -26,7 +26,7 @@ class UserService {
     }
 //t6zFmkEG2GTO1EWafXBZxHBm0Dp2
     retrieve(uid){
-        return Axios.get("/api/users/" + uid)
+        return Axios.get("/users/" + uid)
     }
 
 }

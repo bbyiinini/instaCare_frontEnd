@@ -87,6 +87,9 @@ const NavBar = () => {
     }
     const logout = () => {
         db.auth().signOut().then(r =>{
+            if (window.localStorage.getItem('rateStatus')==='rated'){
+                window.localStorage.removeItem('rateStatus')
+            }
             toast.success("user logged out!")
         });
         dispatch({

@@ -90,6 +90,7 @@ const PostRequest = () => {
     const [ongoing, setOngoing] = useState([])
     const [pastArr, setPastArr] = useState([])
     const [requestFlag, setRequestFlag] = useState(true)
+    const [snapShotFlag, setSnapShotFlag] = useState(true)
     const [needRating, setNeedRating] = useState(null)
     const requestRef = firestore.collection('requestPlaza')
 
@@ -286,34 +287,48 @@ const PostRequest = () => {
         setRatingModal(true)
         setRatingFlag(false)
         setRequestTitle(noneRated[0].title)
-
     }
 
     if (ongoing.length !== 0){
         ongoing.map((res, index)=>{
            requestRef.doc(res.id).onSnapshot(async function (doc){
-               if (doc.data().status === 3){
-                   let result = ongoing.splice(index, 1)
-                   if (result.length !== 0){
-                       console.log(result[0])
-                       setNeedRating(result[0])
-                       setOngoing(ongoing)
-                       setRequestTitle(res.title)
-                       setRatingModal(true)
-                   }
+               if (doc.data().status === 3 && !doc.data().rating){
+                   let result =  ongoing.filter( item => item !== ongoing[index])
+                   setOngoing(result)
+                   setNeedRating(ongoing[index])
+                   setRequestTitle(res.title)
+                   setRatingModal(true)
                }
+
+               // if (doc.data().numOfRating === 2 && window.localStorage.getItem('rateStatus')){
+               //     // window.localStorage.removeItem('rateStatus')
+               //     console.log("remove me")
+               // }
            })
         })
     }
+
 
     const handleRating = () => {
         if (window.localStorage.getItem('rateStatus')){
             window.localStorage.removeItem('rateStatus')
         }
-        RatingService.insertRating(noneRated.length===0?needRating.id:noneRated[0].id, {userRating: rating}).then(r=>{
-            setRatingModal(false)
+        RatingService.insertRating(noneRated.length===0?needRating.id:noneRated[0].id, {userRating: rating}).then(r=> {
+
+            // if (noneRated.length === 0){
+            //     needRating.rating = rating
+            //     needRating.numOfRating = 1
+            //     setPastArr([needRating, ...pastArr])
+            //     setRatingModal(false)
+            // }else
+            // {
+            //     setRatingModal(false)
+            //     window.location.reload()
+            // }
+                setRatingModal(false)
+                window.location.reload()
+
         }).catch(error=>error.message)
-        window.location.reload()
     }
 
 
