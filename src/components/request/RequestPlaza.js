@@ -165,12 +165,15 @@ const PostRequest = () => {
 
                     firestore.doc(`/users/${element.seniorId}/address/${element.addressID}`).get()
                         .then((doc) => {
+                            if(!doc.exists){
+                                return 
+                            }
                             let geolocation = doc.data().geolocation
                             console.log('geolocation: ', geolocation)
 
                             let geolocationArr = geolocation.split(",")
 
-                            //TODO: calculated distance
+
                             let distance = calculateDistance(pos.coords.latitude,pos.coords.longitude,Number(geolocationArr[0]),Number(geolocationArr[1]))
                             console.log(distance)
                             distanceArr = [...distanceArr, distance]
