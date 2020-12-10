@@ -28,6 +28,7 @@ import TimelineConnector from '@material-ui/lab/TimelineConnector'
 import TimelineContent from '@material-ui/lab/TimelineContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import PhoneIcon from '@material-ui/icons/Phone'
+import StarIcon from '@material-ui/icons/Star';
 import imges from '../../assets/takeR.png'
 import moment from 'moment'
 import RatingService from "../../service/RatingService";
@@ -48,7 +49,7 @@ const RequestMangement = () => {
 	const [commentCollection, setCommentCollection] = useState([]);
 	const [volunteerState, setVolunteerState] = useState(user);
 	const [seniorState, setSeniorState] = useState(user);
-	const [onGoing, setOnGoing] = useState(false);
+	const [onGoing, setOnGoing] = useState(originReq.status===2 ? true : false);
 	const [refresh, setRefresh] = useState(false);
 
 	const history = useHistory()
@@ -64,14 +65,15 @@ const RequestMangement = () => {
 			if (requestMange.volunteerId) {
 				const volunteer = (await UserService.retrieve(requestMange.volunteerId)).data.data;
 				console.log(volunteer)
-				if (requestMange.status === 2 && !onGoing) {
-					user.userType === 1 ? toast.success("Request has been take") : toast.success("Successfully take the request");
+				if (requestMange.status === 2 && !onGoing && !toast.isActive("take")) {
+					user.userType === 1 ? toast.success("Request has been take",{toastId: "take"}) : toast.success("Successfully take the request", {toastId: "take"});
 					setOnGoing(true);
 				}
 				setVolunteerState(volunteer);
 			}
-			if (requestMange.seniorId && requestMange.seniorId !== seniorState.id) {
+			if (requestMange.seniorId && (requestMange.seniorId !== seniorState.id || seniorState.rating !==null )) {
 				const senior = (await UserService.retrieve(requestMange.seniorId)).data.data;
+				console.log(senior)
 				setSeniorState(senior);
 			}
 
@@ -92,8 +94,8 @@ const RequestMangement = () => {
 				window.localStorage.setItem('user', JSON.stringify(user))
 
 				if (doc.data()) {
-					// if (doc.data().type && doc.data().type % 5 === user.userType+1){
-					if (doc.data().status === 3){
+					if (doc.data().type && doc.data().type % 5 === user.userType+1){
+					// if (doc.data().status === 3){
 						handleAutoEnd()
 					}else{
 						window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
@@ -103,7 +105,7 @@ const RequestMangement = () => {
 						}
 					}
 				} else {
-					// setRequestMange(originReq)
+					history.push('/')
 				}
 			})
 		}
@@ -122,7 +124,6 @@ const RequestMangement = () => {
 		setWrapId('rating')
 		setOriginReq(requestMange)
 		setWrapOpen(true)
-		// RatingService.insertRating(originReq.id, {userRating: rating}).then(r=>console.log(r)).catch(error=>error.message)
 		await thisRequest.update({ status: 3, type: 4 }).then(setOnGoing(false));
 	}
 
@@ -133,7 +134,7 @@ const RequestMangement = () => {
 			await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
 		} else if (wrapId === 'cancel') {
 			if (user.userType === 1) {
-				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null, type: null}).then(setOnGoing(false));
+				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null, type: null, volunteerLocation: null}).then(setOnGoing(false));
 				window.localStorage.removeItem('user')
 				window.localStorage.removeItem('originReq')
 				window.location.assign("/post");
@@ -169,10 +170,12 @@ const RequestMangement = () => {
 	}
 
 	const handleRating = () => {
-		if (!user.numOfRating) {
-			UserService.update(user.id, { rating: rating, numOfRating: 1 })
+
+		const ratingUser = user.userType===0 ? volunteerState : seniorState
+		if (!ratingUser.numOfRating) {
+			UserService.update(ratingUser.id, { rating: rating, numOfRating: 1 })
 		} else {
-			UserService.update(user.id, { rating: (user.numOfRating * user.rating + rating) / (user.numOfRating + 1), numOfRating: user.numOfRating + 1 })
+			UserService.update(ratingUser.id, { rating: (ratingUser.numOfRating * ratingUser.rating + rating) / (ratingUser.numOfRating + 1), numOfRating: ratingUser.numOfRating + 1 })
 		}
 		RatingService.insertRating(JSON.parse(window.localStorage.getItem('originReq')).id, {userRating: rating}).then(r=>console.log(r)).catch(error=>error.message)
 
@@ -239,7 +242,7 @@ const RequestMangement = () => {
 													</div>
 												</div>
 											}
-											subheader="Rating:" {...requestMange.rating}
+											subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color:"#f4b63f" }}/> {seniorState.rating}</div>}
 										/>
 									</div>
 									<div className={classes.paddings1}>
@@ -335,21 +338,21 @@ const RequestMangement = () => {
 											Waiting for a volunteer to take the request.
 										</Typography>
 									</CardContent>
-									<Button color="primary" variant="contained" className={classes.bHeight1} onClick={() => handleOpen('covid')}>I Want to Help</Button>
+									<Button color="primary" variant="contained" className={classes.bHeight1} onClick={() => handleOpen('covid')}>Take Ticket</Button>
 								</ThemeProvider></> :
 							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
 								<Card className={classes.volunteer}>
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge}></Avatar>}
 										title={<div className={classes.ftSmall}>Waiting for volunteer</div>}
-										subheader='Rating: N/A' />
+										subheader={<div className={classes.ftSmall}>Rating: N/A</div>}/>
 								</Card> :
 								<Card className={classes.volunteer}>
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={requestMange.volunteerId ? volunteerState.avatar : ""}></Avatar>}
 										title={<div className={classes.ftSmall}><a>{requestMange.volunteerId !== null ? volunteerState.fullName : "N/A"}</a>
 											<div><PhoneIcon style={{ color: "#41892c" }} />{requestMange.volunteerId !== null ? formatPhoneNumber(volunteerState.phone) : "N/A"}</div></div>}
-										subheader='Rating:'{...requestMange.rating} />
+										subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color:"#f4b63f" }}/> {volunteerState.rating}</div>} />
 								</Card>
 							} </>
 						}
@@ -385,7 +388,7 @@ const RequestMangement = () => {
 									} else if (wrapId === "rating") {
 										return (
 											<>
-												<h2 className="text-center">Thank you for using InstaCare</h2>
+												<h2 className="text-center">please rate the {user.userType===0? "senior":"volunteer"}</h2>
 												<Rating
 													className={classes.centerItem}
 													name="simple-controlled"

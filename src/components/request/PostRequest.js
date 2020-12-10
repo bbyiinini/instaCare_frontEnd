@@ -90,6 +90,7 @@ const PostRequest = () => {
     const [ongoing, setOngoing] = useState([])
     const [pastArr, setPastArr] = useState([])
     const [requestFlag, setRequestFlag] = useState(true)
+    const [snapShotFlag, setSnapShotFlag] = useState(true)
     const [needRating, setNeedRating] = useState(null)
     const requestRef = firestore.collection('requestPlaza')
 
@@ -286,34 +287,48 @@ const PostRequest = () => {
         setRatingModal(true)
         setRatingFlag(false)
         setRequestTitle(noneRated[0].title)
-
     }
 
     if (ongoing.length !== 0){
         ongoing.map((res, index)=>{
            requestRef.doc(res.id).onSnapshot(async function (doc){
-               if (doc.data().status === 3){
-                   let result = ongoing.splice(index, 1)
-                   if (result.length !== 0){
-                       console.log(result[0])
-                       setNeedRating(result[0])
-                       setOngoing(ongoing)
-                       setRequestTitle(res.title)
-                       setRatingModal(true)
-                   }
+               if (doc.data().status === 3 && !doc.data().rating){
+                   let result =  ongoing.filter( item => item !== ongoing[index])
+                   setOngoing(result)
+                   setNeedRating(ongoing[index])
+                   setRequestTitle(res.title)
+                   setRatingModal(true)
                }
+
+               // if (doc.data().numOfRating === 2 && window.localStorage.getItem('rateStatus')){
+               //     // window.localStorage.removeItem('rateStatus')
+               //     console.log("remove me")
+               // }
            })
         })
     }
+
 
     const handleRating = () => {
         if (window.localStorage.getItem('rateStatus')){
             window.localStorage.removeItem('rateStatus')
         }
-        RatingService.insertRating(noneRated.length===0?needRating.id:noneRated[0].id, {userRating: rating}).then(r=>{
-            setRatingModal(false)
+        RatingService.insertRating(noneRated.length===0?needRating.id:noneRated[0].id, {userRating: rating}).then(r=> {
+
+            // if (noneRated.length === 0){
+            //     needRating.rating = rating
+            //     needRating.numOfRating = 1
+            //     setPastArr([needRating, ...pastArr])
+            //     setRatingModal(false)
+            // }else
+            // {
+            //     setRatingModal(false)
+            //     window.location.reload()
+            // }
+                setRatingModal(false)
+                window.location.reload()
+
         }).catch(error=>error.message)
-        window.location.reload()
     }
 
 
@@ -478,8 +493,8 @@ const PostRequest = () => {
                     {/*<a>Delete</a>*/}
                     <Button type="primary" style={{background: '#00897B', fontSize: '16px', textAlign: 'center'}}
                             shape="round"><a style={{textDecoration: 'none'}}
-                                             onClick={() => handleRequestMange(record.key)}>request
-                        management</a></Button>
+                                             onClick={() => handleRequestMange(record.key)}>Request
+                        Management</a></Button>
                 </Space>
             ),
         },
@@ -744,7 +759,7 @@ const PostRequest = () => {
                                         <Option value={[address.add, address.id]} style={{fontSize: '18px'}}
                                                 data-set={address.add} key={index}>{address.add}</Option>
                                     )) :
-                                    <Option style={{fontSize: '18px'}} value="default">No address found in your account,
+                                    <Option disabled style={{fontSize: '18px'}} value="default">No address found in your account,
                                         please add one</Option>}
                             </AntSelect>
                         </div>
@@ -883,7 +898,7 @@ const PostRequest = () => {
                 </Fade>
             </Modal>
 
-            <Modal style={modalStyle} isOpen={ratingModal} appElement={document.getElementById('root')}>
+            <Modal style={ratingModalStyle} isOpen={ratingModal} appElement={document.getElementById('root')}>
                 <>
                     <h2 className="text-center">Thank you for using InstaCare, your request <span style={{color:'#00897B'}}>{requestTitle}</span> just completed</h2>
                     <Rating
@@ -1024,4 +1039,26 @@ const questionnaireStyle = {
     },
 }
 
+const ratingModalStyle = {
+    overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+    },
+    content: {
+        top: '15%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '400px',
+        borderRadius: '30px',
+        transform: 'translate(-40%, -10%)',
+    },
+
+}
+
 export default PostRequest;
+

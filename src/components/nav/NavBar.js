@@ -87,6 +87,10 @@ const NavBar = () => {
     }
     const logout = () => {
         db.auth().signOut().then(r =>{
+            if (window.localStorage.getItem('rateStatus')==='rated'){
+                window.localStorage.removeItem('rateStatus')
+            }
+            window.location.assign('/')
             toast.success("user logged out!")
         });
         dispatch({
@@ -94,7 +98,6 @@ const NavBar = () => {
             payload: null
         });
 
-        window.location.assign('/')
     }
 
     if(!profile){
@@ -140,7 +143,7 @@ const NavBar = () => {
                 </Menu.Item>
 
                 <Menu.Item key="profile" className="float-right" disabled>
-                    <IconButton onClick={() => redirected('/profile')} className="float-right">
+                    <IconButton onClick={() => redirected('/profile')} className="float-right" style={{marginTop:'50%', transform:"translateY(-45%)"}}>
                         <Avatar aria-label="recipe" className={classes.avHuge} src={profile.avatar}></Avatar>
                     </IconButton>
                 </Menu.Item>

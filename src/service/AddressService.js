@@ -4,11 +4,11 @@ import Axios from "axios";
 class AddressService {
 
     getAddressByUid(uid){
-        return Axios.get("/api/address/" + uid)
+        return Axios.get("/address/" + uid)
     }
 
     getAddressByAddressId(uid, addId) {
-        return Axios.get("/api/address/"+uid+"/"+addId)
+        return Axios.get("/address/"+uid+"/"+addId)
     }
 }
 

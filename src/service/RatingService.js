@@ -9,7 +9,7 @@ class RatingService {
     // }
 
     insertRating(rid, ratingBean){
-        return Axios.post("/api/rating/request/"+rid, ratingBean).then(r=>{
+        return Axios.post("/rating/request/"+rid, ratingBean).then(r=>{
             console.log(r)
         }).catch(error=>error.message)
     }
