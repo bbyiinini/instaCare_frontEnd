@@ -28,6 +28,7 @@ import TimelineConnector from '@material-ui/lab/TimelineConnector'
 import TimelineContent from '@material-ui/lab/TimelineContent'
 import CardMedia from '@material-ui/core/CardMedia'
 import PhoneIcon from '@material-ui/icons/Phone'
+import StarIcon from '@material-ui/icons/Star';
 import imges from '../../assets/takeR.png'
 import moment from 'moment'
 import RatingService from "../../service/RatingService";
@@ -238,7 +239,7 @@ const RequestMangement = () => {
 													</div>
 												</div>
 											}
-											subheader={<div className={classes.ftSmall}>Rating: {seniorState.rating}</div>}
+											subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color:"#f4b63f" }}/> {seniorState.rating}</div>}
 										/>
 									</div>
 									<div className={classes.paddings1}>
@@ -348,7 +349,7 @@ const RequestMangement = () => {
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={requestMange.volunteerId ? volunteerState.avatar : ""}></Avatar>}
 										title={<div className={classes.ftSmall}><a>{requestMange.volunteerId !== null ? volunteerState.fullName : "N/A"}</a>
 											<div><PhoneIcon style={{ color: "#41892c" }} />{requestMange.volunteerId !== null ? formatPhoneNumber(volunteerState.phone) : "N/A"}</div></div>}
-										subheader={<div className={classes.ftSmall}>Rating: {volunteerState.rating}</div>} />
+										subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color:"#f4b63f" }}/> {volunteerState.rating}</div>} />
 								</Card>
 							} </>
 						}
