@@ -329,7 +329,7 @@ export default function (){
                 Phone
               </Grid>
               <Grid item xs={8}>
-                <p>+{phone}</p>
+                <p>+1 {phone}</p>
                 <span style={{color:"#064d40"}} onClick={handlePhone}><b>Change</b></span>
               </Grid>
               </Grid>
