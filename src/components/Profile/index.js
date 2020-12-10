@@ -493,8 +493,7 @@ export default function (){
                isOpen={deleteModal}
                appElement={document.getElementById('root')} >
           <h2>Delete Address</h2>
-          <p>Are you sure to cancel this appointment? you will not be able to undo this action once it is
-            completed</p>
+          <p>Are you sure to delete this address?</p>
           <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
                   className="float-right" onClick={handleConfirm}>Confirm</Button>
           <label style={{color: '#00897B', cursor: 'pointer'}} className="float-right m-2"
