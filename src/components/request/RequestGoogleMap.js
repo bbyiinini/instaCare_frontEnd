@@ -22,6 +22,7 @@ import {
     ToggleButton,
 } from 'react-bootstrap'
 import firebase from 'firebase'
+import {toast} from "react-toastify";
 
 const center = {
     lat: 32.8755662,
@@ -73,6 +74,7 @@ const RequestGoogleMap = (props) => {
                     lng: Number(geolocationArr[1])
                 }
                 setTargetAddress(address)
+                panTo(address)
             })
 
     }
@@ -141,6 +143,7 @@ const RequestGoogleMap = (props) => {
             },
             (err) => {
                 console.log(err)
+                toast.error("Can't get geolocation, please try again later")
             },
             {
                 enableHighAccuracy: true,

@@ -30,7 +30,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControl from "@material-ui/core/FormControl";
 import {firestore} from "../../base";
-
+import {toast} from "react-toastify";
 
 const ENTER_KEY = 13;
 const PostRequest = () => {
@@ -190,12 +190,13 @@ const PostRequest = () => {
                 })
 
 
-
-
-
             },
             (err) => {
                 console.log(err)
+                setDistanceLoading(false)
+                setDistanceText(" All Distance")
+                setOngoing(allOnGoingRequest)
+                toast.error("Can't get geolocation, please try again later")
             },
             {
                 enableHighAccuracy: true,
