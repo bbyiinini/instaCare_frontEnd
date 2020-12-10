@@ -125,9 +125,9 @@ const Login = (props) => {
                             <br/>
                             <br/>
                             <Button label="Login"
-                                    style={(!email || password.length < 6) ? {} : {backgroundColor:"#12897b", color:"white"}}
+                                    style={(!email) ? {} : {backgroundColor:"#12897b", color:"white"}}
                                     className={classes.textfield}
-                                    disabled={!email || password.length < 6}
+                                    disabled={!email}
                                     onClick={handleLoginWithEmailAndPassword}
                             >Log In</Button>
                             <br/>

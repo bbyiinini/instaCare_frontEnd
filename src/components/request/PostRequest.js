@@ -212,7 +212,7 @@ const PostRequest = () => {
     }
 
     if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest || !addressList.userAddrList) {
-        return <h1 style={{marginTop:'15px'}}>Loading...</h1>
+        return <h1 style={{marginTop:'20px'}}>Loading...</h1>
     }
 
     let {fullName} = profile
@@ -336,24 +336,25 @@ const PostRequest = () => {
     let newAdd = "";
 
     const handleAdd = async () => {
-        let geolocation = ""
-        Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') +
-        city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
-            .then(async response => {
-                console.log(response.data);
-                geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
 
-                const addressBean = {
-                    streetAddressL1: street1,
-                    streetAddressL2: street2,
-                    city: city,
-                    state: state,
-                    zipCode: zipCode,
-                    userId: user.uid,
-                    geolocation: geolocation
-                }
+        if (street1 !== "" && city !== "" && state !== "" && zipCode !== ""){
+            let geolocation = ""
+            Axios.post(`https://maps.googleapis.com/maps/api/geocode/json?address=${street1.replace(/ /g, '+') + street2.replace(/ /g, '+') +
+            city.replace(/ /g, '+') + state}&key=${GOOGLE_API_KEY}`)
+                .then(async response => {
+                    console.log(response.data);
+                    geolocation = response.data.results[0].geometry.location.lat + "," + response.data.results[0].geometry.location.lng
 
-                if (street1 !== "" && city !== "" && state !== "" && zipCode !== "") {
+                    const addressBean = {
+                        streetAddressL1: street1,
+                        streetAddressL2: street2,
+                        city: city,
+                        state: state,
+                        zipCode: zipCode,
+                        userId: user.uid,
+                        geolocation: geolocation
+                    }
+
                     newAdd = (street2.trim() === "" ? street1 + ", " + city + ", " + state + " " + zipCode : street1 + ", " + street2 + ", " + city + ", " + state + " " + zipCode);
                     let result = addList.filter(names=>names.add.includes(newAdd))
                     if (result.length !== 0) {
@@ -361,7 +362,7 @@ const PostRequest = () => {
                     }else{
                         let id = "";
                         await RequestService.insertAddress(user.uid, addressBean).then(res => {
-                            toast.success("insert address to backend success")
+                            toast.success("add address success")
                             id = res.data.data;
                         }).catch(error => {
                             toast.error("insert failed")
@@ -376,13 +377,15 @@ const PostRequest = () => {
                         setAddressModal(false);
                     }
 
-                } else {
-                    toast.error("please fill all the information")
-                }
-            })
-            .catch(error => {
-                console.log(error.message)
-            });
+                })
+                .catch(error => {
+                    toast.error("please enter valid address")
+                    console.log(error.message)
+                });
+        } else {
+            toast.error("please fill all the information")
+        }
+
 
     }
 
@@ -441,8 +444,8 @@ const PostRequest = () => {
                     {/*<a>Delete</a>*/}
                     <Button type="primary" style={{background: '#00897B', fontSize: '16px', textAlign: 'center'}}
                             shape="round"><a style={{textDecoration: 'none'}}
-                                             onClick={() => handleRequestMange(record.key)}>request
-                        management</a></Button>
+                                             onClick={() => handleRequestMange(record.key)}>Request
+                        Management</a></Button>
                 </Space>
             ),
         },

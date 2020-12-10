@@ -67,7 +67,7 @@ const PostRequest = () => {
 
 
     if(!requestDetail || !requestDetail.allOnGoingRequest || !addrList || !addrList.addressList){
-        return <h1 style={{marginTop:'15px'}}>Loading...</h1>
+        return <h1 style={{marginTop:'20px'}}>Loading...</h1>
     }
 
     let {allOnGoingRequest} = requestDetail
