@@ -759,7 +759,7 @@ const PostRequest = () => {
                                         <Option value={[address.add, address.id]} style={{fontSize: '18px'}}
                                                 data-set={address.add} key={index}>{address.add}</Option>
                                     )) :
-                                    <Option style={{fontSize: '18px'}} value="default">No address found in your account,
+                                    <Option disabled style={{fontSize: '18px'}} value="default">No address found in your account,
                                         please add one</Option>}
                             </AntSelect>
                         </div>
@@ -898,7 +898,7 @@ const PostRequest = () => {
                 </Fade>
             </Modal>
 
-            <Modal style={modalStyle} isOpen={ratingModal} appElement={document.getElementById('root')}>
+            <Modal style={ratingModalStyle} isOpen={ratingModal} appElement={document.getElementById('root')}>
                 <>
                     <h2 className="text-center">Thank you for using InstaCare, your request <span style={{color:'#00897B'}}>{requestTitle}</span> just completed</h2>
                     <Rating
@@ -1037,6 +1037,27 @@ const questionnaireStyle = {
         bottom: 0,
         backgroundColor: 'rgba(116, 130, 128, 0.6)'
     },
+}
+
+const ratingModalStyle = {
+    overlay: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(116, 130, 128, 0.6)'
+    },
+    content: {
+        top: '15%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        width: '400px',
+        borderRadius: '30px',
+        transform: 'translate(-40%, -10%)',
+    },
+
 }
 
 export default PostRequest;
