@@ -92,8 +92,8 @@ const RequestMangement = () => {
 				window.localStorage.setItem('user', JSON.stringify(user))
 
 				if (doc.data()) {
-					// if (doc.data().type && doc.data().type % 5 === user.userType+1){
-					if (doc.data().status === 3){
+					if (doc.data().type && doc.data().type % 5 === user.userType+1){
+					// if (doc.data().status === 3){
 						handleAutoEnd()
 					}else{
 						window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
