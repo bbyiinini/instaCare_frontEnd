@@ -3,6 +3,8 @@
   font-family: 'Rasa', serif;
   font-size: 24px;
   height: 100vh;
+  overflow-x: hidden;
+
 }
 
 .content {
@@ -99,3 +101,4 @@
 /*.google-map-custom-control:hover {*/
 /*  font-weight: 900 !important;*/
 /*}*/
+

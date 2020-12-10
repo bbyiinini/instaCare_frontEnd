@@ -90,6 +90,7 @@ const NavBar = () => {
             if (window.localStorage.getItem('rateStatus')==='rated'){
                 window.localStorage.removeItem('rateStatus')
             }
+            window.location.assign('/')
             toast.success("user logged out!")
         });
         dispatch({
@@ -97,7 +98,6 @@ const NavBar = () => {
             payload: null
         });
 
-        window.location.assign('/')
     }
 
     if(!profile){

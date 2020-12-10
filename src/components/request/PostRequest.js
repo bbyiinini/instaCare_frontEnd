@@ -493,8 +493,8 @@ const PostRequest = () => {
                     {/*<a>Delete</a>*/}
                     <Button type="primary" style={{background: '#00897B', fontSize: '16px', textAlign: 'center'}}
                             shape="round"><a style={{textDecoration: 'none'}}
-                                             onClick={() => handleRequestMange(record.key)}>request
-                        management</a></Button>
+                                             onClick={() => handleRequestMange(record.key)}>Request
+                        Management</a></Button>
                 </Space>
             ),
         },
