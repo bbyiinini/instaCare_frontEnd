@@ -242,6 +242,7 @@ export default function (){
 
           })
           .catch(error => {
+            toast.error("please enter valid address")
             console.log(error.message)
           });
 
