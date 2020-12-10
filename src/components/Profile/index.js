@@ -225,7 +225,7 @@ export default function (){
             }else{
               let id = "";
               await RequestService.insertAddress(user.uid, addressBean).then(res => {
-                toast.success("insert address to backend success")
+                toast.success("add address success")
                 id = res.data.data;
               }).catch(error => {
                 toast.error("insert failed")
