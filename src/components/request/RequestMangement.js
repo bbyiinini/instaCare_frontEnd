@@ -95,6 +95,7 @@ const RequestMangement = () => {
 
 				if (doc.data()) {
 					if (doc.data().type && doc.data().type % 5 === user.userType+1){
+					// if (doc.data().status === 3){
 						handleAutoEnd()
 					}else{
 						window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
@@ -177,6 +178,8 @@ const RequestMangement = () => {
 			UserService.update(ratingUser.id, { rating: (ratingUser.numOfRating * ratingUser.rating + rating) / (ratingUser.numOfRating + 1), numOfRating: ratingUser.numOfRating + 1 })
 		}
 		RatingService.insertRating(JSON.parse(window.localStorage.getItem('originReq')).id, {userRating: rating}).then(r=>console.log(r)).catch(error=>error.message)
+
+		window.localStorage.setItem('rateStatus', 'rated')
 		window.localStorage.removeItem('user')
 		window.localStorage.removeItem('originReq')
 		window.location.assign('/post')

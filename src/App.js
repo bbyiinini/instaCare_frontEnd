@@ -79,7 +79,7 @@ const App = () => {
         if (profileData !== null) {
           let userType = profileData.userType;
           const requestResult = await Axios.get(
-              "http://localhost:8080/request/" + user.uid, {params: {userType:userType}}
+              "/request/" + user.uid, {params: {userType:userType}}
           );
           const requestDetail = requestResult.data.data
           dispatch({
@@ -94,9 +94,8 @@ const App = () => {
           payload: addressDetail
         })
 
-
         const pastResult = await Axios.get(
-            "http://localhost:8080/request/past/" + user.uid
+            "/request/past/" + user.uid
         );
         const pastRequestDetail = pastResult.data.data
         dispatch({
@@ -105,7 +104,7 @@ const App = () => {
         });
 
         const onGoingResult = await Axios.get(
-            "http://localhost:8080/request/all",
+            "/request/all",
         );
         const allOnGoingRequest = onGoingResult.data.data;
 

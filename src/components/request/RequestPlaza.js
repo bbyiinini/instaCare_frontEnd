@@ -24,7 +24,7 @@ import technology from '../../assets/technology.png';
 import time_consuming from '../../assets/time-consuming.png';
 import with_tips from '../../assets/with tips.png';
 import chore from '../../assets/chore.png';
-import allTags from  '../../assets/all_tags.png'
+import allTags from '../../assets/all_tags.png'
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
@@ -67,7 +67,7 @@ const PostRequest = () => {
 
 
     if(!requestDetail || !requestDetail.allOnGoingRequest || !addrList || !addrList.addressList){
-        return <h1>Loading...</h1>
+        return <h1 style={{marginTop:'15px'}}>Loading...</h1>
     }
 
     let {allOnGoingRequest} = requestDetail
@@ -474,7 +474,7 @@ const PostRequest = () => {
                                <Checkbox
                                    onChange={tagOnchange}
                                    color="primary"
-                                   value="Rides"
+                                   value="Need a Ride"
                                />
                            }
                            label="Need a Ride"/>
