@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react'
+import React, {useState} from 'react'
 import {
     GoogleMap,
     LoadScript,
@@ -7,7 +7,7 @@ import {
     DirectionsRenderer,
 } from '@react-google-maps/api'
 // import styled from 'styled-components';
-import db, {firestore} from '../../base'
+import {firestore} from '../../base'
 // import { useSelector } from "react-redux";
 // import Axios from "axios";
 // import PropTypes from 'prop-types'
@@ -22,6 +22,7 @@ import {
     ToggleButton,
 } from 'react-bootstrap'
 import firebase from 'firebase'
+import {toast} from "react-toastify";
 
 const center = {
     lat: 32.8755662,
@@ -40,7 +41,6 @@ const options = {
     zoomControl: true,
 }
 
-const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
 const RequestGoogleMap = (props) => {
     let intervalId
@@ -73,6 +73,7 @@ const RequestGoogleMap = (props) => {
                     lng: Number(geolocationArr[1])
                 }
                 setTargetAddress(address)
+                panTo(address)
             })
 
     }
@@ -133,14 +134,15 @@ const RequestGoogleMap = (props) => {
                     .collection('requestPlaza')
                     .doc(props.requestId)
                     .update({
-                            volunteerLocation: geoPoint,
-                        })
+                        volunteerLocation: geoPoint,
+                    })
                     .catch((err) => {
                         console.log(err)
                     })
             },
             (err) => {
                 console.log(err)
+                toast.error("Can't get geolocation, please try again later")
             },
             {
                 enableHighAccuracy: true,
@@ -253,9 +255,9 @@ const RequestGoogleMap = (props) => {
                                                 variant="light"
                                                 size="lg"
                                                 disabled={isSending}
-                                                onClick={!isSending ? TrackingGeoLocation: null}
+                                                onClick={!isSending ? TrackingGeoLocation : null}
                                             >
-                                                {isSending ?'Sending Location': 'Send Location' }
+                                                {isSending ? 'Sending Location' : 'Send Location'}
                                             </Button>
                                         </div>
                                     </div>

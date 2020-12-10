@@ -877,8 +877,8 @@ const PostRequest = () => {
                             <h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19
                                 infection?</h6>
                             <br></br>
-                            <h4>If your answer is YES for any of the questions above, we advice you to stay home and
-                                avoid physical contacts.</h4>
+                            <h4>If your answer is YES for any of the questions above, we advise you to stay home and
+                                avoid physical contact.</h4>
                             {/* <TextField
                   className={classes.textfield}
                   label={`Enter new ${modalTitle}`}
@@ -1061,3 +1061,4 @@ const ratingModalStyle = {
 }
 
 export default PostRequest;
+

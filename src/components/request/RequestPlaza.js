@@ -30,7 +30,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
 import FormControl from "@material-ui/core/FormControl";
 import {firestore} from "../../base";
-
+import {toast} from "react-toastify";
 
 const ENTER_KEY = 13;
 const PostRequest = () => {
@@ -165,12 +165,17 @@ const PostRequest = () => {
 
                     firestore.doc(`/users/${element.seniorId}/address/${element.addressID}`).get()
                         .then((doc) => {
+                            if(!doc.exists){
+                                console.error(`/users/${element.seniorId}/address/${element.addressID}`)
+                                console.error(element)
+                                return
+                            }
                             let geolocation = doc.data().geolocation
                             console.log('geolocation: ', geolocation)
 
                             let geolocationArr = geolocation.split(",")
 
-                            //TODO: calculated distance
+
                             let distance = calculateDistance(pos.coords.latitude,pos.coords.longitude,Number(geolocationArr[0]),Number(geolocationArr[1]))
                             console.log(distance)
                             distanceArr = [...distanceArr, distance]
@@ -185,12 +190,13 @@ const PostRequest = () => {
                 })
 
 
-
-
-
             },
             (err) => {
                 console.log(err)
+                setDistanceLoading(false)
+                setDistanceText(" All Distance")
+                setOngoing(allOnGoingRequest)
+                toast.error("Can't get geolocation, please try again later")
             },
             {
                 enableHighAccuracy: true,
