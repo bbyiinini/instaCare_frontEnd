@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react'
+import React, {useState} from 'react'
 import {
     GoogleMap,
     LoadScript,
@@ -7,7 +7,7 @@ import {
     DirectionsRenderer,
 } from '@react-google-maps/api'
 // import styled from 'styled-components';
-import db, {firestore} from '../../base'
+import {firestore} from '../../base'
 // import { useSelector } from "react-redux";
 // import Axios from "axios";
 // import PropTypes from 'prop-types'
@@ -135,8 +135,8 @@ const RequestGoogleMap = (props) => {
                     .collection('requestPlaza')
                     .doc(props.requestId)
                     .update({
-                            volunteerLocation: geoPoint,
-                        })
+                        volunteerLocation: geoPoint,
+                    })
                     .catch((err) => {
                         console.log(err)
                     })
@@ -256,9 +256,9 @@ const RequestGoogleMap = (props) => {
                                                 variant="light"
                                                 size="lg"
                                                 disabled={isSending}
-                                                onClick={!isSending ? TrackingGeoLocation: null}
+                                                onClick={!isSending ? TrackingGeoLocation : null}
                                             >
-                                                {isSending ?'Sending Location': 'Send Location' }
+                                                {isSending ? 'Sending Location' : 'Send Location'}
                                             </Button>
                                         </div>
                                     </div>
