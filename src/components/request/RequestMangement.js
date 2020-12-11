@@ -131,9 +131,17 @@ const RequestMangement = () => {
 		if (wrapId === 'end') {
 			if(requestMange.status===2){
 				setWrapId('rating')
+				setOriginReq(requestMange)
+				await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
+			}else{
+				setOriginReq(requestMange)
+				await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
+				window.localStorage.setItem('rateStatus', 'rated')
+				window.localStorage.removeItem('user')
+				window.localStorage.removeItem('originReq')
+				window.location.assign('/post')
 			}
-			setOriginReq(requestMange)
-			await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
+			
 		} else if (wrapId === 'cancel') {
 			if (user.userType === 1) {
 				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null, type: null, volunteerLocation: null}).then(setOnGoing(false));
