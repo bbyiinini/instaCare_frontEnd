@@ -86,6 +86,11 @@ export default function FinishSetUp(props){
       toast.error("please enter all information!")
       return
     }
+    let phonere = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+    if(!phonere.test(phone)){
+      toast.error("please enter a 11 digit phone number!")
+      return
+    }
     let avt = type === 0 ? "https://s3-alpha-sig.figma.com/img/84c2/1c42/c9125fdec92ca5e62e6c1c10f93b8572?Expires=1607904000&Signature=As5sq50TYgxaL4ToxpGZt~Nv70c0x-UEQpGC0AyoAPJ4fl1tmswCsIlCyzyIU~K7rzdIzw9L5NKs5pPwW2yPQMWxEN4PYOntvdjxA73m6BrjRMgisqTS~alClYZI~AGNfisRhqamZU2DiJ1SQ1LmvSjQvcBLIad49wY3-KjATJukzG46GTClY4XUReFidoRmJ4cpUBo-hjyHkq3ZFxEwYl-1qsNTYXnpZZ1qrtNrf4tTQO6~iV2x6te844DYyt2lkAqnFZ4hGSFlK9qFHeMueh3goLIsquXXltXzAfaHkarNIvAyL55RtClgDStlfK-wX8u8GN3HMuhHJOL-uf2XVQ__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA" : "https://s3-alpha-sig.figma.com/img/f585/f8c0/117253c43893dfc0f6afbddd4664d411?Expires=1607904000&Signature=ZJmjUGVWqgXKoV6ZbedzgD~0igUPNyxdWjqOpP~pvIx4x7IUShUmio1WGhtQOa2mcBPdNmeolawo4vXoFoD8xItQZIcwjD67geN-F8SFpEQt54V-4S4rNrleqM37uu54DnIi12bJsOMf2svpyWLDdjVbnlT31NkDzMrVhnmEDKPtYJYoRI~hzWRbd~MalGdgcJcUfFv69YOpHhC36GJtj9TIsbE8cayxy7VTWK2BxBELKGSB9ms8bs5B08y~NO24LYBwrBwW-QXiXAJYaq0X0HFm8vGOKgEX9BBemOOGHarGqI92VzmzVhPwy8n87yluvCnJGwoGkDQnJb~EL~KMRA__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA";
     const userObj = {
       firstName:fname,
@@ -183,39 +188,32 @@ export default function FinishSetUp(props){
               />
             </div>
             <br/>
-            {/*  <Input*/}
-            {/*      disableUnderline*/}
-            {/*      style={{width:"80%"}}*/}
-            {/*      placeholder={"Phone Number"}*/}
-            {/*      onChange = {phoneChange}*/}
-            {/*  />*/}
-            {/*</div>*/}
-            <ReactPhoneInput
-                  style={{width:"30%",margin:'auto'}}
-                  country={'us'}
-                  onlyCountries={['us']}
-                  isValid={(value, country) => {
-                    if (!value.match(/1/)) {
-                      return 'Invalid area code: ' + value + ', ' + country.name;
-                    } else {
-                      return true;
-                    }
-                  }}
-                  inputProps={{
-                    name: "phone",
-                    required: true,
-                  }}
-                  onChange={e => {setphone(e)}}
+            <div className={classes.textfield}>
+              <Input
+                  disableUnderline
+                  style={{width:"80%"}}
+                  placeholder={"Phone Number"}
+                  onChange = {phoneChange}
               />
-            <br/>
-            {/*<div className={classes.textfield}>*/}
-            {/*  <Input*/}
-            {/*      disableUnderline*/}
-            {/*      style={{width:"80%"}}*/}
-            {/*      placeholder={"Address"}*/}
-            {/*      onChange = {addrChange}*/}
+            </div>
+            {/*<ReactPhoneInput*/}
+            {/*      style={{width:"30%",margin:'auto'}}*/}
+            {/*      country={'us'}*/}
+            {/*      onlyCountries={['us']}*/}
+            {/*      isValid={(value, country) => {*/}
+            {/*        if (!value.match(/1/)) {*/}
+            {/*          return 'Invalid area code: ' + value + ', ' + country.name;*/}
+            {/*        } else {*/}
+            {/*          return true;*/}
+            {/*        }*/}
+            {/*      }}*/}
+            {/*      inputProps={{*/}
+            {/*        name: "phone",*/}
+            {/*        required: true,*/}
+            {/*      }}*/}
+            {/*      onChange={e => {setphone(e)}}*/}
             {/*  />*/}
-            {/*</div>*/}
+            <br/>
             <br/>
             <Button label="Complete Info"
                     style={{backgroundColor:"#12897b", color:"white"}}

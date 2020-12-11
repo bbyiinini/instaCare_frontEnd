@@ -360,8 +360,8 @@ export default function (){
                 Phone
               </Grid>
               <Grid item xs={8}>
-                <p>+{phone}</p>
-                <span style={{color:"#064d40", cursor:'pointer'}} onClick={handlePhone}><b>Change</b></span>
+<p>+1 {phone}</p>
+                <span style={{color:"#064d40"}} onClick={handlePhone}><b>Change</b></span>
               </Grid>
               </Grid>
 

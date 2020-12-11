@@ -49,7 +49,7 @@ const RequestMangement = () => {
 	const [commentCollection, setCommentCollection] = useState([]);
 	const [volunteerState, setVolunteerState] = useState(user);
 	const [seniorState, setSeniorState] = useState(user);
-	const [onGoing, setOnGoing] = useState(originReq.status===2 ? true : false);
+	const [onGoing, setOnGoing] = useState(originReq&&originReq.status===2 ? true : false);
 	const [refresh, setRefresh] = useState(false);
 
 	const history = useHistory()
@@ -340,7 +340,7 @@ const RequestMangement = () => {
 									</CardContent>
 									<Button color="primary" variant="contained" className={classes.bHeight1} onClick={() => handleOpen('covid')}>Take Ticket</Button>
 								</ThemeProvider></> :
-							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
+							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} status={requestMange.status} ></RequestGoogleMap> {requestMange.status === 1 ?
 								<Card className={classes.volunteer}>
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge}></Avatar>}
@@ -388,7 +388,7 @@ const RequestMangement = () => {
 									} else if (wrapId === "rating") {
 										return (
 											<>
-												<h2 className="text-center">please rate the {user.userType===0? "senior":"volunteer"}</h2>
+												<h2 className="text-center">please rate the {user.userType===1? "senior":"volunteer"}</h2>
 												<Rating
 													className={classes.centerItem}
 													name="simple-controlled"
