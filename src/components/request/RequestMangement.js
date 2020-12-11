@@ -129,7 +129,9 @@ const RequestMangement = () => {
 
 	const handleEnd = async () => {
 		if (wrapId === 'end') {
-			setWrapId('rating')
+			if(requestMange.status===2){
+				setWrapId('rating')
+			}
 			setOriginReq(requestMange)
 			await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
 		} else if (wrapId === 'cancel') {
