@@ -340,7 +340,7 @@ const RequestMangement = () => {
 									</CardContent>
 									<Button color="primary" variant="contained" className={classes.bHeight1} onClick={() => handleOpen('covid')}>Take Ticket</Button>
 								</ThemeProvider></> :
-							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} ></RequestGoogleMap> {requestMange.status === 1 ?
+							<> <RequestGoogleMap requestId={requestMange.id} userType={user.userType} status={requestMange.status} ></RequestGoogleMap> {requestMange.status === 1 ?
 								<Card className={classes.volunteer}>
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge}></Avatar>}

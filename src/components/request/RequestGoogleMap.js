@@ -73,7 +73,7 @@ const RequestGoogleMap = (props) => {
                     lng: Number(geolocationArr[1])
                 }
                 setTargetAddress(address)
-                if(mapRef){
+                if(mapRef.current){
                     panTo(address)
                 }
 
@@ -200,7 +200,7 @@ const RequestGoogleMap = (props) => {
                     onUnmount={onUnmount}
                     options={options}
                 >
-                    {props.userType === 1 && (
+                    {props.userType === 1 && props.status === 2 && (
                         <Container>
                             <Row>
                                 <Col xs={7}>
