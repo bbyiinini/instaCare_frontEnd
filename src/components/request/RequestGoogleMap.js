@@ -73,7 +73,10 @@ const RequestGoogleMap = (props) => {
                     lng: Number(geolocationArr[1])
                 }
                 setTargetAddress(address)
-                panTo(address)
+                if(mapRef){
+                    panTo(address)
+                }
+
             })
 
     }
@@ -103,6 +106,9 @@ const RequestGoogleMap = (props) => {
 
     const onLoad = React.useCallback((map) => {
         mapRef.current = map
+        if(targetAddress){
+            panTo(targetAddress)
+        }
     }, [])
 
     const onUnmount = React.useCallback(function callback(map) {
