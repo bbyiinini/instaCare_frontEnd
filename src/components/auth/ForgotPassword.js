@@ -45,7 +45,7 @@ const ForgotPassword = () => {
         e.preventDefault();
 
         const actionSetting = {
-            url: 'http://localhost:3000/login',
+            url: 'http://instacare.today/login',
             handleCodeInApp: true,
         }
         // console.log(email)

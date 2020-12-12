@@ -168,7 +168,7 @@ const App = () => {
               </Route>
               <ProtectedRoute exact path="/login" component={() => <Login />} />
               <ProtectedRoute exact path="/signup" component={() => <Signup />} />
-              <Route exact path="/signup/complete" component={() => <SignUpComplete />} />
+              <Route exact path="/signupcomplete" component={() => <SignUpComplete />} />
               <Route exact path="/forgot/resetpassword" component={() => <ForgotPassword />} />
               <Route exact path="/finishSetUp" component={() => <FinishSetUp/>}/>
               <Route exact path="/request" component={() => <Request />} />
