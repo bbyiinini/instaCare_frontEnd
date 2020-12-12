@@ -49,7 +49,7 @@ const RequestMangement = () => {
 	const [commentCollection, setCommentCollection] = useState([]);
 	const [volunteerState, setVolunteerState] = useState(user);
 	const [seniorState, setSeniorState] = useState(user);
-	const [onGoing, setOnGoing] = useState(originReq&&originReq.status===2 ? true : false);
+	const [onGoing, setOnGoing] = useState(originReq && originReq.status === 2 ? true : false);
 	const [refresh, setRefresh] = useState(false);
 
 	const history = useHistory()
@@ -66,12 +66,12 @@ const RequestMangement = () => {
 				const volunteer = (await UserService.retrieve(requestMange.volunteerId)).data.data;
 				console.log(volunteer)
 				if (requestMange.status === 2 && !onGoing && !toast.isActive("take")) {
-					user.userType === 1 ? toast.success("Request has been take",{toastId: "take"}) : toast.success("Successfully take the request", {toastId: "take"});
+					user.userType === 1 ? toast.success("Request has been take", { toastId: "take" }) : toast.success("Successfully take the request", { toastId: "take" });
 					setOnGoing(true);
 				}
 				setVolunteerState(volunteer);
 			}
-			if (requestMange.seniorId && (requestMange.seniorId !== seniorState.id || seniorState.rating !==null )) {
+			if (requestMange.seniorId && (requestMange.seniorId !== seniorState.id || seniorState.rating !== null)) {
 				const senior = (await UserService.retrieve(requestMange.seniorId)).data.data;
 				console.log(senior)
 				setSeniorState(senior);
@@ -80,7 +80,7 @@ const RequestMangement = () => {
 		}
 	}, [requestMange]);
 
-	if(!refresh){
+	if (!refresh) {
 		setRefresh(true)
 	}
 
@@ -94,10 +94,10 @@ const RequestMangement = () => {
 				window.localStorage.setItem('user', JSON.stringify(user))
 
 				if (doc.data()) {
-					if (doc.data().type && doc.data().type % 5 === user.userType+1){
-					// if (doc.data().status === 3){
+					if (doc.data().type && doc.data().type % 5 === user.userType + 1) {
+						// if (doc.data().status === 3){
 						handleAutoEnd()
-					}else{
+					} else {
 						window.localStorage.setItem('originReq', JSON.stringify(doc.data()))
 						setRequestMange(doc.data())
 						if (doc.data().comments) {
@@ -129,22 +129,22 @@ const RequestMangement = () => {
 
 	const handleEnd = async () => {
 		if (wrapId === 'end') {
-			if(requestMange.status===2){
+			if (requestMange.status === 2) {
 				setWrapId('rating')
 				setOriginReq(requestMange)
-				await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
-			}else{
+				await thisRequest.update({ status: 3, type: user.userType === 0 ? 2 : 1 }).then(setOnGoing(false));
+			} else {
 				setOriginReq(requestMange)
-				await thisRequest.update({ status: 3, type: user.userType===0 ? 2 : 1}).then(setOnGoing(false));
+				await thisRequest.update({ status: 3, type: user.userType === 0 ? 2 : 1 }).then(setOnGoing(false));
 				window.localStorage.setItem('rateStatus', 'rated')
 				window.localStorage.removeItem('user')
 				window.localStorage.removeItem('originReq')
 				window.location.assign('/post')
 			}
-			
+
 		} else if (wrapId === 'cancel') {
 			if (user.userType === 1) {
-				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null, type: null, volunteerLocation: null}).then(setOnGoing(false));
+				await thisRequest.update({ status: 1, volunteer: null, volunteerId: null, type: null, volunteerLocation: null }).then(setOnGoing(false));
 				window.localStorage.removeItem('user')
 				window.localStorage.removeItem('originReq')
 				window.location.assign("/post");
@@ -181,13 +181,13 @@ const RequestMangement = () => {
 
 	const handleRating = () => {
 
-		const ratingUser = user.userType===0 ? volunteerState : seniorState
+		const ratingUser = user.userType === 0 ? volunteerState : seniorState
 		if (!ratingUser.numOfRating) {
 			UserService.update(ratingUser.id, { rating: rating, numOfRating: 1 })
 		} else {
 			UserService.update(ratingUser.id, { rating: (ratingUser.numOfRating * ratingUser.rating + rating) / (ratingUser.numOfRating + 1), numOfRating: ratingUser.numOfRating + 1 })
 		}
-		RatingService.insertRating(JSON.parse(window.localStorage.getItem('originReq')).id, {userRating: rating}).then(r=>console.log(r)).catch(error=>error.message)
+		RatingService.insertRating(JSON.parse(window.localStorage.getItem('originReq')).id, { userRating: rating }).then(r => console.log(r)).catch(error => error.message)
 
 		window.localStorage.setItem('rateStatus', 'rated')
 		window.localStorage.removeItem('user')
@@ -197,17 +197,17 @@ const RequestMangement = () => {
 	const handleTake = () => {
 		thisRequest.update({ status: 2, volunteerId: user.id, volunteer: user.fullName, type: 3 })
 		setWrapOpen(false)
-    }
-    
-    const formatPhoneNumber = (phoneNumberString)=>{
-        let cleaned = ('' + phoneNumberString).replace(/\D/g, '')
-        let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
-        if (match) {
-            let intlCode = (match[1] ? '+1 ' : '')
-            return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
-        }
-        return null
-    }
+	}
+
+	const formatPhoneNumber = (phoneNumberString) => {
+		let cleaned = ('' + phoneNumberString).replace(/\D/g, '')
+		let match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
+		if (match) {
+			let intlCode = (match[1] ? '+1 ' : '')
+			return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('')
+		}
+		return null
+	}
 
 	const theme = createMuiTheme({
 		palette: {
@@ -252,7 +252,7 @@ const RequestMangement = () => {
 													</div>
 												</div>
 											}
-											subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color:"#f4b63f" }}/> {seniorState.rating}</div>}
+											subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color: "#f4b63f" }} /> {seniorState.rating}</div>}
 										/>
 									</div>
 									<div className={classes.paddings1}>
@@ -310,20 +310,20 @@ const RequestMangement = () => {
 											</Timeline>
 											<form onSubmit={handleComment}>
 												<TextField
-												InputProps={{
-													classes: {
-													  input: classes.ftSmall2,
-													},
-												  }}
-												color="secondary"
-												id="outlined-full-width"
-												style={{ margin: "5px"}}
-												placeholder="Type your message here..."
-												fullWidth
-												margin="normal"
-												variant="outlined"
-												value={textField}
-												onChange={handleTextFieldChange}/>
+													InputProps={{
+														classes: {
+															input: classes.ftSmall2,
+														},
+													}}
+													color="secondary"
+													id="outlined-full-width"
+													style={{ margin: "5px" }}
+													placeholder="Type your message here..."
+													fullWidth
+													margin="normal"
+													variant="outlined"
+													value={textField}
+													onChange={handleTextFieldChange} />
 												<Button
 													className={classes.post}
 													variant="contained"
@@ -355,14 +355,14 @@ const RequestMangement = () => {
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge}></Avatar>}
 										title={<div className={classes.ftSmall}>Waiting for volunteer</div>}
-										subheader={<div className={classes.ftSmall}>Rating: N/A</div>}/>
+										subheader={<div className={classes.ftSmall}>Rating: N/A</div>} />
 								</Card> :
 								<Card className={classes.volunteer}>
 									<CardHeader
 										avatar={<Avatar aria-label="recipe" className={classes.avLarge} src={requestMange.volunteerId ? volunteerState.avatar : ""}></Avatar>}
 										title={<div className={classes.ftSmall}><a>{requestMange.volunteerId !== null ? volunteerState.fullName : "N/A"}</a>
 											<div><PhoneIcon style={{ color: "#41892c" }} />{requestMange.volunteerId !== null ? formatPhoneNumber(volunteerState.phone) : "N/A"}</div></div>}
-										subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color:"#f4b63f" }}/> {volunteerState.rating}</div>} />
+										subheader={<div className={classes.ftSmall}>Rating: <StarIcon style={{ color: "#f4b63f" }} /> {volunteerState.rating}</div>} />
 								</Card>
 							} </>
 						}
@@ -398,7 +398,7 @@ const RequestMangement = () => {
 									} else if (wrapId === "rating") {
 										return (
 											<>
-												<h2 className="text-center">please rate the {user.userType===1? "senior":"volunteer"}</h2>
+												<h2 className="text-center">please rate the {user.userType === 1 ? "senior" : "volunteer"}</h2>
 												<Rating
 													className={classes.centerItem}
 													name="simple-controlled"
@@ -421,27 +421,35 @@ const RequestMangement = () => {
 									} else {
 										return (
 											<div className={classes.paper}>
-												<h2 id="transition-modal-title">COVID-19 Self Health Check</h2>
-												<h6>Are you currently experiencing any of the following symptoms that started within the last 14 days?</h6>
-												<ul>
-													<li>Fever or chills</li>
-													<li>Cough</li>
-													<li>Shortness of breath or difficulty breathing</li>
-													<li>Fatigue</li>
-													<li>Muscle or body aches</li>
-													<li>Headache</li>
-													<li>Loss of taste or smell</li>
-													<li>Sore throat</li>
-													<li>Congestion or runny nose</li>
-													<li>Nausea or vomiting</li>
-													<li>Diarrhea</li>
-												</ul>
-												<h6>Over the past 14 days, have you been informed by a public health agency or a healthcare system that you have been exposed to COVID-19?</h6>
-												<br></br>
-												<h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19 infection?</h6>
-												<br></br>
-												<h4>If your answer is YES for any of the questions above, we advise you to stay home and avoid physical contact.</h4>
-												{/* <TextField
+												<div style={{
+													width: "100%",
+													height: "100%",
+													overflowY: "scroll",
+													paddingRight: "17px",
+													boxSizing: "content-box",
+
+												}}>
+													<h2 id="transition-modal-title">COVID-19 Self Health Check</h2>
+													<h6>Are you currently experiencing any of the following symptoms that started within the last 14 days?</h6>
+													<ul>
+														<li>Fever or chills</li>
+														<li>Cough</li>
+														<li>Shortness of breath or difficulty breathing</li>
+														<li>Fatigue</li>
+														<li>Muscle or body aches</li>
+														<li>Headache</li>
+														<li>Loss of taste or smell</li>
+														<li>Sore throat</li>
+														<li>Congestion or runny nose</li>
+														<li>Nausea or vomiting</li>
+														<li>Diarrhea</li>
+													</ul>
+													<h6>Over the past 14 days, have you been informed by a public health agency or a healthcare system that you have been exposed to COVID-19?</h6>
+													<br></br>
+													<h6>Over the past 14 days, has a person in your household been diagnosed with COVID-19 infection?</h6>
+													<br></br>
+													<h4>If your answer is YES for any of the questions above, we advise you to stay home and avoid physical contact.</h4>
+													{/* <TextField
 												className={classes.textfield}
 												label={`Enter new ${modalTitle}`}
 												onChange={handleModalChange}
@@ -449,9 +457,11 @@ const RequestMangement = () => {
 												multiline
 												rows={modalTitle === "Description" ? 6 : 1}
 											/> */}
-												<div>
-													{/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
-													<Button onClick={handleTake} style={{ float: "right", color: "white", backgroundColor: "#00897B" }}>I acknowledge</Button>
+												
+													<div>
+														{/* <Button onClick={submitChange} style={{float:"right", color:"white",backgroundColor:"#00897B"}}>Save</Button> */}
+														<Button onClick={handleTake} style={{ float: "right", color: "white", backgroundColor: "#00897B" }}>I acknowledge</Button>
+													</div>
 												</div>
 											</div>
 										)
@@ -510,8 +520,8 @@ const useStyles = makeStyles((theme) => ({
 	paddings3: {
 		marginTop: '10rem'
 	},
-	media:{
-		marginTop:'2vh',
+	media: {
+		marginTop: '2vh',
 		height: '400px',
 		width: '50%',
 		marginLeft: '50%',
@@ -570,18 +580,18 @@ const useStyles = makeStyles((theme) => ({
 		overflow: "auto"
 	},
 	requestCard: {
-		textAlign:"left",
+		textAlign: "left",
 		marginLeft: "50%",
 		transform: "translateX(-50%)",
-		width:" 75%",
+		width: " 75%",
 		fontFamily: 'Rasa',
 		fontSize: "24px",
 	},
 	navColumn: {
-		height:"100%"
+		height: "100%"
 	},
 	contentColumn: {
-		height:"100%",
+		height: "100%",
 		overflow: "scroll"
 	}
 }))
@@ -596,6 +606,7 @@ const modalStyle = {
 		backgroundColor: 'rgba(0, 0, 0, 0.6)',
 	},
 	content: {
+		maxHeight: "70%",
 		top: '30%',
 		left: '50%',
 		right: 'auto',
