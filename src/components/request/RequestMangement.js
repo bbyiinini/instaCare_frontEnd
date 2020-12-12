@@ -235,10 +235,10 @@ const RequestMangement = () => {
 					</p>
 				</div>
 			) : (
-					<Grid fluid className="row">
+					<Grid fluid className={classes.row}>
 						<ThemeProvider theme={theme}>
-							<Col className="content-column" xs>
-								<div className="request-card">
+							<Col className={classes.contentColumn} xs={12} sm={6}>
+								<div className={classes.requestCard}>
 									<div className={classes.paddings1}>
 										<CardHeader
 											className=""
@@ -335,7 +335,7 @@ const RequestMangement = () => {
 								</div>
 							</Col>
 						</ThemeProvider>
-						<Col className="nav-column" xs={12} sm={6}>{user.userType === 1 && requestMange.status === 1 ?
+						<Col className={classes.navColumn} xs={12} sm={6}>{user.userType === 1 && requestMange.status === 1 ?
 							<>
 								<ThemeProvider theme={theme}>
 									<CardMedia
@@ -564,7 +564,26 @@ const useStyles = makeStyles((theme) => ({
 			outline: 'none',
 		},
 	},
-	
+	row: {
+		display: "flex",
+		height: "100%",
+		overflow: "auto"
+	},
+	requestCard: {
+		textAlign:"left",
+		marginLeft: "50%",
+		transform: "translateX(-50%)",
+		width:" 75%",
+		fontFamily: 'Rasa',
+		fontSize: "24px",
+	},
+	navColumn: {
+		height:"100%"
+	},
+	contentColumn: {
+		height:"100%",
+		overflow: "scroll"
+	}
 }))
 
 const modalStyle = {
