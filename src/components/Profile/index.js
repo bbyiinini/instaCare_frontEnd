@@ -17,6 +17,7 @@ import Modal from "react-modal";
 
 
 import AddressService from "../../service/AddressService";
+import Rating from "@material-ui/lab/Rating";
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
 const useStyle = makeStyles(theme=>({
@@ -322,7 +323,8 @@ export default function (){
           <h3>{fullName}</h3>
           <h5>{!userType? "Senior" : "Volunteer"}</h5>
           <h5>{email}</h5>
-          <h5>Rating:{rating ? rating : "5.0"} </h5>
+          {/*<h5>Rating:{rating ? rating : "5.0"} </h5>*/}
+          <h5>Rating: <Rating style={{transform:'translate(5%, 30%)'}} name="read-only" value={profile.rating} precision={0.5} readOnly /></h5>
         </div>
         <div style={{textAlign:'left',width:"80%",marginTop:"1vh",marginLeft:"auto",marginRight:"auto",padding:'25px'}}>
           <Link to={"/reset"}><h4>Reset Password</h4></Link>
