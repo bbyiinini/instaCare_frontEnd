@@ -31,7 +31,7 @@ const SignUpComplete = ({props}) => {
                 // }).catch(res=>{
                 //     console.log("CORS not connected")
                 // })
-
+                history.push("/finishSetUp")
             }).catch((error)=>{
                 console.log(error)
             })
@@ -39,12 +39,11 @@ const SignUpComplete = ({props}) => {
     window.localStorage.removeItem('email')
     window.localStorage.removeItem('password')
     window.localStorage.removeItem('userType')
-    history.push("/")
     },[])
 
     return (
         <div style={{textAlign:"center"}}>
-            <h1>Sign Up complete</h1>
+            <h1>Sign Up complete, directing to set profile page....</h1>
         </div>
     )
 };

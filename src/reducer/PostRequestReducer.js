@@ -11,7 +11,7 @@ export const postRequestReducer = (state = null, action) =>{
     case 'DELETE_ITEM':
       return {
         ...state,
-        pastRequest: state.pastRequest.filter((items, index) => index !== action.payload)
+        pastRequest: state.pastRequest.filter((items) => items.id !== action.payload)
       }
     case "LOGOUT":
       return null;

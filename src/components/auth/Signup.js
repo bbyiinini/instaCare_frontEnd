@@ -122,7 +122,7 @@ const Signup = (props) => {
         //     }
         // }
         const actionSetting = {
-            url: 'http://localhost:3000/signup/complete',
+            url: 'http://instacare.today/signupcomplete',
             handleCodeInApp: true,
         }
 
@@ -143,7 +143,7 @@ const Signup = (props) => {
     };
 
     return (
-        <div>
+        <div style={{overflow:'hidden'}}>
             <MuiThemeProvider theme={theme}>
                 <Grid container spacing={0} style={{marginTop:"100px"}}>
                     <Grid item xs={6}>

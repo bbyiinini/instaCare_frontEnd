@@ -21,6 +21,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Rating from "@material-ui/lab/Rating";
 import RatingService from "../../service/RatingService";
 import {firestore} from "../../base";
+import UserService from "../../service/UserService";
 
 const GOOGLE_API_KEY = 'AIzaSyCZBZEfqeZbQkO1c_q7AkeySMN4aAJMO0Y'
 
@@ -63,7 +64,6 @@ const PostRequest = () => {
 
     const [flag, setFlag] = useState(true);
     const [text, setText] = useState("");
-    const [checked, setChecked] = useState(false);
     const [title, setTitle] = useState("");
     const [addressId, setAddressId] = useState("");
     const [address, setAddress] = useState("");
@@ -81,23 +81,18 @@ const PostRequest = () => {
     const [zipCode, setZipCode] = useState("");
 
     // delete request bean
-    const [deleteTarget, setDeleteTarget] = useState({})
+    const [deleteTarget, setDeleteTarget] = useState(null)
+    const [pastAddr, setPastAddr] = useState([])
     // rating
     const [rating, setRating] = useState(0)
     const [ratingFlag, setRatingFlag] = useState(true)
     const [ratingModal, setRatingModal] = useState(false)
     const [requestTitle, setRequestTitle] = useState("")
     const [ongoing, setOngoing] = useState([])
-    const [pastArr, setPastArr] = useState([])
     const [requestFlag, setRequestFlag] = useState(true)
-    const [snapShotFlag, setSnapShotFlag] = useState(true)
     const [needRating, setNeedRating] = useState(null)
     const requestRef = firestore.collection('requestPlaza')
 
-
-    const handleCheckBox = () => {
-        setChecked(!checked)
-    }
 
     const handleSubmit = async (e) => {
         // e.preventDefault();
@@ -110,7 +105,6 @@ const PostRequest = () => {
             addressID: addressId,
             // address: address,
             phoneNumber: phoneNumber,
-            neededPhysicalContact: checked,
             tags: tags,
             seniorId: user.uid,
         }
@@ -198,17 +192,17 @@ const PostRequest = () => {
     }
 
     const handleConfirm = async () => {
+
         await RequestService.deleteRequest(deleteTarget.content.id).then(res => {
             console.log(res)
-            dispatch({
-                type: 'DELETE_ITEM',
-                payload: deleteTarget.key
-            })
-            setDeleteModal(false)
+            // dispatch({
+            //     type: 'DELETE_ITEM',
+            //     payload: res.id
+            // })
         }).catch(error => {
             console.log(error.message)
         })
-
+        setDeleteModal(false)
     }
 
     if (!profile || !requestDetail || !addressList || !requestDetail.ongoingRequest || !requestDetail.pastRequest || !addressList.userAddrList) {
@@ -239,7 +233,7 @@ const PostRequest = () => {
     let {ongoingRequest, pastRequest} = requestDetail
     if (requestFlag){
         setOngoing(ongoingRequest)
-        setPastArr(pastRequest)
+        setPastAddr(pastRequest)
         setRequestFlag(false)
     }
 
@@ -260,14 +254,14 @@ const PostRequest = () => {
     }));
 
 
-    const pastData = profile.userType === 0 ? pastArr.map((res, index) => ({
+    const pastData = profile.userType === 0 ? pastAddr.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
         user: res.volunteer === null ? "Pending" : res.volunteer,
         requestTime: moment(parseISOString(res.createTime)).format('HH:mm MM/DD/YYYY'),
         rating: <Rating name="read-only" value={res.rating} precision={0.5} readOnly />
-    })) : pastArr.map((res, index) => ({
+    })) : pastAddr.map((res, index) => ({
         key: index,
         tags: res.tags === null ? [] : res.tags,
         requestTitle: res.title === null ? "" : res.title,
@@ -300,34 +294,41 @@ const PostRequest = () => {
                    setRatingModal(true)
                }
 
-               // if (doc.data().numOfRating === 2 && window.localStorage.getItem('rateStatus')){
-               //     // window.localStorage.removeItem('rateStatus')
-               //     console.log("remove me")
-               // }
            })
         })
     }
 
+    pastAddr.map((res)=>{
+        requestRef.doc(res.id).onSnapshot(async function (doc){
+            if (doc.data() === undefined ){
+                setPastAddr(pastAddr.filter(data=>data.id !== res.id))
+            }
 
-    const handleRating = () => {
+        })
+    })
+
+
+
+
+
+
+    const handleRating = async () => {
         if (window.localStorage.getItem('rateStatus')){
             window.localStorage.removeItem('rateStatus')
         }
+        const ratingUserId = profile.userType===0 ? (noneRated.length===0?needRating.volunteerId:noneRated[0].volunteerId) :
+            (noneRated.length===0?needRating.seniorId:noneRated[0].seniorId)
+        console.log(needRating)
+        console.log(ratingUserId)
+
+        const ratingUser = (await UserService.retrieve(ratingUserId)).data.data;
+        if (ratingUser){
+            UserService.update(ratingUser.id, { rating: (ratingUser.numOfRating * ratingUser.rating + rating) / (ratingUser.numOfRating + 1), numOfRating: ratingUser.numOfRating + 1 })
+        }
+
         RatingService.insertRating(noneRated.length===0?needRating.id:noneRated[0].id, {userRating: rating}).then(r=> {
-
-            // if (noneRated.length === 0){
-            //     needRating.rating = rating
-            //     needRating.numOfRating = 1
-            //     setPastArr([needRating, ...pastArr])
-            //     setRatingModal(false)
-            // }else
-            // {
-            //     setRatingModal(false)
-            //     window.location.reload()
-            // }
-                setRatingModal(false)
-                window.location.reload()
-
+            setRatingModal(false)
+            window.location.reload()
         }).catch(error=>error.message)
     }
 
@@ -414,7 +415,7 @@ const PostRequest = () => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            width: '35%',
+            width: '30%',
             render: tags => (
                 <>
                     {tags.map(tag => {
@@ -432,7 +433,7 @@ const PostRequest = () => {
             title: 'Request Time',
             dataIndex: 'requestTime',
             key: 'requestTime',
-            width: '18%'
+            width: '25%'
         },
 
         {
@@ -809,11 +810,6 @@ const PostRequest = () => {
                                            onClick={() => setAddressModal(false)}>Cancel</label>
                                 </form>
                             </Modal>
-                        </div>
-                        <div className="form-group form-check">
-                            <input type="checkbox" className="form-check-input" checked={checked}
-                                   onChange={handleCheckBox}/>
-                            <label className="form-check-label">Physical contact needed</label>
                         </div>
                         <Button type="primary" style={{background: '#00897B', width: '80px'}} shape="round"
                                 className="float-right" onClick={handleSubmit}>Post</Button>

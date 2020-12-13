@@ -87,7 +87,7 @@ const Login = (props) => {
 
 
     return (
-        <div>
+        <div style={{overflow: 'hidden'}}>
             <MuiThemeProvider>
                 <Grid container spacing={2} style={{paddingTop:"100px"}}>
                     <Grid item xs={6}>
@@ -121,7 +121,7 @@ const Login = (props) => {
                                 />
                             </div>
                             <br/>
-                            <Link to="/forgot/resetpassword" style={{color:"#12897b"}}>Forgot Password</Link>
+                            <Link to="/forgotpassword" style={{color:"#12897b"}}>Forgot Password</Link>
                             <br/>
                             <br/>
                             <Button label="Login"

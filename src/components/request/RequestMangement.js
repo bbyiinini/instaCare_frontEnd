@@ -424,7 +424,7 @@ const RequestMangement = () => {
 												<div style={{
 													width: "100%",
 													height: "100%",
-													overflowY: "scroll",
+													// overflowY: "scroll",
 													paddingRight: "17px",
 													boxSizing: "content-box",
 

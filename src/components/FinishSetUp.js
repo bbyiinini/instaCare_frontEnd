@@ -115,7 +115,7 @@ export default function FinishSetUp(props){
 
 
   return(
-      <div>
+      <div style={{overflow:'hidden'}}>
     <MuiThemeProvider>
       <Grid container spacing={0} style={{marginTop:"100px"}}>
         <Grid item xs={6}>
