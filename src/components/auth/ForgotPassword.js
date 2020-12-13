@@ -63,11 +63,11 @@ const ForgotPassword = () => {
     }
 
     return (
-        <div>
+        <div style={{overflow:'hidden'}}>
             <MuiThemeProvider>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
-                        <img src={forgot} style={{width:"600px"}}/>
+                        <img src={forgot} style={{width:"600px"}} alt="forgot"/>
                     </Grid>
                     <Grid item xs={6} style={{marginTop:"200px"}}>
                         <h4>Please enter your email address to get the reset password link</h4>

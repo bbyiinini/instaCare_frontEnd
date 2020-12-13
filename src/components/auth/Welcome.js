@@ -73,7 +73,7 @@ export default function Welcome(){
   }
 
   return(
-      <div className="root">
+      <div className="root" style={{overflow:'hidden'}}>
         <MuiThemeProvider>
           <Grid container spacing={2}>
             <Grid style={{

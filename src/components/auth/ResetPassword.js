@@ -120,7 +120,7 @@ const ResetPassword = () => {
 
 
   return (
-      <div>
+      <div style={{overflow:'hidden'}}>
         <MuiThemeProvider>
           <Grid container spacing={2}>
             <Grid item xs={6}>

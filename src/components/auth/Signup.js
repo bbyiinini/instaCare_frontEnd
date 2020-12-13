@@ -143,7 +143,7 @@ const Signup = (props) => {
     };
 
     return (
-        <div>
+        <div style={{overflow:'hidden'}}>
             <MuiThemeProvider theme={theme}>
                 <Grid container spacing={0} style={{marginTop:"100px"}}>
                     <Grid item xs={6}>
