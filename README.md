@@ -3,15 +3,25 @@
 ### Team Members:
 
 Shinuo Xu -- Project Manager
+
 Shuyang Miao -- Software Architect
+
 Tianpeng Fan -- Algorithm Specialist
+
 Jie Wang -- Database Specialist
+
 Qingxuan Cao -- UI Specialist
+
 Fengyuan Wu -- QA Lead
+
 Gan Kang -- Software Lead
+
 Zhenyi Xu -- Business Analyst
+
 Yueqian Ma -- Senior System Analyst
+
 Guangyu Yang -- Database Specialist
+
 
 ### Introduction:
 The Covid-19 global pandemic has drastically changed the lifestyle of the majority of us. While most of us could simply stay at home and shop online, some seniors are experiencing a really tough time. They are the group of people that need most help during this pandemic. InstaCare, an online platform that connects seniors and volunteers, helps to alleviate the situations when seniors are unable to do something on their own, such as buying food or seeking medication. InstaCare helps both seniors and volunteers feel better, live better during the pandemic. As a registered senior, you can request for help, or an errand, on our plaza, and provide tips to volunteer when they accept your request. For registered volunteers, you can help seniors in need of your neighborhood.
